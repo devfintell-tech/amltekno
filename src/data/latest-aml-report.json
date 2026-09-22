@@ -1,36 +1,36 @@
 {
   "date": "22 Eylül 2026",
   "isoDate": "2026-09-22",
-  "durationSeconds": 41,
+  "durationSeconds": 31,
   "startedAt": "06:00:12",
   "completedAt": "06:01:21",
   "activeModel": "DeepSeek v4.1 Flash",
   "phase1Model": "DeepSeek v4.1 Flash",
   "phase2Model": "DeepSeek v4.1 Flash",
   "phase1TokenUsage": {
-    "promptTokens": 8886,
-    "completionTokens": 8189,
-    "reasoningTokens": 4200,
-    "finalTokens": 8189,
-    "totalTokens": 17075
+    "promptTokens": 5290,
+    "completionTokens": 6018,
+    "reasoningTokens": 600,
+    "finalTokens": 6018,
+    "totalTokens": 11308
   },
   "phase2TokenUsage": {
-    "promptTokens": 1171,
-    "completionTokens": 2020,
-    "reasoningTokens": 600,
-    "finalTokens": 2020,
-    "totalTokens": 3191
+    "promptTokens": 1005,
+    "completionTokens": 1568,
+    "reasoningTokens": 400,
+    "finalTokens": 1568,
+    "totalTokens": 2573
   },
   "tokenUsage": {
-    "promptTokens": 10057,
-    "completionTokens": 10209,
-    "reasoningTokens": 4800,
-    "finalTokens": 10209,
-    "totalTokens": 20266
+    "promptTokens": 6295,
+    "completionTokens": 7586,
+    "reasoningTokens": 1000,
+    "finalTokens": 7586,
+    "totalTokens": 13881
   },
-  "totalPostsAnalyzed": 64,
-  "totalTweetsAnalyzed": 5,
-  "totalAuthoritiesAnalyzed": 13,
+  "totalPostsAnalyzed": 53,
+  "totalTweetsAnalyzed": 45,
+  "totalAuthoritiesAnalyzed": 8,
   "threatMeter": {
     "overallScore": 8.8,
     "level": "Yüksek",
@@ -38,274 +38,244 @@
   },
   "morningBrief": {
     "flashAlert": {
-      "title": "Rabobank'ın 368,7 Milyon Dolarlık Kontrol Tasarım Hatası",
-      "description": "Rabobank, tek bir kontrol tasarım hatası nedeniyle 368,7 milyon dolar ceza aldı. Bu vaka, AI çıktılarının insan incelemesinden geçirilmesinin denetimde nasıl kanıtlanacağı sorusunu gündeme getiriyor. Analistler, kontrol tasarımını gözden geçirmeli ve AI destekli süreçlerde insan gözetimini belgelemeli."
+      "title": "OFAC Etiyopya Yaptırımlarını Kaldırdı",
+      "description": "OFAC, Etiyopya acil durumunun sona ermesiyle yaptırımları kaldırdı. Analistler, Etiyopya ile bağlantılı işlemlerde tarama filtrelerini güncellemeli ve potansiyel geri dönüş risklerini değerlendirmelidir."
     },
     "mostDiscussed": {
-      "name": "AI Çıktılarının İnsan İncelemesi ve Denetim Kanıtı",
-      "hypeScore": 9.8,
-      "sentimentScore": 38,
-      "description": "AI çıktılarının insan incelemesinden geçirilmesi, düzenleyiciler için kritik bir denetim kanıtı haline geliyor. Rabobank vakası, kontrol tasarımındaki tek bir hatanın milyonlarca dolar cezaya yol açabileceğini gösterdi. Denetim firmaları, AI'ın gerçekten değer katıp katmadığını sorguluyor; bazıları sadece kutu doldurduğunu düşünüyor. Analistler, AI çıktılarının izlenebilirliğini ve insan müdahalesini net şekilde belgelemeli."
+      "name": "AI Denetim İzleri ve İnsan Gözetimi Kanıtı",
+      "hypeScore": 9.2,
+      "sentimentScore": 42,
+      "description": "Yapay zeka çıktılarının insan incelemesinden geçtiğini kanıtlamak, düzenleyiciler için kritik bir uyumluluk gereksinimi haline geliyor. Finansal kurumlar, AI kararlarının denetim izlerini tutmakta ve insan gözetimini belgelemekte zorlanıyor. Bu konu, Twitter'da en çok konuşulan konu olarak öne çıkıyor ve sektörde endişe yaratıyor."
     },
     "mostLoved": {
-      "name": "Kripto Varlık Yönetiminde Kurumsal Benimseme ve Tokenizasyon",
-      "hypeScore": 9.6,
+      "name": "Graf-Transformer ile Öz-Denetimli Ön Eğitim ve Konformal Risk Kontrolü",
+      "hypeScore": 8.7,
       "sentimentScore": 95,
-      "description": "Kripto varlık yönetiminde kurumsal benimseme ve tokenizasyon, sektörde en çok sevilen gelişme olarak öne çıkıyor. Geleneksel finans kurumları, tokenizasyon yoluyla likidite ve şeffaflık sağlıyor. Bu trend, AML süreçlerinin de zincir üstü takip ile entegre edilmesini gerektiriyor. Analistler, tokenizasyonun getirdiği yeni riskleri ve fırsatları değerlendirmeli."
+      "description": "Graf-Transformer modelleri, karmaşık ilişkileri ve kara para aklama kalıplarını tespit etmede yüksek başarı gösteriyor. Konformal risk kontrolü ile birleştirildiğinde, model belirsizliğini ölçerek daha güvenilir uyarılar üretiyor. Bu yenilikçi yaklaşım, sektörde büyük beğeni topluyor ve gelecek vaat ediyor."
     },
     "bullets": [
       {
         "tag": "Regülasyon ve Yaptırımlar",
-        "text": "FATF, Öneri 16 (Travel Rule) kapsamında eşik değer ve sınır ötesi bilgi paylaşımı raporunu yayımladı; OFAC, gölge filo ve denizcilik paravan şirketlerine 18 yeni yaptırım kararı aldı; FinCEN, gayrimenkul ve yatırım danışmanlığı sektörüne yönelik nihai AML düzenlemesini açıkladı; EU AMLA, AB Tekil Kural Kitabı ve doğrudan denetim kriterlerini duyurdu."
+        "text": "OFAC, Etiyopya yaptırımlarını kaldırdı; FCA, yapay zeka çağında kredi piyasası düzenlemelerini yeniden değerlendiriyor."
       },
       {
         "tag": "İşlem İzleme ve Anomali",
-        "text": "Geçiş şablonları ile aklama katmanlarının tespiti, graf-Transformer ve konformal risk kontrolü ile kurumsal dolandırıcılık tespiti gibi yeni fikirler öne çıkıyor. FINESSE, çok modlu finansal olay dizileri için ajan tabanlı simülatör ve kıyaslama veri seti sunuyor."
+        "text": "Geçiş şablonlarıyla yorumlanabilir kara para aklama tespiti ve olay tabanlı tetikleyicilerle sürekli CDD öne çıkıyor."
       },
       {
         "tag": "Sentetik Kimlik ve Biyometri",
-        "text": "Uzaktan müşteri kabulünde sadece fotoğraf yükleme yetersiz; EBA cezai uyarıları artırdı. Almanya'nın EUDI Cüzdanı d-you, 40 kuruluşla kabul tarafını test ediyor. EBA, FinTek ve neobankalarda e-KYC risk değerlendirmesi yayımladı."
+        "text": "Sentetik kimlik tespitinde cihaz parmak izi ve davranışsal biyometri kombinasyonu etkili bir savunma olarak öneriliyor."
       },
       {
         "tag": "Kripto ve Zincir Üstü Takip",
-        "text": "MASAK, kripto varlık hizmet sağlayıcıları için şüpheli işlem rehberini güncelledi. Kripto madencilik payoutlarında ilk AML kaydı blokzincirde değil elektrik şirketinde olabilir. Deepfake dolandırıcılık kayıplarında patlama ve AI destekli siber suç servislerinin çökertilmesi gündemde."
+        "text": "Kripto madencilik payoutlarında AML kaydı ve enerji tüketimi izleme ihtiyacı tartışılıyor; elektrik şirketlerinin rolü belirsiz."
       }
     ]
   },
-  "executiveSummary": "Bugünün en kritik gelişmesi, Rabobank'ın tek bir kontrol tasarım hatası nedeniyle 368,7 milyon dolar ceza almasıdır. Bu vaka, AI çıktılarının insan incelemesinden geçirilmesinin denetimde nasıl kanıtlanacağı sorusunu derinleştiriyor. Düzenleyiciler, AI destekli süreçlerde insan gözetiminin belgelenmesini ve izlenebilirliğini talep ediyor. Analistler, kontrol tasarımını gözden geçirmeli ve AI'ın gerçekten değer katıp katmadığını sorgulamalı; aksi halde sadece kutu doldurma riskiyle karşılaşılabilir.\n\nRegülasyon cephesinde yoğun bir gün yaşanıyor. FATF, Travel Rule kapsamında eşik değer ve sınır ötesi bilgi paylaşımı raporunu yayımladı; OFAC, gölge filo ve denizcilik paravan şirketlerine 18 yeni yaptırım kararı aldı; FinCEN, gayrimenkul ve yatırım danışmanlığı sektörüne yönelik nihai AML düzenlemesini açıkladı; EU AMLA ise AB Tekil Kural Kitabı ve doğrudan denetim kriterlerini duyurdu. Bu gelişmeler, kurumların uyum programlarını gözden geçirmesini ve sınır ötesi işlemlerde şeffaflığı artırmasını gerektiriyor. Ayrıca MASAK, kripto varlık hizmet sağlayıcıları için şüpheli işlem rehberini güncelledi; EBA ise FinTek ve neobankalarda e-KYC risk değerlendirmesi yayımladı.\n\nTeknoloji ve inovasyon tarafında, kripto varlık yönetiminde kurumsal benimseme ve tokenizasyon en çok sevilen gelişme olarak öne çıkıyor. Ancak deepfake dolandırıcılık kayıplarındaki patlama ve AI destekli siber suç servislerinin çökertilmesi, tehdit aktörlerinin AI'ı kötüye kullanmaya devam ettiğini gösteriyor. Yeni fikirler arasında geçiş şablonları ile aklama katmanlarının tespiti, graf-Transformer ve konformal risk kontrolü ile kurumsal dolandırıcılık tespiti ve FINESSE gibi ajan tabanlı simülatörler yer alıyor. Uzaktan müşteri kabulünde sadece fotoğraf yüklemenin yetersiz olduğu ve EBA cezai uyarılarının arttığı unutulmamalı; Almanya'nın EUDI Cüzdanı d-you girişimi 40 kuruluşla test ediliyor. Wolfsberg CBDDQ v1.4 ise muhabir bankacılıkta zincirleme işlem şeffaflığı ve UBO eşiği revizyonu getiriyor. Yöneticiler, bu gelişmeler ışığında risk iştahını ve kontrol ortamını yeniden değerlendirmeli.",
+  "executiveSummary": "Bugünün en önemli gelişmesi, OFAC'ın Etiyopya acil durumunun sona ermesiyle yaptırımları kaldırmasıdır. Bu, Etiyopya ile ilgili işlemlerde tarama filtrelerinin güncellenmesini gerektirirken, potansiyel geri dönüş risklerinin de dikkatle izlenmesi gerekmektedir. Ayrıca FinCEN, finansal kurumlara şüpheli faaliyetleri bildirme çağrısında bulunurken, EBA yeni icra direktörünü onayladı ve FCA yapay zeka çağında kredi piyasası düzenlemelerini yeniden düşünmeye başladı. Bu düzenleyici hareketlilik, uyum ekiplerinin hızlı adaptasyonunu zorunlu kılıyor.\n\nSektörde en çok tartışılan konu, yapay zeka çıktılarının insan incelemesinden geçtiğinin nasıl kanıtlanacağıdır. Düzenleyiciler, AI kararlarının denetim izlerinin tutulmasını ve insan gözetiminin belgelenmesini talep ediyor. Bu, özellikle otomatik karar alma süreçlerinde şeffaflık ve hesap verebilirlik açısından kritik bir uyumluluk gereksinimi haline geliyor. Twitter'da %42'lik bir konuşma oranıyla bu konu, sektörün en büyük endişesi olarak öne çıkıyor. Öte yandan, Graf-Transformer ve konformal risk kontrolü gibi yenilikçi yöntemler, daha doğru ve güvenilir kara para aklama tespiti için umut vadediyor.\n\nKYC/CDD alanında, sentetik kimlik tespitinde cihaz parmak izi ve davranışsal biyometri kombinasyonu ile UBO tespitinde grafik sinir ağları kullanımı öne çıkıyor. Müşteri yaşam döngüsü boyunca sürekli CDD için olay tabanlı tetikleyiciler, risk yönetimini güçlendiriyor. Kripto madencilik payoutlarında AML kaydının kimde olması gerektiği (elektrik şirketleri mi, madenciler mi?) belirsizliğini korurken, enerji tüketimi izleme ihtiyacı artıyor. Nijerya fintech'i için AI sistemlerinin dağıtım öncesi değerlendirme çerçevesi gibi yeni fikirler, yerel düzenlemelere uyumu kolaylaştırabilir. Yöneticilerin, bu hızlı değişen düzenleyici ortamda proaktif adımlar atması ve teknolojik yenilikleri yakından takip etmesi gerekiyor.",
   "amlTalks": [
     {
       "id": "talk-1",
-      "title": "AI Çıktılarının İnsan İncelemesi Denetimde Nasıl Kanıtlanacak?",
+      "title": "AI Çıktılarının İnsan İncelemesi Nasıl Kanıtlanır?",
       "category": "Operasyon ve Saha Tartışmaları",
-      "summary": "AML analistleri, yapay zeka destekli karar süreçlerinde insan gözetiminin denetim ve düzenleyici soruşturmalarda nasıl kanıtlanacağı konusunda zorlanıyor. Mevcut uygulamada bir analist AI önerisini onaylıyor veya reddediyor, ancak bu incelemenin gerçekten yapıldığına dair kanıt üretmek için yalnızca bir 'reviewed' durum etiketi kullanılıyor. Denetçiler bu etiketin ötesinde somut kanıt talep ettiğinde süreç tıkanıyor.",
-      "keyInsight": "İnsan incelemesinin kanıtlanabilir olması için her AI önerisi için zaman damgalı, gerekçeli ve değiştirilemez bir karar günlüğü tutulmalı. Analistin hangi veriyi gördüğü, hangi alternatifleri değerlendirdiği ve neden onayladığı veya reddettiği yapılandırılmış bir formatta saklanmalı. Bu kayıtlar denetim sırasında sorgulanabilir olmalı ve model sürümü, veri kaynağı gibi bağlam bilgilerini içermeli.",
+      "summary": "r/Compliance topluluğunda bir analist, AI destekli karar süreçlerinde insan gözetiminin politika gereği var olduğunu ancak denetim veya düzenleyici sorgulamasında bunun somut kanıtının nasıl sunulacağını sorguluyor. Ekipler, AI önerilerini onaylayan veya reddeden kişilerin kararlarının loglanması, gerekçelendirilmesi ve denetim izinin tutulması gerektiğini tartışıyor.",
+      "keyInsight": "İnsan gözetimi sadece onay butonuyla değil, karar gerekçesi, zaman damgası ve değiştirilemez denetim kaydıyla kanıtlanmalı. AI çıktılarının versiyonlanması ve manuel müdahalelerin ayrı bir olay günlüğünde tutulması, düzenleyici incelemelerde savunulabilir bir kanıt zinciri oluşturur.",
       "source": "r/Compliance"
     },
     {
       "id": "talk-2",
-      "title": "Rabobank 'Verified List' Vakası: Tek Bir Kontrol Tasarım Hatası 368,7 Milyon Dolara Mal Oldu",
-      "category": "Vaka Analizi ve Ders Çıkarımı",
-      "summary": "Rabobank NA, 2018'de BSA ihlali nedeniyle 368,7 milyon dolar ceza ödedi. Vakanın özünde, bankanın yüksek riskli hesapları bir kez inceleyip 'doğrulanmış liste'ye aldıktan sonra bir daha gözden geçirmemesi yatıyor. Bu tasarım hatası, sonradan ortaya çıkan tüm risk sinyallerine rağmen hesapların izlenmemesine yol açtı. Topluluk, cezanın büyüklüğünü dolandırıcılık anlatısından çok bu kontrol tasarımına bağlıyor.",
-      "keyInsight": "Yüksek riskli müşteriler için 'tek seferlik inceleme ve listeye alma' yaklaşımı terk edilmeli. Bunun yerine, sürekli izleme ve periyodik yeniden değerlendirme içeren dinamik bir risk skorlama mekanizması kurulmalı. Doğrulanmış liste kavramı, ancak sürekli güncellenen ve yeni risk faktörlerini otomatik olarak tetikleyen bir yapıyla anlamlı olur.",
+      "title": "Kripto Madencilik Payoutlarında AML Kaydı Elektrik Şirketinde mi?",
+      "category": "Operasyon ve Saha Tartışmaları",
+      "summary": "r/AMLCompliance'da paylaşılan bir vaka, Meksika'da Tlaola'da ele geçirilen yasa dışı kripto madencilik tesisinin transformatör, uydu anteni ve yüzlerce özel bilgisayar içerdiğini gösteriyor. Analistler, bu tür operasyonlarda ilk AML kaydının blokzincirde değil, yüksek elektrik tüketimini fark eden enerji şirketinde oluştuğunu vurguluyor.",
+      "keyInsight": "Kripto madencilik faaliyetlerinde anormal enerji tüketimi, geleneksel finansal izleme sistemlerinin gözden kaçırdığı bir kırmızı bayrak. Enerji dağıtım şirketleriyle veri paylaşımı, yasa dışı madencilik ve kara para aklama ağlarının erken tespitinde kritik bir istihbarat kaynağı olabilir.",
       "source": "r/AMLCompliance"
     },
     {
       "id": "talk-3",
-      "title": "Kripto Madencilik Payoutlarında İlk AML Kaydı Blokzincirde Değil Elektrik Şirketinde Olabilir",
-      "category": "Yeni Risk Alanları ve Saha Gözlemleri",
-      "summary": "Meksika'da Tlaola, Puebla'da bir kripto madencilik tesisine yapılan baskında transformatör, yaklaşık 80 orta gerilim terminali, sekiz uydu internet anteni ve 300 özel bilgisayar ele geçirildi. Topluluk, bu tür yasadışı madencilik operasyonlarının finansal izini sürerken ilk AML kaydının blokzincirde değil, elektrik dağıtım şirketindeki anormal tüketim faturalarında veya kaçak elektrik kullanım kayıtlarında olabileceğini tartışıyor.",
-      "keyInsight": "Kripto madencilik kaynaklı yasadışı fon akışlarını tespit etmek için enerji tüketim verileri, uydu internet abonelikleri ve yerel işletme kayıtları gibi geleneksel olmayan veri kaynakları AML izleme süreçlerine entegre edilmeli. Özellikle yüksek gerilimli elektrik tüketimi ile kripto cüzdan hareketleri arasında korelasyon analizi yapılmalı.",
+      "title": "AI, Uyumluluk ve QA Rollerini İnsansızlaştırır mı?",
+      "category": "Operasyon ve Saha Tartışmaları",
+      "summary": "r/AMLCompliance'da bir kullanıcı, AI'nın başkalarının işini izleyen ve düzenleyici uyumu sağlayan rollerini tamamen ortadan kaldırıp kaldırmayacağını soruyor. Topluluk, bu rollerin otomasyon süreçlerini denetleyen, istisnaları yöneten ve AI kararlarını açıklayan pozisyonlara evrileceği görüşünde.",
+      "keyInsight": "Uyumluluk rollerinin geleceği, rutin kontrol işlerinin otomasyonuyla birlikte AI yönetişimi, model riski ve açıklanabilirlik uzmanlığına kayacak. Analistlerin teknik yeterlilik kazanması ve AI çıktılarını sorgulama becerisi geliştirmesi gerekiyor.",
       "source": "r/AMLCompliance"
     },
     {
       "id": "talk-4",
-      "title": "AI Denetim Firmaları Gerçekten Değer Katıyor mu, Yoksa Sadece Kutu mu Dolduruyor?",
-      "category": "Teknoloji ve Verimlilik Tartışmaları",
-      "summary": "AML analistleri, binlerce çevrimiçi kaynağı tarayıp yüksek riskli müşteriler hakkında basit raporlar üreten AI araçlarının gerçek değerini sorguluyor. Bu araçların analistlerin karar verme süresini kısaltıp kısaltmadığı, yoksa yanlış pozitif yığını oluşturup operasyonel yükü artırdığı tartışılıyor. Özellikle bu raporların denetim izi ve kaynak güvenilirliği konusunda endişeler var.",
-      "keyInsight": "AI destekli araştırma araçları satın alınırken sadece hız değil, doğruluk ve açıklanabilirlik de ölçülmeli. Pilot uygulamalarda yanlış pozitif oranı, analist memnuniyeti ve denetim uyumluluğu test edilmeli. Araçların ürettiği raporların kaynakları açıkça belirtilmeli ve analistin kendi araştırmasını yapmasını teşvik edecek şekilde tasarlanmalı.",
+      "title": "Gemiyi Yaptırım Taraması: IMO Numarasıyla Otomatik Raporlama",
+      "category": "Operasyon ve Saha Tartışmaları",
+      "summary": "r/AMLCompliance'da bir geliştirici, bir geminin IMO numarasını alıp OFAC, AB, Birleşik Krallık ve BM yaptırım verilerini kontrol eden otomatik bir gemi yaptırım tarama raporu oluşturduğunu paylaşıyor. Denizcilik profesyonellerinden geri bildirim isteyen kullanıcı, manuel tarama süreçlerinin yavaşlığına dikkat çekiyor.",
+      "keyInsight": "Denizcilik ve lojistik sektöründe yaptırım taraması hala büyük ölçüde manuel ve parçalı. IMO numarası gibi benzersiz tanımlayıcılarla çoklu yaptırım listelerini otomatik tarayan araçlar, insan hatasını azaltır ve uyum ekiplerinin hızını artırır.",
       "source": "r/AMLCompliance"
     }
   ],
   "twitterPulse": {
-    "totalAnalyzed": 5,
+    "totalAnalyzed": 35,
     "sentimentDistribution": {
-      "critical": 40,
-      "solutionOriented": 40,
-      "informative": 20
+      "critical": 58,
+      "solutionOriented": 28,
+      "informative": 14
     },
     "dominantTopics": [
       {
-        "topic": "Deepfake Dolandırıcılık Kayıplarında Patlama",
-        "sharePercentage": 40,
+        "topic": "AI Denetim İzleri ve İnsan Gözetimi Kanıtı",
+        "sharePercentage": 42,
         "sentiment": "Kritik",
-        "summary": "TRM Labs'in 2026 AI-in-Crime Adoption Index raporuna göre deepfake dolandırıcılık kayıpları 2026 başında 2025'in tamamını %263 aşmış durumda. Ses klonlama ve görsel deepfake araçları, yönetici taklidi ve büyükanne dolandırıcılığı gibi suçları ölçeklenebilir hale getiriyor. Uzmanlar, görsel, işitsel ve davranışsal işaretler ile doğrulama adımlarının önemine dikkat çekiyor."
+        "summary": "Uyumluluk profesyonelleri, AI destekli karar süreçlerinde insan incelemesinin denetimlerde nasıl kanıtlanacağını tartışıyor. Politika ile uygulama arasındaki boşluk, düzenleyici risk olarak görülüyor."
       },
       {
-        "topic": "AI Destekli Siber Suç Servislerinin Çökertilmesi",
-        "sharePercentage": 30,
-        "sentiment": "Çözüm Odaklı",
-        "summary": "Microsoft Digital Crimes Unit ve TRM Labs dahil endüstri ortakları, EvilTokens adlı abonelik tabanlı siber suç servisini çökertti. Bu servis, AI sohbet robotu ile ele geçirilmiş e-posta hesaplarını analiz edip dolandırıcılık için kullanılabilir bilgileri (güvenilir ilişkiler, ödeme yetkileri, satıcı faturaları) ortaya çıkarıyordu. Olay, AI'nın ihlal ile paraya çevirme arasındaki süreyi nasıl kısalttığını gösteriyor."
-      },
-      {
-        "topic": "Kripto Varlık Yönetiminde Kurumsal Benimseme ve Tokenizasyon",
-        "sharePercentage": 30,
+        "topic": "Kripto Madencilik ve Enerji Tüketimi İzleme",
+        "sharePercentage": 33,
         "sentiment": "Bilgilendirici",
-        "summary": "TRM Talks'da Morgan Stanley Dijital Varlıklar Başkanı Amy Oldenburg, bir GSIB içinde kripto varlıkların hayatta kalma mücadelesini ve SVB vakasının stablecoin'lerle nasıl farklı olabileceğini anlatıyor. Ayrıca TOKENISED Singapore etkinliği, tokenize finansın geleceğini tartışmak üzere kıdemli liderleri ve yatırımcıları bir araya getiriyor."
+        "summary": "Yasa dışı kripto madencilik operasyonlarının tespitinde enerji şirketlerinin rolü ve elektrik tüketim verilerinin AML istihbaratına entegrasyonu öne çıkıyor."
+      },
+      {
+        "topic": "Kariyer Geçişi ve Sertifikasyon Baskısı",
+        "sharePercentage": 25,
+        "sentiment": "Çözüm Odaklı",
+        "summary": "AML/KYC alanına giriş, CAMS/CFE sertifikalarının değeri ve bankadan danışmanlığa geçiş gibi kariyer soruları yoğun ilgi görüyor."
       }
     ],
     "topExpertTakeaways": [
       {
-        "expert": "@trmlabs",
-        "highlight": "Deepfake dolandırıcılık kayıpları 2026 başında 2025'in tamamını %263 aştı; ses klonlama ve görsel deepfake araçları suçları ölçeklenebilir hale getiriyor. Doğrulama adımları ve görsel/işitsel/davranışsal işaretler kritik."
+        "expert": "@AMLCompliance",
+        "highlight": "AI çıktılarının denetim izi olmadan insan gözetimi iddiası, düzenleyici incelemede savunulamaz. Karar gerekçeleri ve manuel müdahaleler loglanmalı."
       },
       {
-        "expert": "@trmlabs",
-        "highlight": "EvilTokens vakası, AI'nın hesap ele geçirme ile paraya çevirme arasındaki süreyi nasıl kısalttığını gösteriyor. Siber, kimlik ve finansal istihbaratın tek bir resimde birleştirilmesi gerekiyor."
+        "expert": "@FinCrimeAnalyst",
+        "highlight": "Kripto madencilik tesislerinde ilk AML kaydı genellikle enerji şirketinde oluşuyor; finansal istihbarat birimleri enerji verilerini izlemeli."
       }
     ]
   },
   "newDevelopmentsAndIdeas": [
     {
       "id": "dev-1",
-      "title": "Geçiş Şablonları ile Aklama Katmanlarının Tespiti",
+      "title": "Geçiş Şablonlarıyla Yorumlanabilir Kara Para Aklama Tespiti",
       "category": "İşlem İzleme ve Anomali",
-      "problem": "Aklama sürecinin katmanlama aşamasında fonlar, kaynağı gizlemek için ara varlıklar arasında hızla hareket ettirilir. Geleneksel kural tabanlı sistemler, bu tür çok adımlı ve hızlı hareketleri tespit etmekte yetersiz kalıyor; çünkü her işlem tek başına meşru görünebilir.",
-      "solution": "İşlem grafiği üzerinde geçiş şablonları (pass-through templates) kullanarak katmanlama hareketlerini tespit eden yorumlanabilir bir yaklaşım geliştirildi. Bu yöntem, düğümlerin (kişi veya kuruluş) ve kenarların (işlemler) oluşturduğu çoklu grafikte, fonların belirli bir süre içinde belirli sayıda ara düğümden geçip çıkış yaptığı kalıpları arar.",
-      "promptOrLogic": "Graf üzerinde tanımlanan geçiş şablonları, örneğin 'A'dan B'ye, B'den C'ye ve C'den D'ye hızlı transferler' gibi yapıları arar. Bu şablonlar, işlem tutarı, zaman aralığı ve düğüm özellikleri (örneğin yeni hesap, yüksek riskli ülke) ile birleştirilerek skorlanır. Yorumlanabilirlik için her tespit, hangi şablonun eşleştiğini ve neden şüpheli olduğunu açıklar.",
-      "expectedImpact": "Katmanlama aşamasındaki aklama faaliyetlerinin tespit oranını artırırken yanlış pozitifleri azaltır. Analistlere şüpheli işlem raporlarında daha güçlü gerekçe sunma imkanı sağlar."
+      "problem": "Kara para aklamanın katmanlama aşamasında varlıklar, kaynağı gizlemek için ara varlıklar üzerinden hareket ettirilir. Geleneksel kural motorları ve izole işlem modelleri, bu tür çok adımlı ve yapılandırılmış hareketleri tespit etmekte yetersiz kalıyor.",
+      "solution": "İşlem grafiği üzerinde geçiş şablonları (pass-through templates) kullanan yorumlanabilir bir model geliştirildi. Düğümler varlıkları, kenarlar işlemleri temsil ediyor ve şablonlar katmanlama hareketlerini tanımlıyor.",
+      "promptOrLogic": "İşlemler etiketli yönlü çoklu grafik olarak modelleniyor. Geçiş şablonları, belirli bir düğümün kısa sürede birden fazla ara hesap üzerinden fon geçirmesi gibi yapısal kalıpları yakalıyor. Model, bu şablonları grafik sinyalleriyle birleştirerek yorumlanabilir skorlar üretiyor.",
+      "expectedImpact": "Katmanlama aşamasında tespit oranını artırırken yanlış pozitifleri azaltıyor. Yorumlanabilir çıktı, analistlerin şüpheli işlem raporlarını gerekçelendirmesini kolaylaştırıyor."
     },
     {
       "id": "dev-2",
-      "title": "Graf-Transformer ve Konformal Risk Kontrolü ile Kurumsal Dolandırıcılık Tespiti",
+      "title": "Graf-Transformer ile Öz-Denetimli Ön Eğitim ve Konformal Risk Kontrolü",
       "category": "İşlem İzleme ve Anomali",
-      "problem": "Kurumsal işlem ağlarındaki finansal dolandırıcılık giderek daha koordineli hale geliyor ve kural tabanlı motorlar ile her işlemi izole olarak değerlendiren klasik modeller bu tür dolandırıcılığı tespit etmekte zorlanıyor. Yapısal ve zamansal kanıtları birleştiren modellere ihtiyaç var.",
-      "solution": "GTFD adı verilen bir graf-transformer dolandırıcılık dedektörü geliştirildi. Bu model, işlem ağlarındaki yapısal ve zamansal kanıtları birleştiriyor ve kendi kendini denetimli ön eğitim ile güçlendiriliyor. Ayrıca konformal risk kontrolü kullanarak tahminlerin güvenilirliğini ölçüyor.",
-      "promptOrLogic": "Model, işlem grafiğini düğüm ve kenar özellikleriyle temsil eder; transformer mimarisi ile komşuluk ilişkilerini ve zaman serisi desenlerini öğrenir. Ön eğitimde etiketsiz veri kullanılır, ardından etiketli veriyle ince ayar yapılır. Konformal risk kontrolü, her tahmin için bir güven aralığı üretir ve belirlenen hata oranını aşmamayı garanti eder.",
-      "expectedImpact": "Kurumsal dolandırıcılık tespitinde doğruluğu artırır ve analistlere hangi işlemlerin daha yüksek risk taşıdığına dair güvenilir bir ölçüt sunar. Yanlış pozitifleri azaltarak operasyonel verimliliği yükseltir."
+      "problem": "Kurumsal işlem ağlarında finansal dolandırıcılık daha koordineli hale geldi ve kural tabanlı motorlar ile her işlemi izole eden klasik öğrenme modelleri bu ağları tespit etmekte zorlanıyor.",
+      "solution": "GTFD adı verilen bir graf-transformer modeli, öz-denetimli ön eğitim ve konformal risk kontrolü ile birleştirildi. Model, işlem ağlarındaki düğüm ve kenar ilişkilerini bütünsel olarak öğreniyor.",
+      "promptOrLogic": "Öz-denetimli ön eğitimde, etiketlenmemiş işlem grafikleri üzerinde düğüm ve kenar tahmini yapılıyor. Konformal risk kontrolü, model çıktılarına istatistiksel güven aralığı ekleyerek yanlış pozitif oranını kontrol altında tutuyor.",
+      "expectedImpact": "Koordineli dolandırıcılık ağlarının tespitinde daha yüksek doğruluk ve düşük yanlış pozitif oranı sağlıyor. Konformal kontrol, uyum ekiplerine öngörülebilir bir risk seviyesi sunuyor."
     },
     {
       "id": "dev-3",
-      "title": "FINESSE: Çok Modlu Finansal Olay Dizileri için Ajan Tabanlı Simülatör ve Kıyaslama Veri Seti",
-      "category": "Veri ve Modelleme",
-      "problem": "Finansal hizmetlerde makine öğrenmesi araştırmaları, temsili açık kaynak veri setlerinin kıtlığı nedeniyle sınırlıdır. Mevcut kaynaklar genellikle tek bir modaliteye veya göreve odaklanır ve finansal hizmetlerdeki yapısal, çok modlu ve dinamik doğayı yansıtmaz.",
-      "solution": "FINESSE adında, ajan tabanlı bir simülatör ve çok modlu finansal olay dizileri için bir kıyaslama veri seti geliştirildi. Bu simülatör, gerçekçi finansal senaryolar üretmek için farklı ajanları (müşteriler, kurumlar, düzenleyiciler) modelleyerek çok modlu veri (işlemler, iletişimler, belgeler) oluşturur.",
-      "promptOrLogic": "Simülatör, tanımlanmış kurallar ve olasılıksal modeller kullanarak ajanlar arası etkileşimleri üretir. Örneğin, bir müşteri ajanı işlem yapar, bir banka ajanı bunu izler ve şüpheli durumda rapor üretir. Veri seti, bu etkileşimlerden elde edilen çok modlu olay dizilerini içerir ve farklı AML senaryolarını test etmek için kullanılabilir.",
-      "expectedImpact": "AML araştırmacıları ve uygulayıcıları için gerçekçi, çok modlu ve tekrarlanabilir bir kıyaslama ortamı sağlar. Yeni modellerin geliştirilmesini ve karşılaştırılmasını hızlandırır."
+      "title": "Nijerya Fintech için AI Sistemlerinin Dağıtım Öncesi Değerlendirme Çerçevesi",
+      "category": "Düzenleyici Teknoloji ve Yönetişim",
+      "problem": "Afrika fintech altyapısında ticari büyük dil modelleri dolandırıcılık tespiti ve müşteri iletişimi için yaygınlaşıyor ancak Nijerya veya Afrika kıtası düzeyinde dağıtım öncesi değerlendirme gerekliliklerini tanımlayan bir düzenleyici çerçeve bulunmuyor.",
+      "solution": "Nijerya fintech'i için bağlam duyarlı, dağıtım öncesi AI değerlendirme çerçevesi öneriliyor. Çerçeve, model performansı, önyargı, açıklanabilirlik ve veri gizliliği boyutlarını kapsıyor.",
+      "promptOrLogic": "Değerlendirme, yerel düzenleyici bağlam, veri yerelleştirme ve etik riskler dikkate alınarak tasarlanmış kontrol listeleri ve test senaryolarıyla yapılıyor. Modelin dağıtım öncesi ve sonrası izlenmesi için metrikler tanımlanıyor.",
+      "expectedImpact": "Fintech'lerin AI sistemlerini düzenleyici beklentilerle uyumlu şekilde dağıtmasını sağlıyor. Önyargı ve açıklanabilirlik riskleri erken aşamada tespit edilerek itibar ve uyum maliyetleri düşürülüyor."
     }
   ],
   "cddKycInnovations": [
     {
       "id": "kyc-1",
-      "title": "Uzaktan Müşteri Kabulünde Sadece Fotoğraf Yükleme Yetersiz: EBA Cezai Uyarıları Artırdı",
+      "title": "Sentetik Kimlik Tespitinde Cihaz Parmak İzi ve Davranışsal Biyometri",
       "category": "Sentetik Kimlik ve Biyometri",
-      "problem": "FinTek ve neobankalar, görüntülü görüşme olmaksızın sadece kimlik fotoğrafı yükleyerek müşteri kabul ediyor. Bu yöntem, sentetik kimlikler, deepfake'ler ve çalıntı belgelerle kolayca aşılabiliyor. EBA, bu tür ödeme kuruluşlarına yönelik cezai uyarıları artırdı.",
-      "solution": "Uzaktan müşteri kabulünde çok katmanlı doğrulama zorunlu hale getirilmeli: canlılık tespiti (liveness detection), cihaz parmak izi, davranışsal biyometri ve belge doğrulama (hologram, MRZ, çip okuma) birlikte kullanılmalı. Görüntülü görüşme, yüksek riskli durumlarda veya şüpheli sinyallerde devreye girmeli.",
-      "promptOrLogic": "Canlılık tespiti için kullanıcıdan rastgele hareketler (baş çevirme, göz kırpma) istenir ve yüzdeki mikro ifadeler analiz edilir. Cihaz parmak izi ile aynı cihazdan birden fazla kimlik denemesi engellenir. Belge doğrulamada, kimlik belgesinin çip verisi okunur ve NFC ile doğrulanır. Tüm bu adımlar bir risk skoru üretir ve skor eşiğin altındaysa ek doğrulama istenir.",
-      "expectedImpact": "Sentetik kimlik ve deepfake saldırılarını büyük ölçüde engeller, müşteri kabul sürecinde güvenilirliği artırır ve düzenleyici cezalardan korur."
+      "problem": "Sentetik kimlikler, gerçek ve sahte bilgilerin birleştirilmesiyle oluşturuluyor ve geleneksel belge doğrulama ile biyometrik kontrollerden geçebiliyor. Uzaktan müşteri kabul süreçlerinde bu tür kimliklerin tespiti zorlaşıyor.",
+      "solution": "Cihaz parmak izi, davranışsal biyometri ve canlılık tespiti birleştirilerek çok katmanlı bir doğrulama akışı oluşturuluyor. Aynı cihazdan veya benzer davranış kalıplarından gelen başvurular işaretleniyor.",
+      "promptOrLogic": "Başvuru sırasında cihaz özellikleri, dokunma basıncı, yazma hızı ve oturum davranışları toplanıyor. Bu sinyaller, bilinen sentetik kimlik ağlarıyla ilişkili kalıplarla karşılaştırılarak risk skoru üretiliyor.",
+      "expectedImpact": "Sentetik kimlikle açılan hesapların tespit oranını artırırken meşru müşterilerin kabul süresini kısaltıyor. Dolandırıcılık kayıplarını ve sonradan yapılan manuel inceleme yükünü azaltıyor."
     },
     {
       "id": "kyc-2",
-      "title": "Almanya'nın EUDI Cüzdanı d-you: 40 Kuruluş Kabul Tarafını Test Ediyor",
-      "category": "Dijital Kimlik ve UBO",
-      "problem": "Avrupa'da dijital kimlik cüzdanlarının benimsenmesi, kabul tarafındaki entegrasyon eksikliği nedeniyle yavaş ilerliyor. Kullanıcılar cüzdanı edinse bile, bankalar ve diğer kuruluşlar bu kimlikleri kabul etmeye hazır değil.",
-      "solution": "Almanya, 2 Ocak 2027'de d-you adlı EUDI cüzdanını başlatıyor. Cüzdan, kimlik kartı, ehliyet ve diğer kimlik bilgilerini barındıracak ve yaş doğrulama, sözleşme imzalama, banka hesabı açma gibi işlemler için kullanılabilecek. 40 kuruluş, kabul tarafını test ediyor.",
-      "promptOrLogic": "d-you cüzdanı, kullanıcının kimlik verilerini güvenli bir şekilde saklar ve paylaşır. Bir kuruluş kimlik doğrulaması istediğinde, kullanıcı cüzdanından ilgili bilgileri seçerek paylaşır. Bu, merkezi bir veritabanına ihtiyaç duymadan, kullanıcı kontrolünde bir doğrulama sağlar. Bankalar, bu kimlik bilgilerini kendi KYC süreçlerine entegre ederek müşteri kabulünü hızlandırabilir.",
-      "expectedImpact": "Müşteri kabul süreçlerini hızlandırır, kimlik doğrulama maliyetlerini düşürür ve UBO tespitinde güvenilirliği artırır. Avrupa genelinde dijital kimlik benimsenmesini hızlandırır."
+      "title": "UBO Tespitinde Grafik Sinir Ağları ile Gizli Kontrol İlişkileri",
+      "category": "UBO ve Gerçek Fayda Sahibi",
+      "problem": "Gerçek fayda sahibi (UBO) tespitinde, karmaşık sahiplik yapıları, nominal hissedarlar ve dolaylı kontrol ilişkileri manuel incelemeyle ortaya çıkarılamıyor. Şirketler arası bağlantılar ve nihai kontrol zinciri gözden kaçabiliyor.",
+      "solution": "Grafik sinir ağları (GNN) kullanılarak şirket sahiplik ağları analiz ediliyor. Düğümler şirketleri ve bireyleri, kenarlar hisse ve kontrol ilişkilerini temsil ediyor; model gizli kontrol kalıplarını tespit ediyor.",
+      "promptOrLogic": "Açık kaynaklardan ve ticaret sicillerinden toplanan sahiplik verileri grafiğe dönüştürülüyor. GNN, düğüm özellikleri ve kenar ağırlıkları üzerinden eğitilerek geleneksel eşik tabanlı yöntemlerin kaçırdığı dolaylı kontrol ilişkilerini ortaya çıkarıyor.",
+      "expectedImpact": "UBO tespitinde doğruluk artıyor ve karmaşık yapıların manuel incelenmesi için harcanan zaman azalıyor. Gizli kontrol ilişkileri erken tespit edilerek yaptırım ve kara para aklama riski düşürülüyor."
     },
     {
       "id": "kyc-3",
-      "title": "Wolfsberg CBDDQ v1.4: Muhabir Bankacılıkta Zincirleme İşlem Şeffaflığı ve UBO Eşiği Revizyonu",
-      "category": "UBO ve Muhabir Bankacılık",
-      "problem": "Muhabir bankacılıkta zincirleme işlemler, fonların kaynağının ve gerçek faydalanıcısının takibini zorlaştırıyor. Tüzel kişilerin UBO'larının belirlenmesinde farklı ülkelerdeki eşik değerler ve tanımlar uyumsuzluk yaratıyor.",
-      "solution": "Wolfsberg Group, CBDDQ v1.4 ile muhabir bankacılıkta müşteri incelemesi prensiplerini güncelledi. Zincirleme işlem şeffaflığı için daha sıkı kurallar getirildi ve tüzel kişi UBO eşiği yönergeleri revize edildi. Bu, bankaların karşı taraf riskini daha iyi değerlendirmesini sağlayacak.",
-      "promptOrLogic": "Yeni prensipler, muhabir bankaların karşı taraf bankanın müşteri tabanını ve UBO yapısını daha detaylı anlamasını gerektiriyor. Zincirleme işlemlerde, her bir aracı bankanın kendi müşterisinin kim olduğunu ve fonun kaynağını doğrulaması bekleniyor. UBO eşiği, ülke mevzuatına göre değil, risk bazlı olarak belirlenmeli ve %10 gibi daha düşük bir eşik öneriliyor.",
-      "expectedImpact": "Muhabir bankacılıkta şeffaflığı artırır, yasadışı fon akışlarının tespitini kolaylaştırır ve bankalar arası güveni güçlendirir."
+      "title": "Müşteri Yaşam Döngüsü Boyunca Sürekli CDD için Olay Tabanlı Tetikleyiciler",
+      "category": "Sürekli İzleme ve CDD",
+      "problem": "Müşteri inceleme süreçleri genellikle hesap açılışında yapılıp yıllık periyodik gözden geçirmelerle sınırlı kalıyor. Müşterinin risk profilindeki ani değişiklikler, işlem davranışındaki sapmalar veya olumsuz haberler zamanında yakalanamıyor.",
+      "solution": "Olay tabanlı tetikleyicilerle sürekli CDD yaklaşımı benimseniyor. Adres değişikliği, işlem hacminde ani artış, yaptırım listesi güncellemesi veya olumsuz medya haberi gibi olaylar otomatik inceleme başlatıyor.",
+      "promptOrLogic": "Müşteri verileri, işlem akışları ve dış kaynaklar gerçek zamanlı izleniyor. Önceden tanımlanmış risk kuralları ve anomali tespit modelleri tetiklendiğinde, ilgili müşteri için otomatik bir CDD görev akışı oluşturuluyor.",
+      "expectedImpact": "Riskli müşteri değişiklikleri anında tespit edilerek periyodik gözden geçirme döngüsünün yarattığı kör noktalar kapatılıyor. Uyum ekipleri kaynaklarını en yüksek riskli durumlara yönlendirebiliyor."
     }
   ],
   "authoritiesPulse": [
     {
       "id": "auth-1",
-      "authority": "MASAK",
-      "country": "Türkiye",
-      "title": "Kripto Varlık Hizmet Sağlayıcıları İçin Şüpheli İşlem Rehberi Güncellendi",
-      "summary": "Kripto borsalarının 100.000 TL üzeri tüm şüpheli transferlerde Travel Rule uyumunu zorunlu kılan ve mikser cüzdanları doğrudan bloke eden yeni genelge tebliğ edildi. Bu düzenleme, kripto varlık hizmet sağlayıcılarının şüpheli işlem bildirim yükümlülüklerini artırıyor.",
-      "date": "22 Eylül 2026",
-      "url": "https://masak.hmb.gov.tr/duyurular"
+      "authority": "OFAC",
+      "country": "ABD",
+      "title": "Etiyopya Acil Durumunun Sona Ermesi ve Yaptırım Kaldırılması",
+      "summary": "17 Eylül 2021 tarihli 14046 sayılı Yürütme Emri ile ilan edilen ulusal acil durum süresi doldu. Hazine Bakanlığı, Etiyopya ile ilgili belirli yaptırım listelerini kaldırdı ve Rusya ile ilgili değiştirilmiş genel lisans ile ilgili SSS'leri yayımladı.",
+      "date": "18 Eylül 2026",
+      "url": "https://ofac.treasury.gov/recent-actions/20260918"
     },
     {
       "id": "auth-2",
-      "authority": "FATF",
-      "country": "Küresel",
-      "title": "Öneri 16 (Travel Rule) Kapsamında Eşik Değer ve Sınır Ötesi Bilgi Paylaşımı Raporu",
-      "summary": "Sınır ötesi kripto ve anlık fon transferlerinde gönderen ve alıcı bilgilerinin eksik iletilmesine yönelik küresel denetim sonuçları yayınlandı. Rapor, ülkelerin Travel Rule uygulamalarındaki eksiklikleri ve iyileştirme önerilerini içeriyor.",
+      "authority": "FinCEN",
+      "country": "ABD",
+      "title": "Finansal Kurumlara Şüpheli Faaliyetleri Bildirme Çağrısı",
+      "summary": "FinCEN, finansal kurumları dikkatli olmaya ve şüpheli faaliyetleri bildirmeye teşvik eden bir duyuru yayımladı. Duyuru, belirli bir tehdit veya dolandırıcılık trendine ilişkin farkındalık artırma amacı taşıyor.",
       "date": "22 Eylül 2026",
-      "url": "https://www.fatf-gafi.org/en/publications.html"
+      "url": "https://www.fincen.gov/news"
     },
     {
       "id": "auth-3",
-      "authority": "OFAC",
-      "country": "ABD",
-      "title": "Gölge Filo ve Denizcilik Paravan Şirketlerine Yönelik 18 Yeni Yaptırım Kararı",
-      "summary": "AIS transponder sinyalini kapatarak yaptırımlı petrol taşıyan tanker işletmecileri ve Hong Kong/BAE merkezli aracı paravan şirketler SDN listesine eklendi. Bu karar, yaptırım kaçırma yöntemlerine karşı denizcilik sektörüne yönelik baskıyı artırıyor.",
+      "authority": "EBA",
+      "country": "Avrupa Birliği",
+      "title": "Thomas Gstädtner EBA İcra Direktörü Olarak Onaylandı",
+      "summary": "Avrupa Parlamentosu genel kurul oylamasının ardından Thomas Gstädtner, Avrupa Bankacılık Otoritesi (EBA) İcra Direktörü olarak onaylandı. Gstädtner, beş yıllık yenilenebilir bir dönem için görev yapacak.",
       "date": "22 Eylül 2026",
-      "url": "https://ofac.treasury.gov/recent-actions"
+      "url": "https://www.eba.europa.eu/publications-and-media/press-releases"
     },
     {
       "id": "auth-4",
-      "authority": "FinCEN",
-      "country": "ABD",
-      "title": "Gayrimenkul ve Yatırım Danışmanlığı Sektörüne Yönelik Nihai AML Düzenlemesi",
-      "summary": "Gayrimenkul alımlarında nakit veya paravan şirket arkasına gizlenen fonların gerçek faydalanıcılarının (BOI) bildirilmesi zorunlu kılındı. Düzenleme, yatırım danışmanlarını da kapsayarak AML yükümlülüklerini genişletiyor.",
+      "authority": "FCA",
+      "country": "Birleşik Krallık",
+      "title": "Kredi Piyasasının Geleceğini Şekillendirmek: Yapay Zeka Çağında Düzenlemeyi Yeniden Düşünmek",
+      "summary": "FCA yetkilisi Alison Walters, Credit Week etkinliğinde yaptığı konuşmada yapay zeka çağında kredi piyasası düzenlemelerinin geleceğine ilişkin değerlendirmelerde bulundu. Konuşma, AI'nın finansal hizmetlerdeki rolüne ve düzenleyici yaklaşıma odaklandı.",
       "date": "22 Eylül 2026",
-      "url": "https://www.fincen.gov/news-room/news"
-    },
-    {
-      "id": "auth-5",
-      "authority": "EU AMLA",
-      "country": "Avrupa Birliği",
-      "title": "AB Tekil Kural Kitabı (Single Rulebook) ve Doğrudan Denetim Kriterleri Açıklandı",
-      "summary": "Avrupa Birliği'nin yeni süper AML otoritesi AMLA, AB genelinde en az 6 üye ülkede faaliyet gösteren 40 büyük bankayı doğrudan denetleyeceğini duyurdu. Bu, AB'de AML denetiminin merkezileşmesi yolunda önemli bir adım.",
-      "date": "22 Eylül 2026",
-      "url": "https://finance.ec.europa.eu/financial-markets/anti-money-laundering-and-countering-financing-terrorism_en"
-    },
-    {
-      "id": "auth-6",
-      "authority": "EBA",
-      "country": "Avrupa Birliği",
-      "title": "FinTek ve Neobankalarda Uzaktan Müşteri Kabulü (e-KYC) Risk Değerlendirmesi",
-      "summary": "Görüntülü görüşme olmaksızın sadece fotoğraf yükleme ile müşteri kabul eden ödeme kuruluşlarına yönelik cezai uyarılar artırıldı. EBA, bu tür uygulamaların sentetik kimlik ve deepfake risklerini artırdığını vurguluyor.",
-      "date": "22 Eylül 2026",
-      "url": "https://www.eba.europa.eu/news-press/news"
+      "url": "https://www.fca.org.uk/news"
     }
   ],
   "dailyGlossary": [
     {
       "id": "g-1",
-      "term": "Travel Rule (Seyahat Kuralı)",
-      "definition": "Kripto varlık transferlerinde gönderen ve alıcı bilgilerinin transferle birlikte iletilmesini zorunlu kılan FATF Öneri 16 kuralıdır. Amaç, kripto işlemlerinin geleneksel bankacılıkta olduğu gibi izlenebilir olmasını sağlamaktır. Belirli bir tutarın üzerindeki transferlerde uygulanır.",
+      "term": "Katmanlama (Layering)",
+      "definition": "Kara para aklama sürecinin ikinci aşamasıdır; yasa dışı kaynaklı fonların kaynağını gizlemek için karmaşık işlemler, transferler veya finansal araçlar kullanılarak hareket ettirilmesidir. Amaç, paranın izini sürmeyi zorlaştırmaktır.",
       "dateStr": "22 Eylül 2026"
     },
     {
       "id": "g-2",
-      "term": "UBO (Gerçek Faydalanıcı)",
-      "definition": "Bir tüzel kişiliği nihai olarak kontrol eden veya ondan ekonomik fayda sağlayan gerçek kişidir. Genellikle %25 veya daha fazla hisseye sahip olan kişi olarak tanımlanır, ancak risk bazlı olarak daha düşük eşikler de uygulanabilir. UBO tespiti, aklama ve yaptırım kaçırma ile mücadelede kritiktir.",
+      "term": "Gerçek Fayda Sahibi (UBO)",
+      "definition": "Bir tüzel kişiliği nihai olarak kontrol eden veya ondan önemli ölçüde fayda sağlayan gerçek kişidir. Genellikle belirli bir hisse oranının üzerindeki sahiplik veya kontrol gücüyle tanımlanır.",
       "dateStr": "22 Eylül 2026"
     },
     {
       "id": "g-3",
-      "term": "Deepfake",
-      "definition": "Yapay zeka kullanılarak üretilen, gerçekmiş gibi görünen sahte ses, görüntü veya video içerikleridir. Ses klonlama ve yüz değiştirme teknikleriyle yönetici taklidi veya dolandırıcılık gibi suçlarda kullanılır. AML/KYC süreçlerinde kimlik doğrulamayı tehdit eden önemli bir risktir.",
+      "term": "Konformal Risk Kontrolü",
+      "definition": "Makine öğrenmesi modellerinin çıktılarına istatistiksel güven aralığı ekleyerek yanlış pozitif oranını kontrol altında tutan bir yöntemdir. Modelin belirsizliğini ölçerek daha güvenilir karar destek sağlar.",
       "dateStr": "22 Eylül 2026"
     },
     {
       "id": "g-4",
-      "term": "Katmanlama (Layering)",
-      "definition": "Aklama sürecinin ikinci aşamasıdır; yasadışı fonların kaynağını gizlemek için karmaşık işlemlerle ara varlıklar arasında hareket ettirilmesidir. Fonlar farklı hesaplar, ülkeler ve varlık türleri arasında hızla transfer edilir. Tespiti zor olduğu için gelişmiş analitik yöntemler gerektirir.",
+      "term": "Sentetik Kimlik",
+      "definition": "Gerçek ve sahte kişisel bilgilerin birleştirilmesiyle oluşturulan, tamamen hayali bir kimliktir. Genellikle kredi başvuruları veya hesap açılışlarında dolandırıcılık amacıyla kullanılır.",
       "dateStr": "22 Eylül 2026"
     },
     {
       "id": "g-5",
-      "term": "Muhabir Bankacılık (Correspondent Banking)",
-      "definition": "Bir bankanın, başka bir bankaya sınır ötesi ödeme ve para transferi gibi hizmetler sunmasıdır. Muhabir banka, karşı bankanın müşterileri adına işlem yapar ve bu nedenle karşı tarafın AML kontrollerine güvenmek zorundadır. Zincirleme işlemler riski artırır.",
+      "term": "Geçiş Şablonu (Pass-Through Template)",
+      "definition": "İşlem grafiğinde, fonların kısa sürede birden fazla ara hesap üzerinden geçirilmesi gibi yapısal kalıpları tanımlayan bir modeldir. Katmanlama hareketlerinin tespitinde kullanılır.",
       "dateStr": "22 Eylül 2026"
     },
     {
       "id": "g-6",
-      "term": "Konformal Risk Kontrolü (Conformal Risk Control)",
-      "definition": "Makine öğrenmesi modellerinin tahminlerine istatistiksel güven aralığı ekleyen bir yöntemdir. Belirlenen bir hata oranını aşmamayı garanti eder. AML'de dolandırıcılık tespiti gibi yüksek riskli kararlarda model güvenilirliğini artırmak için kullanılır.",
-      "dateStr": "22 Eylül 2026"
-    },
-    {
-      "id": "g-7",
-      "term": "SDN Listesi (Specially Designated Nationals)",
-      "definition": "ABD Hazine Bakanlığı OFAC tarafından yayımlanan, yaptırım uygulanan kişi ve kuruluşların listesidir. Listede yer alanlarla işlem yapmak yasaktır ve ciddi cezalar gerektirir. Finansal kurumlar müşterilerini ve işlemlerini bu listeye karşı taramak zorundadır.",
-      "dateStr": "22 Eylül 2026"
-    },
-    {
-      "id": "g-8",
-      "term": "e-KYC (Elektronik Müşteri Tanıma)",
-      "definition": "Müşteri kimlik doğrulama süreçlerinin dijital kanallar üzerinden uzaktan yapılmasıdır. Görüntülü görüşme, belge yükleme, biyometrik doğrulama gibi yöntemler içerir. Kolaylık sağlar ancak sentetik kimlik ve deepfake gibi risklere karşı ek güvenlik önlemleri gerektirir.",
+      "term": "Sürekli CDD (Periyodik Olmayan İzleme)",
+      "definition": "Müşteri incelemesinin yalnızca hesap açılışında veya periyodik aralıklarla değil, risk profilini etkileyen olaylar gerçekleştiğinde tetiklenmesidir. Adres değişikliği, işlem sapması veya olumsuz haber gibi durumlarda otomatik inceleme başlatılır.",
       "dateStr": "22 Eylül 2026"
     }
   ],

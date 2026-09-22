@@ -13,14 +13,35 @@ function safeParseJson(raw, phaseName = "LLM") {
   try {
     return JSON.parse(cleaned);
   } catch (err) {
-    console.warn(`⚠️ ${phaseName} JSON doğrudan ayrıştırılamadı (${err.message}), kurtarma deneniyor...`);
-    const lastBrace = cleaned.lastIndexOf("}");
-    if (lastBrace !== -1) {
+    console.warn(`⚠️ ${phaseName} JSON doğrudan ayrıştırılamadı (${err.message}), otomatik parantez dengeleme ve kurtarma deneniyor...`);
+    
+    // Kesilen JSON'ı son geçerli nesne kapanışından kurtarma algoritması
+    const lastValidObject = cleaned.lastIndexOf("}\n");
+    const lastObj = cleaned.lastIndexOf("}");
+    const cutPoint = Math.max(lastValidObject, lastObj);
+    if (cutPoint !== -1) {
+      let candidate = cleaned.slice(0, cutPoint + 1);
+      let openBraces = 0;
+      let openBrackets = 0;
+      let inString = false;
+      for (let i = 0; i < candidate.length; i++) {
+        const c = candidate[i];
+        if (c === '"' && candidate[i - 1] !== '\\') inString = !inString;
+        if (!inString) {
+          if (c === '{') openBraces++;
+          else if (c === '}') openBraces--;
+          else if (c === '[') openBrackets++;
+          else if (c === ']') openBrackets--;
+        }
+      }
+      while (openBrackets > 0) { candidate += "]"; openBrackets--; }
+      while (openBraces > 0) { candidate += "}"; openBraces--; }
       try {
-        const repaired = cleaned.slice(0, lastBrace + 1);
-        return JSON.parse(repaired);
+        const repaired = JSON.parse(candidate);
+        console.log(`✅ ${phaseName} JSON başarıyla kurtarıldı.`);
+        return repaired;
       } catch (err2) {
-        console.error(`❌ ${phaseName} JSON kurtarma da başarısız oldu.`);
+        console.error(`❌ ${phaseName} JSON kurtarma da başarısız oldu:`, err2.message);
       }
     }
     throw err;
@@ -45,20 +66,20 @@ export async function analyzeAmlDataWithDualLLM({
 
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
-  const redditContext = redditPosts.slice(0, 45).map((p, idx) => 
-    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 300)}`
+  const redditContext = redditPosts.slice(0, 30).map((p, idx) => 
+    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 250)}`
   ).join("\n\n");
 
-  const twitterContext = twitterPosts.slice(0, 35).map((t, idx) => 
+  const twitterContext = twitterPosts.slice(0, 25).map((t, idx) => 
     `[Twitter-${idx + 1}] @${t.authorHandle} (${t.likes} fav, ${t.retweets} rt): "${t.text}"`
   ).join("\n\n");
 
-  const arxivContext = arxivPapers.slice(0, 8).map((a, idx) => 
-    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 300)}\nLink: ${a.arxivUrl}`
+  const arxivContext = arxivPapers.slice(0, 6).map((a, idx) => 
+    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 250)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
-  const authContext = authorityPosts.slice(0, 12).map((a, idx) => 
-    `[Resmi Otorite-${idx + 1}] [${a.authorityName} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
+  const authContext = authorityPosts.slice(0, 8).map((a, idx) => 
+    `[Resmi Otorite-${idx + 1}] [${a.authority} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
   ).join("\n\n");
 
   // ==========================================
@@ -68,13 +89,14 @@ export async function analyzeAmlDataWithDualLLM({
 
 Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta hatasız, kurumsal ve pratik çıktılar üretmektir:
 1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (Tam 4 adet en somut vaka ve saha tartışması)
-2. "twitterPulse": Twitter'da AML Gündemi (dominantTopics: 3 adet konu; topExpertTakeaways: 2-3 adet uzman tespiti)
+2. "twitterPulse": Twitter'da AML Gündemi (dominantTopics: 3 adet konu; topExpertTakeaways: 2 adet uzman tespiti)
 3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (Tam 3 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
 4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (Tam 3 adet CDD/KYC/UBO inovasyonu)
-5. "authoritiesPulse": Otoritelerde Durum Nasıl? (4-6 adet resmi otorite duyurusu)
-6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 6-9 kavramı ve 2-3 cümlelik sade tanımı)
+5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Tam 4 adet resmi otorite duyurusu)
+6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 6 kavramı ve 2-3 cümlelik sade tanımı)
 
 Kurallar:
+- Açıklamaları öz, net ve doğrudan yaz (her madde için 2-3 cümle). Gereksiz ansiklopedik uzatmalardan kaçın.
 - Kesinlikle emoji kullanma.
 - 'Kritik', 'Önem: Yüksek', 'Acil' gibi yapay zeka klişesi etiketlerden ve 'OPERASYONEL ÇIKARIM:' gibi yapay başlıklardan kaçın; doğrudan konuyu ve çözümü akıcı anlat.
 - Çıktıyı SADECE geçerli ve hatasız bir JSON objesi olarak ver.`;
@@ -198,11 +220,11 @@ ${arxivContext || "arXiv verisi bulunamadı."}
   const p1Usage = p1Json.usage || {};
 
   const p1Tokens = {
-    promptTokens: p1Usage.prompt_tokens || 48200,
-    completionTokens: p1Usage.completion_tokens || 24800,
-    reasoningTokens: p1Usage.completion_tokens_details?.reasoning_tokens || 4200,
-    finalTokens: (p1Usage.completion_tokens || 24800) - (p1Usage.completion_tokens_details?.reasoning_tokens || 0),
-    totalTokens: p1Usage.total_tokens || 73000
+    promptTokens: p1Usage.prompt_tokens || 8800,
+    completionTokens: p1Usage.completion_tokens || 4200,
+    reasoningTokens: p1Usage.completion_tokens_details?.reasoning_tokens || 600,
+    finalTokens: (p1Usage.completion_tokens || 4200) - (p1Usage.completion_tokens_details?.reasoning_tokens || 0),
+    totalTokens: p1Usage.total_tokens || 13000
   };
 
   console.log("⚡ 2. LLM (Phase 2) - Model: DeepSeek v4.1 Flash: Yönetici sentezi hazırlanıyor...");
@@ -252,11 +274,11 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
 
   let p2Data = {};
   let p2Tokens = {
-    promptTokens: 8400,
-    completionTokens: 3200,
-    reasoningTokens: 600,
-    finalTokens: 2600,
-    totalTokens: 11600
+    promptTokens: 1200,
+    completionTokens: 2000,
+    reasoningTokens: 400,
+    finalTokens: 1600,
+    totalTokens: 3200
   };
 
   try {
@@ -285,11 +307,11 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
       p2Data = safeParseJson(rawP2, "Phase 2");
       const p2Usage = p2Json.usage || {};
       p2Tokens = {
-        promptTokens: p2Usage.prompt_tokens || 8400,
-        completionTokens: p2Usage.completion_tokens || 3200,
-        reasoningTokens: p2Usage.completion_tokens_details?.reasoning_tokens || 600,
-        finalTokens: (p2Usage.completion_tokens || 3200) - (p2Usage.completion_tokens_details?.reasoning_tokens || 0),
-        totalTokens: p2Usage.total_tokens || 11600
+        promptTokens: p2Usage.prompt_tokens || 1200,
+        completionTokens: p2Usage.completion_tokens || 2000,
+        reasoningTokens: p2Usage.completion_tokens_details?.reasoning_tokens || 400,
+        finalTokens: (p2Usage.completion_tokens || 2000) - (p2Usage.completion_tokens_details?.reasoning_tokens || 0),
+        totalTokens: p2Usage.total_tokens || 3200
       };
     }
   } catch (err2) {
@@ -343,7 +365,7 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
         description: "Analistin 45 dakikasını 12 dakikaya indirip doğrudan MASAK formatında resmi şüpheli işlem gerekçesi üretiyor."
       },
       bullets: [
-        { tag: "Yaptırımlar ve OFAC", text: "OFAC ve AB, transponder kapatan 18 paravan denizcilik şirketini kara listeye aldı. Dış ticarette otomatik IMO taraması zorunlu kılınıyor." },
+        { tag: "Regülasyon ve Yaptırımlar", text: "OFAC ve AB, transponder kapatan 18 paravan denizcilik şirketini kara listeye aldı. Dış ticarette otomatik IMO taraması zorunlu kılınıyor." },
         { tag: "Grafik AI ve GNN", text: "Heterojen Grafik Sinir Ağları (HGNN) banka transfer ağlarındaki smurfing döngülerini %94 doğrulukla izole ederek kural motorlarına fark attı." },
         { tag: "Sentetik Kimlik", text: "Deepfake selfie ve sahte kimliklerle açılan kurye hesaplara karşı SIM kart değişiklik hızı (velocity) ve cihaz parmak izi zorunlu kılınıyor." },
         { tag: "Kripto ve Mixer", text: "Cüzdan zehirleme saldırılarıyla zincir içi analiz yazılımlarını yanıltmak için sıfıra yakın sub-cent test transferleri arttı." }
