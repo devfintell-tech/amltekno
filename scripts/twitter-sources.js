@@ -88,21 +88,22 @@ export async function fetchAmlTwitterPosts(apifyToken) {
       return getFallbackExpertTweets();
     }
 
-    const cutoff = Date.now() - 48 * 60 * 60 * 1000; // Son 48 saat
+    // Nitelikli ve anlamlı AML tweetlerini filtrele
     const meaningful = items.filter(t => {
       const text = (t.text || t.full_text || "").replace(/^@\w+\s+/g, "").trim();
-      if (text.length < 25) return false;
-      if (t.createdAt) {
-        const time = new Date(t.createdAt).getTime();
-        if (time < cutoff) return false;
-      }
-      return true;
+      return text.length >= 35 && !text.startsWith("https://t.co");
     });
 
-    // Etkileşime göre sırala
-    meaningful.sort((a, b) => ((b.likeCount || 0) + (b.retweetCount || 0) * 2) - ((a.likeCount || 0) + (a.retweetCount || 0) * 2));
+    // En güncel ve en çok etkileşim alanlara göre sırala
+    meaningful.sort((a, b) => {
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      const scoreA = timeA + (a.likeCount || 0) * 1000000;
+      const scoreB = timeB + (b.likeCount || 0) * 1000000;
+      return scoreB - scoreA;
+    });
 
-    return meaningful.slice(0, 45).map(t => {
+    const mapped = meaningful.slice(0, 35).map(t => {
       const handle = t.author?.username || t.userName || "aml_expert";
       const name = t.author?.name || t.name || handle;
       const avatar = t.author?.profilePicture || t.profilePicture || "";
@@ -119,6 +120,19 @@ export async function fetchAmlTwitterPosts(apifyToken) {
         url: t.url || `https://twitter.com/${handle}/status/${t.id || ''}`
       };
     });
+
+    if (mapped.length < 5) {
+      console.log("ℹ️ Canlı tweet sayısı az olduğu için uzman havuzuyla birleştiriliyor.");
+      const fallback = getFallbackExpertTweets();
+      for (const fb of fallback) {
+        if (!mapped.some(m => m.authorHandle === fb.authorHandle)) {
+          mapped.push(fb);
+        }
+      }
+    }
+
+    console.log(`✅ X (Twitter) analist ve dedektif havuzundan ${mapped.length} gönderi hazırlandı.`);
+    return mapped;
   } catch (err) {
     console.warn("⚠️ Apify Twitter çekimi sırasında hata oluştu, yedek uzman havuzuna geçiliyor:", err.message);
     return getFallbackExpertTweets();
