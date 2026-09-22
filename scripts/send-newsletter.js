@@ -34,9 +34,9 @@ const FALLBACK_SENDER = "AML Tekno Radar <onboarding@resend.dev>";
 function buildAmlNewsletterHtml(report) {
   const dateStr = report.date || new Date().toLocaleDateString('tr-TR');
   const flash = report.morningBrief?.flashAlert || {};
-  const ideas = report.actionableIdeas || [];
-  const macros = report.morningBrief?.macroDevelopments || [];
-  const typologies = report.threatAndTypologyMatrix || [];
+  const ideas = report.newDevelopmentsAndIdeas || report.actionableIdeas || [];
+  const talks = report.amlTalks || [];
+  const authorities = report.authoritiesPulse || [];
 
   return `<!DOCTYPE html>
 <html lang="tr">
@@ -45,78 +45,66 @@ function buildAmlNewsletterHtml(report) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AML Tekno Radar - Günlük İstihbarat Bülteni</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #090d16; color: #e2e8f0; margin: 0; padding: 20px; line-height: 1.6; }
-    .container { max-width: 650px; margin: 0 auto; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; overflow: hidden; }
-    .header { background: linear-gradient(135deg, #022c22 0%, #0f172a 100%); padding: 32px 24px; border-bottom: 1px solid #065f46; }
-    .badge { display: inline-block; padding: 4px 10px; background: #059669; color: #ffffff; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .title { margin: 12px 0 6px 0; font-size: 24px; font-weight: 800; color: #f8fafc; }
-    .subtitle { margin: 0; font-size: 13px; color: #94a3b8; }
-    .content { padding: 24px; }
-    .card { background: #1e293b; border-radius: 8px; padding: 18px; margin-bottom: 20px; border-left: 4px solid #10b981; }
-    .card-title { font-size: 16px; font-weight: 700; color: #f1f5f9; margin: 0 0 8px 0; }
-    .card-body { font-size: 13px; color: #cbd5e1; margin: 0; }
-    .code-block { background: #020617; border: 1px solid #334155; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; color: #34d399; overflow-x: auto; margin: 10px 0; white-space: pre-wrap; }
-    .threat-tag { display: inline-block; padding: 2px 8px; background: #dc2626; color: #ffffff; font-size: 10px; font-weight: 700; border-radius: 4px; }
-    .footer { text-align: center; padding: 20px; font-size: 12px; color: #64748b; border-top: 1px solid #1e293b; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 20px; line-height: 1.6; }
+    .container { max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 4px; border: 1px solid #cbd5e1; overflow: hidden; }
+    .header { background: #721c24; padding: 24px 20px; border-bottom: 3px solid #5c0f1c; color: #ffffff; }
+    .badge { display: inline-block; padding: 2px 8px; background: #5c0f1c; color: #ffffff; border-radius: 2px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-family: monospace; }
+    .title { margin: 8px 0 4px 0; font-size: 20px; font-weight: 800; color: #ffffff; }
+    .subtitle { margin: 0; font-size: 12px; color: #fecdd3; font-family: monospace; }
+    .content { padding: 20px; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-left: 3px solid #721c24; border-radius: 3px; padding: 14px; margin-bottom: 16px; }
+    .card-title { font-size: 14px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0; }
+    .card-body { font-size: 12.5px; color: #334155; margin: 0; line-height: 1.5; }
+    .code-block { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 3px; padding: 10px; font-family: monospace; font-size: 11.5px; color: #0f172a; overflow-x: auto; margin: 8px 0; white-space: pre-wrap; }
+    .footer { text-align: center; padding: 16px; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; font-family: monospace; background: #f8fafc; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <span class="badge">🛡️ AML & RegTech İstihbaratı</span>
-      <h1 class="title">AML Tekno Radar Bülteni</h1>
+      <span class="badge">AML &amp; FinCrime İstihbaratı</span>
+      <h1 class="title">AML Tekno Radar</h1>
       <p class="subtitle">${dateStr} • Günlük Yönetici ve Uyum Özeti</p>
     </div>
     <div class="content">
       <!-- Flaş Uyarı -->
       ${flash.title ? `
-      <div class="card" style="border-left-color: #ef4444; background: #1a1625;">
-        <span class="threat-tag">FLAŞ TEHDİT</span>
-        <h3 class="card-title" style="color: #fca5a5; margin-top: 8px;">${flash.title}</h3>
+      <div class="card" style="border-left-color: #721c24; background: #fff8f8;">
+        <span style="font-family: monospace; font-size: 10px; font-weight: 700; color: #721c24; text-transform: uppercase;">Günün Flaş Tehdidi</span>
+        <h3 class="card-title" style="color: #721c24; margin-top: 4px;">${flash.title}</h3>
         <p class="card-body">${flash.description || ""}</p>
       </div>` : ""}
 
       <!-- Yönetici Özeti -->
-      <h3 style="color: #38bdf8; font-size: 16px; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-top: 24px;">📋 Yönetici Brifingi</h3>
-      <p style="font-size: 13px; color: #cbd5e1;">${(report.executiveSummary || "").replace(/\n/g, "<br><br>")}</p>
+      <h3 style="color: #0f172a; font-size: 14px; font-family: monospace; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 20px;">Yönetici Brifingi</h3>
+      <p style="font-size: 12.5px; color: #334155; line-height: 1.6;">${(report.executiveSummary || "").replace(/\n/g, "<br><br>")}</p>
 
-      <!-- Zekice Fikirler -->
-      <h3 style="color: #10b981; font-size: 16px; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-top: 24px;">💡 AML Ekipleri İçin Zekice Fikirler & Reçeteler</h3>
+      <!-- Yeni Gelişmeler & Fikirler -->
+      <h3 style="color: #0f172a; font-size: 14px; font-family: monospace; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 24px;">Yeni Gelişmeler &amp; Saha Çalışmaları</h3>
       ${ideas.map((idea, i) => `
         <div class="card">
-          <div style="font-size: 11px; color: #10b981; font-weight: 700;">#${i + 1} ${idea.category || "Aksiyon"} • ${idea.badge || "Öneri"}</div>
+          <div style="font-size: 10.5px; color: #721c24; font-weight: 700; font-family: monospace; text-transform: uppercase;">${idea.category || "İnovasyon"}</div>
           <h4 class="card-title" style="margin-top: 4px;">${idea.title}</h4>
-          <p class="card-body"><strong>Acı Noktası:</strong> ${idea.problem}</p>
-          <p class="card-body" style="margin-top: 6px;"><strong>Çözüm:</strong> ${idea.solution}</p>
-          ${idea.promptOrLogic ? `<div class="code-block">${idea.promptOrLogic}</div>` : ""}
-          <p class="card-body" style="font-size: 11px; color: #94a3b8;"><strong>Etki:</strong> ${idea.expectedImpact}</p>
+          <p class="card-body">${idea.problem}</p>
+          <p class="card-body" style="margin-top: 6px; color: #0f172a; font-weight: 500;">${idea.solution}</p>
+          ${(idea.methodologyAndStudy || idea.promptOrLogic) ? `<div class="code-block">${idea.methodologyAndStudy || idea.promptOrLogic}</div>` : ""}
         </div>
       `).join("")}
 
-      <!-- Tipoloji Tablosu -->
-      <h3 style="color: #fbbf24; font-size: 16px; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-top: 24px;">⚡ Yükselen Aklama Tipolojileri</h3>
-      <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 10px;">
-        <thead>
-          <tr style="background: #1e293b; color: #94a3b8; text-align: left;">
-            <th style="padding: 8px;">Tipoloji</th>
-            <th style="padding: 8px;">Risk</th>
-            <th style="padding: 8px;">Trend</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${typologies.map(t => `
-            <tr style="border-bottom: 1px solid #1e293b;">
-              <td style="padding: 8px; color: #f1f5f9;"><strong>${t.name}</strong><br><span style="color: #64748b; font-size: 11px;">Hedef: ${t.targetSector}</span></td>
-              <td style="padding: 8px; color: #ef4444; font-weight: 700;">${t.riskScore}/10</td>
-              <td style="padding: 8px; color: #34d399;">${t.delta}</td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
+      <!-- Otoritelerden Gelişmeler -->
+      ${authorities.length > 0 ? `
+      <h3 style="color: #0f172a; font-size: 14px; font-family: monospace; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-top: 24px;">Otoritelerde Durum Nasıl?</h3>
+      ${authorities.slice(0, 5).map(auth => `
+        <div style="padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+          <div style="font-size: 11px; font-family: monospace; font-weight: 700; color: #721c24;">${auth.authority} • ${auth.country || ''} (${auth.date || ''})</div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #0f172a; margin: 2px 0;">${auth.title}</div>
+          <div style="font-size: 12px; color: #475569;">${auth.summary}</div>
+        </div>
+      `).join("")}
+      ` : ""}
     </div>
     <div class="footer">
-      Bu bülten Reddit, Twitter ve arXiv açık kaynak verileri ile DeepSeek AI tarafından derlenmiştir.<br>
-      © ${new Date().getFullYear()} AML Tekno Radar • Tüm Hakları Saklıdır.
+      AML Tekno Radar © ${new Date().getFullYear()} • Açık Kaynak İstihbarat &amp; RegTech Analizi
     </div>
   </div>
 </body>
@@ -155,7 +143,7 @@ async function main() {
       body: JSON.stringify({
         from: sender,
         to: [ALICI_MAIL],
-        subject: `🛡️ AML Tekno Radar: ${report.date} Günlük İstihbarat & Fikirler`,
+        subject: `AML Tekno Radar: ${report.date || ''} Günlük İstihbarat & Gelişmeler`,
         html: htmlContent
       })
     });

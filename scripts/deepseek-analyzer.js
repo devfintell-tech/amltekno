@@ -2,10 +2,30 @@
  * Çift LLM (Dual LLM) AML & FinCrime Analiz ve Sentez Motoru
  * Model: DeepSeek v4.1 Flash
  * 
- * 1. LLM (Phase 1): Reddit, X (Otorite Dışı Uzmanlar), Resmi Otorite Siteleri ve arXiv verilerinden
+ * 1. LLM (Phase 1): Reddit, X (Bağımsız Uzmanlar), Resmi Otorite Siteleri ve arXiv verilerinden
  *    ham çıkarım yapar, kural mantıkları ve zeki fikirler üretir.
  * 2. LLM (Phase 2): Sabah sentezini, yönetici brifingini ve Twitter topluluk nabzını oluşturur.
  */
+
+function safeParseJson(raw, phaseName = "LLM") {
+  if (!raw || typeof raw !== "string") return {};
+  const cleaned = raw.replace(/```json\s*/gi, "").replace(/```\s*$/g, "").trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.warn(`⚠️ ${phaseName} JSON doğrudan ayrıştırılamadı (${err.message}), kurtarma deneniyor...`);
+    const lastBrace = cleaned.lastIndexOf("}");
+    if (lastBrace !== -1) {
+      try {
+        const repaired = cleaned.slice(0, lastBrace + 1);
+        return JSON.parse(repaired);
+      } catch (err2) {
+        console.error(`❌ ${phaseName} JSON kurtarma da başarısız oldu.`);
+      }
+    }
+    throw err;
+  }
+}
 
 export async function analyzeAmlDataWithDualLLM({ 
   redditPosts = [], 
@@ -19,6 +39,10 @@ export async function analyzeAmlDataWithDualLLM({
   }
 
   const startTime = Date.now();
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  const isoDate = today.toISOString().slice(0, 10);
+
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
   const redditContext = redditPosts.slice(0, 45).map((p, idx) => 
@@ -33,7 +57,7 @@ export async function analyzeAmlDataWithDualLLM({
     `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 300)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
-  const authContext = authorityPosts.slice(0, 10).map((a, idx) => 
+  const authContext = authorityPosts.slice(0, 12).map((a, idx) => 
     `[Resmi Otorite-${idx + 1}] [${a.authorityName} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
   ).join("\n\n");
 
@@ -42,43 +66,45 @@ export async function analyzeAmlDataWithDualLLM({
   // ==========================================
   const phase1System = `Sen küresel düzeyde kıdemli bir AML/CFT, Finansal Suçlar, Yaptırımlar, MASAK mevzuatı ve Müşteri İnceleme (CDD/KYC) Baş Mimarı ve Danışmanısın.
 
-Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta hatasız ve pratik çıktılar üretmektir:
-1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (Reddit ve saha tartışmaları, analistlerin günlük şikayetleri, false-positive yükü, pratik çözümler)
-2. "twitterPulse": Twitter'da AML Gündemi (Bağımsız analist, araştırmacı ve dedektiflerin ne konuştuğu, öne çıkan odak konular ve paylaşım hacimleri)
-3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (İşlem izleme kuralları, SAR/STR otomasyonu, smurfing, kurye hesap tespiti)
-4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (Sentetik kimlik, deepfake liveness, UBO ve paravan şirket grafikleri)
-5. "authoritiesPulse": Otoritelerde Durum Nasıl? (FATF, MASAK, OFAC, FinCEN son 24 saat duyuruları ve yaptırımları)
-6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 9 kavramı ve 2-3 cümlelik sade tanımı)
+Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta hatasız, kurumsal ve pratik çıktılar üretmektir:
+1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (Tam 4 adet en somut vaka ve saha tartışması)
+2. "twitterPulse": Twitter'da AML Gündemi (dominantTopics: 3 adet konu; topExpertTakeaways: 2-3 adet uzman tespiti)
+3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (Tam 3 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
+4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (Tam 3 adet CDD/KYC/UBO inovasyonu)
+5. "authoritiesPulse": Otoritelerde Durum Nasıl? (4-6 adet resmi otorite duyurusu)
+6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 6-9 kavramı ve 2-3 cümlelik sade tanımı)
 
-Çıktıyı SADECE geçerli ve hatasız bir JSON objesi olarak ver.`;
+Kurallar:
+- Kesinlikle emoji kullanma.
+- 'Kritik', 'Önem: Yüksek', 'Acil' gibi yapay zeka klişesi etiketlerden ve 'OPERASYONEL ÇIKARIM:' gibi yapay başlıklardan kaçın; doğrudan konuyu ve çözümü akıcı anlat.
+- Çıktıyı SADECE geçerli ve hatasız bir JSON objesi olarak ver.`;
 
   const phase1User = `Aşağıdaki güncel kaynak verilerini derinlemesine analiz et:
 
-=== 🏛️ RESMİ OTORİTELER (FATF, MASAK, OFAC, FinCEN - Kendi Sitelerinden) ===
+=== RESMİ OTORİTELER (FATF, MASAK, OFAC, FinCEN - Kendi Sitelerinden) ===
 ${authContext || "Otorite verisi bulunamadı."}
 
-=== 🗣️ REDDİT TOPLULUKLARI & AML ANALİSTLERİ ===
+=== REDDİT TOPLULUKLARI & AML ANALİSTLERİ ===
 ${redditContext || "Reddit verisi bulunamadı."}
 
-=== 🐦 X (TWITTER) BAĞIMSIZ DEDEKTİFLER & SAHA UZMANLARI ===
+=== X (TWITTER) BAĞIMSIZ DEDEKTİFLER & SAHA UZMANLARI ===
 ${twitterContext || "Twitter verisi bulunamadı."}
 
-=== 📚 ARXIV AKADEMİK ARAŞTIRMALAR ===
+=== ARXIV AKADEMİK ARAŞTIRMALAR ===
 ${arxivContext || "arXiv verisi bulunamadı."}
 
 Şu JSON şemasında çıktı ver:
 {
-  "date": "22 Eylül 2026",
+  "date": "${dateStr}",
   "threatScore": 8.8,
   "threatLevel": "Yüksek",
   "amlTalks": [
     {
       "id": "talk-1",
       "title": "Tartışma Başlığı",
-      "category": "Operasyon & Saha Tartışmaları",
-      "badge": "Sıcak Tartışma",
-      "summary": "Analistlerin Reddit'te ne konuştuğu ve acı noktaları",
-      "keyInsight": "Operasyonel çıkarım ve çözüm yolu",
+      "category": "Operasyon ve Saha Tartışmaları",
+      "summary": "Analistlerin ne konuştuğu ve acı noktaları",
+      "keyInsight": "Operasyonel çıkarım ve uygulanabilir çözüm yolu",
       "source": "r/AMLCompliance"
     }
   ],
@@ -87,44 +113,27 @@ ${arxivContext || "arXiv verisi bulunamadı."}
     "sentimentDistribution": { "critical": 58, "solutionOriented": 28, "informative": 14 },
     "dominantTopics": [
       {
-        "topic": "Öğrenci Kurye Hesap (Money Mule) Ağları",
+        "topic": "Öğrenci Kurye Hesap Ağları",
         "sharePercentage": 36,
         "sentiment": "Kritik",
-        "summary": "Telegram ve TikTok üzerinden öğrencilerin banka hesaplarını kiralayan aklama şebekeleri gündemde."
-      },
-      {
-        "topic": "İşlem İzlemede Alert Fatigue & Yanlış Alarm Bıkkınlığı",
-        "sharePercentage": 32,
-        "sentiment": "Endişeli",
-        "summary": "Saha analistleri %95 yanlış alarm üreten kural motorları nedeniyle gerçek vakaları kaçırmaktan şikayetçi."
-      },
-      {
-        "topic": "Yapay Zeka Destekli Sahte Pasaport & KYC Atlatma",
-        "sharePercentage": 22,
-        "sentiment": "Yüksek Tehdit",
-        "summary": "Görsel üretim modelleriyle üretilen sentetik kimlikler finteklerde hesap açılışını kolaylaştırıyor."
+        "summary": "Telegram ve sosyal medya üzerinden hesap kiralama şebekeleri gündemde."
       }
     ],
     "topExpertTakeaways": [
       {
         "expert": "@zachxbt",
-        "highlight": "Kripto köprü fonlarının geleneksel mikserler yerine anlık yerel banka havaleleriyle aklandığı uyarısı."
-      },
-      {
-        "expert": "@graham_barrow",
-        "highlight": "Tek adreste 80+ şirket kümelenmesi ve banka CDD süreçlerinde Graph eksikliği eleştirisi."
+        "highlight": "Kripto köprü fonlarının anlık yerel banka transferleriyle aklandığı uyarısı."
       }
     ]
   },
   "newDevelopmentsAndIdeas": [
     {
       "id": "dev-1",
-      "title": "Gelişme / Fikir Başlığı",
-      "category": "İşlem İzleme & Kural",
-      "badge": "Yüksek Verim",
-      "problem": "Acı noktası",
-      "solution": "Teknolojik zekice çözüm",
-      "promptOrLogic": "Doğrudan kopyalanabilir prompt şablonu veya Python/SQL anomali kuralı",
+      "title": "Gelişme ve Çalışma Başlığı",
+      "category": "İşlem İzleme ve Anomali",
+      "problem": "Mevcut darboğaz veya problem tanımı",
+      "solution": "Teknolojik çözüm ve yaklaşım",
+      "promptOrLogic": "Uygulanan yöntem, mimari veya kural mantığı",
       "expectedImpact": "Beklenen ölçülebilir etki"
     }
   ],
@@ -132,12 +141,11 @@ ${arxivContext || "arXiv verisi bulunamadı."}
     {
       "id": "kyc-1",
       "title": "Müşteri İnceleme Gelişmesi Başlığı",
-      "category": "Sentetik Kimlik & Biyometri",
-      "badge": "Kritik Güvenlik",
-      "problem": "Kimlik kabul / UBO sürecindeki açık",
-      "solution": "Uygulanacak teknoloji (GNN, Liveness, Device Fingerprint vb.)",
-      "promptOrLogic": "Test edilmiş kural veya sorgu mantığı",
-      "expectedImpact": "Fayda"
+      "category": "Sentetik Kimlik ve Biyometri",
+      "problem": "Kimlik kabul veya UBO sürecindeki açık",
+      "solution": "Uygulanacak teknoloji (GNN, Liveness, Device Fingerprint)",
+      "promptOrLogic": "Test edilmiş yöntem veya kural mantığı",
+      "expectedImpact": "Süreç ve güvenlik faydası"
     }
   ],
   "authoritiesPulse": [
@@ -146,9 +154,8 @@ ${arxivContext || "arXiv verisi bulunamadı."}
       "authority": "MASAK",
       "country": "Türkiye",
       "title": "Başlık",
-      "summary": "Açıklama",
-      "impact": "Kritik",
-      "date": "22 Eylül 2026",
+      "summary": "Açıklama ve kapsam",
+      "date": "${dateStr}",
       "url": "https://..."
     }
   ],
@@ -157,7 +164,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
       "id": "g-1",
       "term": "Kavram Adı",
       "definition": "Sade ve anlaşılır tanımı (2-3 cümle)",
-      "dateStr": "22 Eylül 2026"
+      "dateStr": "${dateStr}"
     }
   ]
 }`;
@@ -175,7 +182,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
         { role: "user", content: phase1User }
       ],
       temperature: 0.3,
-      max_tokens: 4000,
+      max_tokens: 8192,
       response_format: { type: "json_object" }
     }),
     signal: AbortSignal.timeout(120000)
@@ -187,7 +194,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
 
   const p1Json = await res1.json();
   const rawP1 = p1Json.choices?.[0]?.message?.content || "{}";
-  const p1Data = JSON.parse(rawP1.replace(/```json\s*/gi, "").replace(/```\s*$/g, "").trim());
+  const p1Data = safeParseJson(rawP1, "Phase 1");
   const p1Usage = p1Json.usage || {};
 
   const p1Tokens = {
@@ -205,7 +212,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
   // ==========================================
   const phase2System = `Sen küresel bir AML & RegTech Baş Danışmanısın. 
 Görevin 1. LLM'in ürettiği verileri okuyup yöneticilerin 30 saniyede okuyacağı kusursuz 'Günün Sentezi' ve 'Yönetici Brifingini' oluşturmaktır.
-SADECE JSON döndür.`;
+Kesinlikle emoji kullanma. SADECE JSON döndür.`;
 
   const phase2User = `1. LLM Çıktıları:
 - Konuşulanlar: ${(p1Data.amlTalks || []).map(t => t.title).join(", ")}
@@ -217,6 +224,10 @@ SADECE JSON döndür.`;
 Şu şemada JSON üret:
 {
   "morningBrief": {
+    "flashAlert": {
+      "title": "Günün En Sıcak Tehdidi veya Gelişmesi",
+      "description": "2-3 cümlelik net açıklama ve analistlerin alması gereken önlem."
+    },
     "mostDiscussed": {
       "name": "Günün En Çok Konuşulan Tehdidi (Örn: FAST Smurfing)",
       "hypeScore": 9.8,
@@ -224,16 +235,16 @@ SADECE JSON döndür.`;
       "description": "3-4 cümlelik derin açıklama"
     },
     "mostLoved": {
-      "name": "En Etkili Savunma / Çözüm (Örn: DeepSeek SAR Asistanı)",
+      "name": "En Etkili Savunma veya Çözüm (Örn: SAR/STR Ajanları)",
       "hypeScore": 9.6,
       "sentimentScore": 95,
       "description": "3-4 cümlelik derin açıklama"
     },
     "bullets": [
-      { "tag": "Regülasyon & Yaptırımlar", "icon": "🏛️", "text": "Açıklama" },
-      { "tag": "İşlem İzleme & Anomali", "icon": "⚡", "text": "Açıklama" },
-      { "tag": "Sentetik Kimlik & Biyometri", "icon": "🎭", "text": "Açıklama" },
-      { "tag": "Kripto & On-Chain Dedektifliği", "icon": "⛓️", "text": "Açıklama" }
+      { "tag": "Regülasyon ve Yaptırımlar", "text": "Net açıklama" },
+      { "tag": "İşlem İzleme ve Anomali", "text": "Net açıklama" },
+      { "tag": "Sentetik Kimlik ve Biyometri", "text": "Net açıklama" },
+      { "tag": "Kripto ve Zincir Üstü Takip", "text": "Net açıklama" }
     ]
   },
   "executiveSummary": "Günün 3 paragraflık derinlemesine AML yönetici brifingi."
@@ -262,7 +273,7 @@ SADECE JSON döndür.`;
           { role: "user", content: phase2User }
         ],
         temperature: 0.3,
-        max_tokens: 2500,
+        max_tokens: 4000,
         response_format: { type: "json_object" }
       }),
       signal: AbortSignal.timeout(60000)
@@ -271,7 +282,7 @@ SADECE JSON döndür.`;
     if (res2.ok) {
       const p2Json = await res2.json();
       const rawP2 = p2Json.choices?.[0]?.message?.content || "{}";
-      p2Data = JSON.parse(rawP2.replace(/```json\s*/gi, "").replace(/```\s*$/g, "").trim());
+      p2Data = safeParseJson(rawP2, "Phase 2");
       const p2Usage = p2Json.usage || {};
       p2Tokens = {
         promptTokens: p2Usage.prompt_tokens || 8400,
@@ -287,10 +298,10 @@ SADECE JSON döndür.`;
 
   const durationSec = Math.round((Date.now() - startTime) / 1000);
 
-  // Nihai Çift LLM Çıktısı (Kusursuz Model İsimlendirmesi: DeepSeek v4.1 Flash)
+  // Nihai Çift LLM Çıktısı
   return {
-    date: p1Data.date || "22 Eylül 2026",
-    isoDate: new Date().toISOString().slice(0, 10),
+    date: p1Data.date || dateStr,
+    isoDate: isoDate,
     durationSeconds: durationSec,
     startedAt: "06:00:12",
     completedAt: "06:01:21",
@@ -316,11 +327,11 @@ SADECE JSON döndür.`;
     },
     morningBrief: p2Data.morningBrief || {
       flashAlert: {
-        title: "FAST / SEPA Instant Sistemlerinde Smurfing & Kripto Köprü Fonları",
-        description: "DeFi köprülerinden kaçırılan fonlar 120'den fazla öğrenci ve ev hanımı kurye hesabına saniyeler içinde dağıtılıyor."
+        title: "FAST / SEPA Instant Sistemlerinde Smurfing ve Kripto Köprü Fonları",
+        description: "DeFi köprülerinden kaçırılan fonlar çok sayıda öğrenci ve ev hanımı kurye hesabına saniyeler içinde dağıtılıyor."
       },
       mostDiscussed: {
-        name: "FAST Smurfing & Anlık Fon Kaçırma",
+        name: "FAST Smurfing ve Anlık Fon Kaçırma",
         hypeScore: 9.8,
         sentimentScore: 38,
         description: "Anlık ödeme altyapılarında hesap yaşını ve fon kalış süresini (dwell time) kontrol etmeyen kural motorları kurye hesapları yakalayamıyor."
@@ -332,10 +343,10 @@ SADECE JSON döndür.`;
         description: "Analistin 45 dakikasını 12 dakikaya indirip doğrudan MASAK formatında resmi şüpheli işlem gerekçesi üretiyor."
       },
       bullets: [
-        { tag: "Yaptırımlar & OFAC", icon: "🏛️", text: "OFAC ve AB, transponder kapatan 18 paravan denizcilik şirketini kara listeye aldı. Dış ticarette otomatik IMO taraması zorunlu kılınıyor." },
-        { tag: "Grafik AI & GNN", icon: "🕸️", text: "Heterojen Grafik Sinir Ağları (HGNN) banka transfer ağlarındaki smurfing döngülerini %94 doğrulukla izole ederek kural motorlarına fark attı." },
-        { tag: "Sentetik Kimlik", icon: "🎭", text: "Deepfake selfie ve sahte kimliklerle açılan kurye hesaplara karşı SIM kart değişiklik hızı (velocity) ve cihaz parmak izi zorunlu kılınıyor." },
-        { tag: "Kripto & Mixer", icon: "⛓️", text: "ZachXBT uyardı: Cüzdan zehirleme saldırılarıyla zincir içi analiz yazılımlarını yanıltmak için sıfıra yakın sub-cent test transferleri arttı." }
+        { tag: "Yaptırımlar ve OFAC", text: "OFAC ve AB, transponder kapatan 18 paravan denizcilik şirketini kara listeye aldı. Dış ticarette otomatik IMO taraması zorunlu kılınıyor." },
+        { tag: "Grafik AI ve GNN", text: "Heterojen Grafik Sinir Ağları (HGNN) banka transfer ağlarındaki smurfing döngülerini %94 doğrulukla izole ederek kural motorlarına fark attı." },
+        { tag: "Sentetik Kimlik", text: "Deepfake selfie ve sahte kimliklerle açılan kurye hesaplara karşı SIM kart değişiklik hızı (velocity) ve cihaz parmak izi zorunlu kılınıyor." },
+        { tag: "Kripto ve Mixer", text: "Cüzdan zehirleme saldırılarıyla zincir içi analiz yazılımlarını yanıltmak için sıfıra yakın sub-cent test transferleri arttı." }
       ]
     },
     executiveSummary: p2Data.executiveSummary || p1Data.executiveSummary || "Bugün AML ve FinCrime dünyasında anlık ödeme sistemlerinde parçalama (smurfing) ve yapay zeka ajanlarının SAR/STR yazımında sahaya inmesi ana gündemi oluşturuyor.",
@@ -345,19 +356,19 @@ SADECE JSON döndür.`;
       sentimentDistribution: { critical: 58, solutionOriented: 28, informative: 14 },
       dominantTopics: [
         {
-          topic: "Öğrenci Kurye Hesap (Money Mule) Ağları",
+          topic: "Öğrenci Kurye Hesap Ağları",
           sharePercentage: 36,
           sentiment: "Kritik",
           summary: "Telegram ve TikTok üzerinden öğrencilerin banka hesaplarını kiralayan aklama şebekeleri gündemde."
         },
         {
-          topic: "İşlem İzlemede Alert Fatigue & Yanlış Alarm Bıkkınlığı",
+          topic: "İşlem İzlemede Alert Fatigue ve Yanlış Alarm Bıkkınlığı",
           sharePercentage: 32,
           sentiment: "Endişeli",
           summary: "Saha analistleri %95 yanlış alarm üreten kural motorları nedeniyle gerçek vakaları kaçırmaktan şikayetçi."
         },
         {
-          topic: "Yapay Zeka Destekli Sahte Pasaport & KYC Atlatma",
+          topic: "Yapay Zeka Destekli Sahte Pasaport ve KYC Atlatma",
           sharePercentage: 22,
           sentiment: "Yüksek Tehdit",
           summary: "Görsel üretim modelleriyle üretilen sentetik kimlikler finteklerde hesap açılışını kolaylaştırıyor."

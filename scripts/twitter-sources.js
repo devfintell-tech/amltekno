@@ -60,7 +60,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     return [];
   }
 
-  console.log("🐦 Twitter taranıyor (Otoriteler HARİÇ: Sadece bağımsız analistler, dedektifler ve saha tartışmaları)...");
+  console.log("🐦 Twitter taranıyor (Bağımsız analistler, dedektifler ve saha paylaşımları)...");
 
   const payload = {
     searchTerms: TWITTER_SEARCH_BATCHES,

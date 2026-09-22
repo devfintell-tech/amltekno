@@ -348,10 +348,10 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
         description: "Analistin 45 dakikasını 12 dakikaya indirip doğrudan MASAK formatında resmi şüpheli işlem gerekçesi üretiyor."
       },
       bullets: [
-        { tag: "Yaptırımlar & OFAC", icon: "🏛️", text: "OFAC ve AB, transponder kapatan 18 paravan denizcilik şirketini kara listeye aldı. Dış ticarette otomatik IMO taraması zorunlu kılınıyor." },
-        { tag: "Grafik AI & GNN", icon: "🕸️", text: "Heterojen Grafik Sinir Ağları (HGNN) banka transfer ağlarındaki smurfing döngülerini %94 doğrulukla izole ederek kural motorlarına fark attı." },
-        { tag: "Sentetik Kimlik", icon: "🎭", text: "Deepfake selfie ve sahte kimliklerle açılan kurye hesaplara karşı SIM kart değişiklik hızı (velocity) ve cihaz parmak izi zorunlu kılınıyor." },
-        { tag: "Kripto & Mixer", icon: "⛓️", text: "ZachXBT uyardı: Cüzdan zehirleme saldırılarıyla zincir içi analiz yazılımlarını yanıltmak için sıfıra yakın sub-cent test transferleri arttı." }
+        { tag: "Yaptırımlar ve OFAC", text: "OFAC ve AB, transponder kapatan 18 paravan denizcilik şirketini kara listeye aldı. Dış ticarette otomatik IMO taraması zorunlu kılınıyor." },
+        { tag: "Grafik AI ve GNN", text: "Heterojen Grafik Sinir Ağları (HGNN) banka transfer ağlarındaki smurfing döngülerini %94 doğrulukla izole ederek kural motorlarına fark attı." },
+        { tag: "Sentetik Kimlik", text: "Deepfake selfie ve sahte kimliklerle açılan kurye hesaplara karşı SIM kart değişiklik hızı (velocity) ve cihaz parmak izi zorunlu kılınıyor." },
+        { tag: "Kripto ve Mixer", text: "ZachXBT uyardı: Cüzdan zehirleme saldırılarıyla zincir içi analiz yazılımlarını yanıltmak için sıfıra yakın sub-cent test transferleri arttı." }
       ]
     },
     executiveSummary: `Bugün AML ve FinCrime dünyasında iki temel dinamik çarpışıyor: Geleneksel bankacılık sistemlerinde anlık ödeme altyapılarının (FAST/FedNow/SEPA Instant) yaygınlaşmasıyla birlikte aklayıcıların fonları saatler yerine saniyeler içinde yüzlerce alt hesaba dağıtabilmesi; diğer tarafta ise yapay zeka ajanlarının ilk kez doğrudan SAR/STR şüpheli işlem bildirim taslağı yazımında fiilen sahaya inmesi.\n\nr/AMLCompliance topluluğundaki saha tartışmaları, uyum analistlerinin her gün binlerce yanlış alarm (false positive) altında ezildiğini ve kural tabanlı eski motorların artık sentetik kimlik dolandırıcılığını yakalayamadığını gösteriyor. Analistler, müşteri risk skorlamasında statik formlar yerine LLM tabanlı açık kaynak istihbarat (OSINT) doğrulamalarına geçilmesini talep ediyor.\n\nX (Twitter) cephesinde ise bağımsız analistler ve araştırmacılar (@zachxbt, @graham_barrow, @DarkMoneyFiles) kurye hesap ağlarının Telegram ve TikTok üzerinden öğrencilere açtırıldığını ve çalınan fonların geleneksel mikserler yerine DEX likidite havuzlarına sokulduğunu belgeliyor.`,
@@ -360,25 +360,25 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
       sentimentDistribution: { critical: 58, solutionOriented: 28, informative: 14 },
       dominantTopics: [
         {
-          topic: "Öğrenci Kurye Hesap (Money Mule) Ağları",
+          topic: "Öğrenci Kurye Hesap Ağları",
           sharePercentage: 36,
           sentiment: "Kritik",
           summary: "Telegram ve sosyal medya üzerinden komisyon karşılığı kiralanan genç/öğrenci hesapları aklayıcıların en hızlı kaçış yolu haline geldi."
         },
         {
-          topic: "İşlem İzlemede Alert Fatigue & Yanlış Alarm Bıkkınlığı",
+          topic: "İşlem İzlemede Alert Fatigue ve Yanlış Alarm Bıkkınlığı",
           sharePercentage: 32,
           sentiment: "Endişeli",
           summary: "Saha analistleri %95 yanlış alarm üreten kural motorları nedeniyle gerçek vakaları kaçırmaktan şikayetçi."
         },
         {
-          topic: "Yapay Zeka Destekli Sahte Pasaport & KYC Atlatma",
+          topic: "Yapay Zeka Destekli Sahte Pasaport ve KYC Atlatma",
           sharePercentage: 22,
           sentiment: "Yüksek Tehdit",
           summary: "Görsel üretim modelleriyle üretilen sentetik kimlikler finteklerde hesap açılışını kolaylaştırıyor."
         },
         {
-          topic: "Banka De-risking & Haksız Hesap Kapatmaları",
+          topic: "Banka De-risking ve Haksız Hesap Kapatmaları",
           sharePercentage: 10,
           sentiment: "Tartışmalı",
           summary: "Uyum departmanlarının riskten kaçınmak için masum KOBİ ve kripto yatırımcılarının hesaplarını toptan kapatması tepki topluyor."
@@ -386,11 +386,11 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
       ],
       topExpertTakeaways: [
         {
-          expert: "@zachxbt (On-Chain Adli Takip)",
+          expert: "@zachxbt",
           highlight: "Son 14M$'lık kimlik avı fonları mikser yerine Güneydoğu Asya ve İngiltere'deki yerel öğrenci kurye hesapları üzerinden anında FAST/havale ile eritildi."
         },
         {
-          expert: "@graham_barrow (The Dark Money Files)",
+          expert: "@graham_barrow",
           highlight: "İngiltere'de tek bir sanal ofis adresinde 85 paravan şirket kurulmuş durumda; bankalar hesap açılışında Graph analizi kullanmadığı sürece bu ağları yakalayamaz."
         },
         {
@@ -403,8 +403,7 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
       {
         id: "talk-1",
         title: "False-Positive Cehennemi: Analistler Günde 180 Sahte Alarmı Kapatmaktan Gerçek Vakayı Kaçırıyor",
-        category: "Saha Tartışması & Operasyonel Yük",
-        badge: "Kritik Tartışma",
+        category: "Saha Tartışması ve Operasyonel Yük",
         summary: "r/AMLCompliance topluluğundaki bir Tier-1 banka kıdemli analistinin itirafı 400'den fazla etkileşim aldı. Analistlerin %92'si, kural tabanlı motorların sadece 'tutar eşiği' bazlı ürettiği alarmların operasyonu felç ettiğini ve SAR yazma süresini 10 dakikaya indiren yapay zeka araçlarına acil ihtiyaç duyduklarını belirtiyor.",
         keyInsight: "Banka uyum departmanlarında sadece tutar değil, 'Hesap Yaşı + Davranış Sapması + Cihaz Tutarlılığı' üçlüsünü tek kuralda birleştiren hibrit motorlara geçiş şart.",
         source: "r/AMLCompliance"
@@ -412,8 +411,7 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
       {
         id: "talk-2",
         title: "Kurye Hesap (Money Mule) Ticareti: Telegram Gruplarında Öğrenci Hesapları 500$'a Kiralanıyor",
-        category: "Kurye Hesap & Finansal Dolandırıcılık",
-        badge: "Yeni Tehdit",
+        category: "Kurye Hesap ve Finansal Dolandırıcılık",
         summary: "Dolandırıcılar ve aklayıcılar, üniversite kampüslerinde ve sosyal medyada 'hesabını 1 günlüğüne kirala komisyon al' vaadiyle gençlerin IBAN'larını topluyor. Para FAST ile hesaba girdiği anda 90 saniye içinde ATM veya kripto VASP üzerinden çekiliyor.",
         keyInsight: "Hesaba gelen transfer ile giden transfer arasındaki süre 180 saniyenin altındaysa ve hesap 6 aydan gençse geçici 5 dakikalık doğrulama blokesi konulmalı.",
         source: "r/fraud & X"
@@ -421,8 +419,7 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
       {
         id: "talk-3",
         title: "Banka De-risking Dalgası: Uyum Ekipleri Masum KOBİ Hesaplarını Toptan Kapatıyor",
-        category: "Regülasyon & Müşteri Mağduriyeti",
-        badge: "Sektörel Tartışma",
+        category: "Regülasyon ve Müşteri Mağduriyeti",
         summary: "Analistlerin ağır cezalar alma korkusuyla yüksek riskli sektörlerdeki (dış ticaret, e-ihracat, döviz büroları) dürüst müşterilerin de hesaplarını kapatması (de-risking), hem regülatörlerin hem iş dünyasının tepkisini çekiyor.",
         keyInsight: "Toptan ret yerine, yapay zeka ile sürekli işlem puanlaması (dynamic transaction risk scoring) yapılarak müşteri bazlı granüler sınırlandırma uygulanabilir.",
         source: "r/compliance"
@@ -430,8 +427,7 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
       {
         id: "talk-4",
         title: "Kripto-Fiat Köprüsü: Banka Şubeleri Borsadan Gelen Fonun Kaynağını Nasıl İspatlatacak?",
-        category: "Kripto Varlık & İspat Yükü",
-        badge: "Uygulama Zorluğu",
+        category: "Kripto Varlık ve İspat Yükü",
         summary: "Müşterilerin yerli/yabancı kripto borsalarından çektiği milyonlarca liralık fonlarda 'Servet Kaynağı (Source of Wealth)' doğrulaması şube personelini kilitliyor. Şubelerin zincir analitiği okuryazarlığının olmaması dosya kapatma sürelerini haftalara uzatıyor.",
         keyInsight: "Banka core banking ekranlarına kripto borsa cüzdan risk skorunu getiren tek tık API entegrasyonu operasyon süresini %80 kısaltır.",
         source: "r/Banking"
@@ -440,31 +436,21 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
     newDevelopmentsAndIdeas: [
       {
         id: "idea-sar-generator",
-        title: "Banka SAR/STR (Şüpheli İşlem Bildirimi) Otomasyonu İçin Test Edilmiş LLM Prompt Şablonu",
+        title: "Banka SAR/STR (Şüpheli İşlem Bildirimi) Otomasyonu ve Doğrulama Mimarisi",
         category: "SAR/STR Otomasyonu",
-        badge: "Yüksek Verim",
         problem: "Uyum analistleri şüpheli bir işlemi tespit ettikten sonra resmi MASAK/FinCEN bildirim gerekçesini ve vaka özetini yazmak için dosya başına 35-50 dakika harcıyor. Bu durum ciddi iş yığılmasına yol açıyor.",
-        solution: "Analistin sisteme girdiği ham işlem hareketlerini, hesap yaşını ve müşteri profilini alıp doğrudan regülatör diline uygun 5 bölümlü resmi SAR anlatısına (Narrative) dönüştüren hazır prompt şablonu.",
-        promptOrLogic: `Sistem Rolü: Sen kıdemli bir AML/Uyum Denetçisisin. Aşağıdaki ham işlem verilerini resmi SAR/STR Şüpheli İşlem Bildirimi Anlatısı (Narrative) formatında yapılandır.
-
-Girdi Bilgileri:
-- Müşteri Profili: [Meslek, Hesap Açılış Tarihi, Beyan Edilen Aylık Gelir]
-- Şüpheli Hareketler: [Tarih, Tutar, Gönderen/Alıcı Bilgileri, Açıklamalar]
-- Tespit Edilen Tipoloji: [Örn: Yapılandırma/Smurfing, Kripto Fon Akışı, Ani Hacim Artışı]
-
-Çıktı Formatı (5 Bölüm):
-1. Giriş & Bildirim Nedeni
-2. Müşteri Profili & Hesap Geçmişi
-3. Şüpheli İşlem Kronolojisi & Fon Döngüsü
-4. İlgili Taraflar & Tespit Edilen Risk İpuçları
-5. Sonuç & Analist Karar Notu (Önerilen Aksiyon)`,
+        solution: "Analistin sisteme girdiği ham işlem hareketlerini, hesap yaşını ve müşteri profilini alıp doğrudan regülatör diline uygun 5 bölümlü resmi SAR anlatısına (Narrative) dönüştüren mimari çalışma.",
+        promptOrLogic: `Mimari İş Akışı:
+1. Core Banking şüpheli transfer verisi ile müşteri KYC kimlik parametrelerinin birleştirilmesi.
+2. İşlem tipolojisi tespiti (Örn: Smurfing, Kripto Fon Akışı, Ani Hacim Artışı).
+3. 5 Bölümlü standart anlatı üretimi (Giriş, Profil, Kronoloji, İlgili Taraflar, Analist Karar Notu).
+4. Analist önizlemesi ve resmi MASAK formatında tek tık imzalama.`,
         expectedImpact: "Vaka bildirim yazım süresinde %65 tasarruf; regülatör formatına %100 uyum ve standartlaşma."
       },
       {
         id: "idea-mule-fast-rule",
         title: "Anlık Ödemelerde (FAST/FedNow) Para Katırı (Money Mule) Tespiti İçin Dinamik Anomali Kuralı",
         category: "Mule (Kurye) Hesap Tespiti",
-        badge: "Kritik Güvenlik",
         problem: "Geleneksel kurallar günde 1 kez EOD (gün sonu) çalıştığı için, kurye hesaplara gelen para 3 dakika içinde kriptoya veya ATM'den nakde çevrilip buharlaşıyor.",
         solution: "Hesap Yaşı + Fon Kalış Süresi (Dwell Time) + Çıkış Hızı metriğini anlık birleştiren olay tabanlı (event-driven) anomali kuralı.",
         promptOrLogic: `IF (Account_Age < 90 Days) 
@@ -482,7 +468,6 @@ THEN:
         id: "idea-shell-osint",
         title: "Ticaret Odası & Paravan Şirket Ağlarını Çözen Otomatik OSINT Ajanı",
         category: "OSINT & Paravan Şirket",
-        badge: "Hızlı Uygulanabilir",
         problem: "Müşteri kabul (CDD) aşamasında paravan şirketler aynı adresi veya aynı vekili kullanarak farklı tüzel kişilikler altında hesap açabiliyor; analistlerin manuel Ticaret Sicil taraması saatler alıyor.",
         solution: "Şirket adresi, yetkili TCKN/Pasaport ve sermaye artış hareketlerini grafikte eşleştiren açık kaynak istihbarat mikro-ajani.",
         promptOrLogic: `// Python/SQL Graph Sorgu Mantığı
@@ -501,7 +486,6 @@ ORDER BY company_count DESC;`,
         id: "kyc-synthetic-defense",
         title: "Sentetik Kimlik ve Deepfake Biyometrik Atlatmaya Karşı Çok Katmanlı Savunma",
         category: "Sentetik Kimlik Savunması",
-        badge: "Kritik Güvenlik",
         problem: "Aklayıcılar gerçek bir kişinin TCKN/SSN numarasını yapay zeka üretimi yüz fotoğraflarıyla birleştirip dijital bankalarda hesap açtırıyor.",
         solution: "Görsel liveness kontrolünün yanında cihaz parmak izi (Device Fingerprint) ve SIM Kart Değişiklik Sinyali (SIM Swap Velocity) eşleştirmesi.",
         promptOrLogic: `Kural Mantığı:
@@ -516,7 +500,6 @@ ORDER BY company_count DESC;`,
         id: "kyc-ubo-graph",
         title: "Karmaşık Hissedarlık Yapılarında Nihai Faydalanıcı (UBO) Çözümleme Algoritması",
         category: "UBO & Mülkiyet Analitiği",
-        badge: "Yüksek Verim",
         problem: "Çok katmanlı off-shore holding yapıları arkasına gizlenen gerçek kişileri manuel tespit etmek analistlerin 3-4 gününü alıyor.",
         solution: "Sermaye payı %25'i aşan ortakları zincirleme çarpım kuralıyla (recursive tree traversal) saniyeler içinde hesaplayan Python/Neo4j algoritması.",
         promptOrLogic: `def calculate_ultimate_beneficial_ownership(node_id, current_weight=1.0):
@@ -536,7 +519,6 @@ ORDER BY company_count DESC;`,
         id: "kyc-adverse-media-llm",
         title: "Yerel Medya ve Savcılık Haberlerinde Olumsuz Medya (Adverse Media) Filtresi",
         category: "Olumsuz Medya Taraması",
-        badge: "Yanlış Alarm Azaltıcı",
         problem: "İsim benzerliği (homonim) nedeniyle masum müşteriler için yüzlerce alakasız mahkeme veya suç haberi uyarısı düşüyor.",
         solution: "Haber metnindeki meslek, yaş ve şehir bağlamını müşterinin bankadaki kimlik verisiyle çapraz doğrulayan LLM sınıflandırıcısı.",
         promptOrLogic: `Sistem: Aşağıdaki haber metnini verilen müşteri kimlik profiliyle karşılaştır.
