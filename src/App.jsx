@@ -156,7 +156,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {/* Üst Logo, Dosya Adı ve Geçmiş Tarih Seçici */}
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2.5 sm:gap-3 w-full">
           
-          {/* SOL BÖLÜM: Logo üstte, Tarih Seçici kesinlikle amlteknoradar.com'un altında */}
+          {/* SOL BÖLÜM: Logo üstte, Tarih Seçici .com'un altında, Sistem Bilgileri butonu da mobilde tarihin altında */}
           <div className="flex flex-col gap-1.5 shrink-0 min-w-0">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-7 h-7 bg-white text-[#721c24] font-black rounded text-xs shadow-inner tracking-tighter shrink-0">
@@ -184,24 +184,21 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                 ))}
               </select>
             </div>
-          </div>
 
-          {/* Sağ Durum: ÇİFT LLM & TELEMETRİ BİLGİSİ */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-mono text-rose-100 shrink-0">
-
-            {/* 📱 MOBİL: "Sistem Bilgileri" Butonu (Önceki projedeki gibi belirgin ve derli toplu) */}
+            {/* 📱 MOBİL: "Sistem Bilgileri" Butonu (TARİHİN HEMEN ALTINDA, ASLA SAĞA TAŞMAZ) */}
             <button
               type="button"
               onClick={() => setIsSystemInfoOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 bg-[#5c0f1c] hover:bg-[#4a0b16] active:scale-95 border border-rose-300/40 px-2.5 py-1.5 rounded text-xs font-mono font-bold text-white shadow-xs transition cursor-pointer shrink-0"
+              className="lg:hidden flex items-center gap-1.5 bg-[#5c0f1c] hover:bg-[#4a0b16] active:scale-95 border border-rose-300/40 px-2.5 py-1 rounded text-[11px] font-mono font-bold text-white shadow-xs transition cursor-pointer w-fit"
               title="Sistem Bilgileri ve Telemetri Verilerini Görüntüle"
             >
-              <Cpu className="w-3.5 h-3.5 text-rose-200 shrink-0" />
+              <Cpu className="w-3 h-3 text-rose-200 shrink-0" />
               <span>Sistem Bilgileri</span>
             </button>
+          </div>
 
-            {/* ⚡ MASAÜSTÜ: 1. LLM & 2. LLM Telemetrisi (Birebir Eski Kusursuz Hali) */}
-            <div className="hidden lg:flex items-center gap-2">
+          {/* Sağ Durum: ÇİFT LLM & TELEMETRİ BİLGİSİ (YALNIZCA MASAÜSTÜNDE) */}
+          <div className="hidden lg:flex items-center gap-2 shrink-0">
               
               {/* Süre Kutusu */}
               <div className="flex flex-col justify-between py-1 px-2.5 bg-[#5c0f1c] border border-rose-300/25 rounded text-[11px] font-mono shadow-xs h-[50px]">
@@ -295,9 +292,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               )}
 
             </div>
-
           </div>
-        </div>
 
         {/* 2. ANA SEKMELER ÇUBUĞU (KULLANICININ İSTEDİĞİ 5 ANA BAŞLIK + BÜLTEN) */}
         <div className="max-w-7xl mx-auto px-2 sm:px-4 border-t border-[#5c0f1c] pt-2 pb-1.5 w-full">
@@ -537,10 +532,10 @@ ${(report.authoritiesPulse || []).map((a, i) => `
       </div>
 
       {/* 4. KATEGORİ VE ÇALIŞMA ALANI */}
-      <main className="max-w-7xl mx-auto px-2 sm:px-4 py-4 w-full flex-1 space-y-4 min-w-0 overflow-x-hidden">
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 py-4 w-full flex-1 space-y-5 min-w-0 overflow-x-hidden">
         
-        {/* ☕ 30 SANİYELİK SABAH İSTİHBARATI: DÜNYADA BUGÜN */}
-        {report.morningBrief && (
+        {/* ☕ 30 SANİYELİK SABAH İSTİHBARATI: YALNIZCA İLK SAYFADA (activeTab === 'talks') */}
+        {report.morningBrief && activeTab === 'talks' && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm p-3.5 sm:p-4 shadow-xs space-y-3">
             <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#f1f5f9]">
               <div className="flex items-center gap-2">
@@ -741,7 +736,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {/* ========================================================
             TAB 2: AML DÜNYASINDA YENİ GELİŞMELER, FİKİRLER & SAHA ÇALIŞMALARI
             ======================================================== */}
-        {activeTab === 'developments' && (
+        {(activeTab === 'talks' || activeTab === 'developments') && (
           <section className="space-y-4">
             <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs">
               <div className="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -795,7 +790,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {/* ========================================================
             TAB 3: MÜŞTERİ İNCELEME SÜREÇLERİNE DAİR TEKNOLOJİK GELİŞMELER VE FİKİRLER
             ======================================================== */}
-        {activeTab === 'cdd_kyc' && (
+        {(activeTab === 'talks' || activeTab === 'cdd_kyc') && (
           <section className="space-y-4">
             <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs">
               <div className="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -849,7 +844,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {/* ========================================================
             TAB 4: OTORİTELERDE DURUM NASIL? (FATF, MASAK, OFAC, FinCEN, EBA)
             ======================================================== */}
-        {activeTab === 'authorities' && (
+        {(activeTab === 'talks' || activeTab === 'authorities') && (
           <section className="space-y-4">
             <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs">
               <div className="flex items-center justify-between pb-3 border-b border-slate-200 flex-wrap gap-2">
@@ -904,7 +899,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
 
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs">
                     <a
-                      href={auth.url}
+                      href={auth.authority === 'MASAK' ? 'https://masak.hmb.gov.tr' : (auth.url || 'https://masak.hmb.gov.tr')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#721c24] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
@@ -922,7 +917,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {/* ========================================================
             TAB 5: GÜNÜN AML SÖZLÜĞÜ (GÜNÜN 9 KAVRAMI + GEÇMİŞ ARŞİV)
             ======================================================== */}
-        {activeTab === 'glossary' && (
+        {(activeTab === 'talks' || activeTab === 'glossary') && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm p-4 sm:p-5 shadow-xs space-y-6">
             
             {/* 1. KISIM: GÜNÜN 9 KİLİT KAVRAMI */}
@@ -959,8 +954,9 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               </div>
             </div>
 
-            {/* 2. KISIM: O GÜNE KADARKİ TÜM KAVRAMLAR ARŞİVİ (TEKRARSIZ & ARAMALI) */}
-            <div className="space-y-3 pt-5 border-t-2 border-[#cbd5e1]">
+            {/* 2. KISIM: O GÜNE KADARKİ TÜM KAVRAMLAR ARŞİVİ (YALNIZCA SÖZLÜK SEKMESİNDE) */}
+            {activeTab === 'glossary' && (
+              <div className="space-y-3 pt-5 border-t-2 border-[#cbd5e1]">
               <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#e2e8f0]">
                 <div className="flex items-center gap-2">
                   <History className="w-4 h-4 text-slate-600" />
@@ -1016,6 +1012,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                 ))}
               </div>
             </div>
+          )}
 
           </section>
         )}

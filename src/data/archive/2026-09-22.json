@@ -220,25 +220,34 @@
       "title": "Etiyopya Acil Durumunun Sona Ermesi ve Yaptırım Kaldırma",
       "summary": "Etiyopya'daki insani ve insan hakları krizi nedeniyle ilan edilen ulusal acil durum sona erdi. Hazine Bakanlığı, Etiyopya ile ilgili belirli yaptırım listelerini kaldırdı ve Rusya ile ilgili genel lisansı değiştirdi.",
       "date": "22 Eylül 2026",
-      "url": "https://ofac.treasury.gov/recent-actions/20260918"
+      "url": "https://ofac.treasury.gov/recent-actions"
     },
     {
       "id": "auth-3",
       "authority": "FinCEN",
       "country": "ABD",
-      "title": "Finansal Kurumlara Şüpheli Faaliyet Bildirimi Çağrısı",
-      "summary": "FinCEN, finansal kurumları tetikte olmaya ve şüpheli faaliyetleri bildirmeye teşvik ediyor. Duyuru, mevcut tehdit ortamında proaktif şüpheli işlem raporlamasının önemini vurguluyor.",
-      "date": "22 Eylül 2026",
+      "title": "Finansal Kuruluşlara Şüpheli Faaliyetleri Bildirme Çağrısı",
+      "summary": "FinCEN, finansal kuruluşları dikkatli olmaya ve şüpheli faaliyetleri bildirmeye teşvik eden bir duyuru yayımlamıştır. Duyuru, belirli bir tehdit veya trende ilişkin güncel rehberlik içermektedir.",
+      "date": "23 Eylül 2026",
       "url": "https://www.fincen.gov/news"
     },
     {
       "id": "auth-4",
+      "authority": "FCA",
+      "country": "Birleşik Krallık",
+      "title": "Kredi Piyasasının Geleceğini Şekillendirmek: Yapay Zeka Çağında Düzenlemeyi Yeniden Düşünmek",
+      "summary": "FCA yetkilisi Alison Walters, Credit Week etkinliğinde yaptığı konuşmada yapay zeka çağında kredi piyasası düzenlemelerinin nasıl evrilmesi gerektiğini ele almıştır. Konuşma, inovasyon ve tüketici koruması arasındaki dengeye odaklanmaktadır.",
+      "date": "23 Eylül 2026",
+      "url": "https://www.fca.org.uk/news"
+    },
+    {
+      "id": "auth-5",
       "authority": "MASAK",
       "country": "Türkiye",
-      "title": "Mali Suçları Araştırma Kurulu Son Duyuruları",
-      "summary": "MASAK, yayımladığı son resmi bildiri ve yönergelerle yükümlülere uyum gerekliliklerini hatırlatıyor. Duyurular, şüpheli işlem bildirimi ve müşteri inceleme süreçlerine ilişkin güncel beklentileri kapsıyor.",
-      "date": "22 Eylül 2026",
-      "url": "https://masak.hmb.gov.tr/duyurular"
+      "title": "MASAK Son Duyurular ve Yönergeler",
+      "summary": "MASAK, mali suçlarla mücadele kapsamında son resmi bildiri ve yönergelerini yayımlamıştır. Duyurular, yükümlülükler, sektörel rehberlik ve uyum gerekliliklerine ilişkin güncellemeleri içermektedir.",
+      "date": "23 Eylül 2026",
+      "url": "https://masak.hmb.gov.tr"
     }
   ],
   "dailyGlossary": [
