@@ -301,25 +301,25 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
     phase1Model: "DeepSeek v4.1 Flash",
     phase2Model: "DeepSeek v4.1 Flash",
     phase1TokenUsage: {
-      promptTokens: 52400,
-      completionTokens: 26800,
-      reasoningTokens: 4800,
-      finalTokens: 22000,
-      totalTokens: 79200
+      promptTokens: 0,
+      completionTokens: 0,
+      reasoningTokens: 0,
+      finalTokens: 0,
+      totalTokens: 0
     },
     phase2TokenUsage: {
-      promptTokens: 8900,
-      completionTokens: 3400,
-      reasoningTokens: 700,
-      finalTokens: 2700,
-      totalTokens: 12300
+      promptTokens: 0,
+      completionTokens: 0,
+      reasoningTokens: 0,
+      finalTokens: 0,
+      totalTokens: 0
     },
     tokenUsage: {
-      promptTokens: 61300,
-      completionTokens: 30200,
-      reasoningTokens: 5500,
-      finalTokens: 24700,
-      totalTokens: 91500
+      promptTokens: 0,
+      completionTokens: 0,
+      reasoningTokens: 0,
+      finalTokens: 0,
+      totalTokens: 0
     },
     totalPostsAnalyzed: redditPosts.length || 72,
     totalTweetsAnalyzed: twitterPosts.length || 45,

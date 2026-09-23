@@ -218,13 +218,17 @@ ${arxivContext || "arXiv verisi bulunamadı."}
   const rawP1 = p1Json.choices?.[0]?.message?.content || "{}";
   const p1Data = safeParseJson(rawP1, "Phase 1");
   const p1Usage = p1Json.usage || {};
+  const p1PromptTokens = p1Usage.prompt_tokens ?? 0;
+  const p1CompletionTokens = p1Usage.completion_tokens ?? 0;
+  const p1ReasoningTokens = p1Usage.completion_tokens_details?.reasoning_tokens ?? 0;
+  const p1TotalTokens = p1Usage.total_tokens ?? (p1PromptTokens + p1CompletionTokens);
 
   const p1Tokens = {
-    promptTokens: p1Usage.prompt_tokens || 8800,
-    completionTokens: p1Usage.completion_tokens || 4200,
-    reasoningTokens: p1Usage.completion_tokens_details?.reasoning_tokens || 600,
-    finalTokens: (p1Usage.completion_tokens || 4200) - (p1Usage.completion_tokens_details?.reasoning_tokens || 0),
-    totalTokens: p1Usage.total_tokens || 13000
+    promptTokens: p1PromptTokens,
+    completionTokens: p1CompletionTokens,
+    reasoningTokens: p1ReasoningTokens,
+    finalTokens: p1CompletionTokens - p1ReasoningTokens,
+    totalTokens: p1TotalTokens
   };
 
   console.log("⚡ 2. LLM (Phase 2) - Model: DeepSeek v4.1 Flash: Yönetici sentezi hazırlanıyor...");
@@ -274,11 +278,11 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
 
   let p2Data = {};
   let p2Tokens = {
-    promptTokens: 1200,
-    completionTokens: 2000,
-    reasoningTokens: 400,
-    finalTokens: 1600,
-    totalTokens: 3200
+    promptTokens: 0,
+    completionTokens: 0,
+    reasoningTokens: 0,
+    finalTokens: 0,
+    totalTokens: 0
   };
 
   try {
@@ -306,12 +310,17 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
       const rawP2 = p2Json.choices?.[0]?.message?.content || "{}";
       p2Data = safeParseJson(rawP2, "Phase 2");
       const p2Usage = p2Json.usage || {};
+      const p2PromptTokens = p2Usage.prompt_tokens ?? 0;
+      const p2CompletionTokens = p2Usage.completion_tokens ?? 0;
+      const p2ReasoningTokens = p2Usage.completion_tokens_details?.reasoning_tokens ?? 0;
+      const p2TotalTokens = p2Usage.total_tokens ?? (p2PromptTokens + p2CompletionTokens);
+
       p2Tokens = {
-        promptTokens: p2Usage.prompt_tokens || 1200,
-        completionTokens: p2Usage.completion_tokens || 2000,
-        reasoningTokens: p2Usage.completion_tokens_details?.reasoning_tokens || 400,
-        finalTokens: (p2Usage.completion_tokens || 2000) - (p2Usage.completion_tokens_details?.reasoning_tokens || 0),
-        totalTokens: p2Usage.total_tokens || 3200
+        promptTokens: p2PromptTokens,
+        completionTokens: p2CompletionTokens,
+        reasoningTokens: p2ReasoningTokens,
+        finalTokens: p2CompletionTokens - p2ReasoningTokens,
+        totalTokens: p2TotalTokens
       };
     }
   } catch (err2) {
