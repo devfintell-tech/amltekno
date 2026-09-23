@@ -2,8 +2,8 @@
   "date": "23 Eylül 2026",
   "isoDate": "2026-09-23",
   "durationSeconds": 36,
-  "startedAt": "06:00:12",
-  "completedAt": "06:01:21",
+  "startedAt": "03:00:12",
+  "completedAt": "03:01:21",
   "activeModel": "DeepSeek v4.1 Flash",
   "phase1Model": "DeepSeek v4.1 Flash",
   "phase2Model": "DeepSeek v4.1 Flash",
@@ -276,6 +276,24 @@
       "id": "g-6",
       "term": "Sürekli KYC (Perpetual KYC)",
       "definition": "Müşteri kabulünde bir kez yapılan kimlik doğrulamasının ötesine geçen, müşteri risk profilinin sürekli izlendiği ve güncellendiği bir yaklaşımdır. İşlem davranışı, yaptırım listesi değişiklikleri ve olumsuz haberler gibi dinamik faktörler gerçek zamanlı olarak değerlendirilir. Bu sayede riskli durumlar ortaya çıktığı anda tespit edilir.",
+      "dateStr": "23 Eylül 2026"
+    },
+    {
+      "id": "g-7",
+      "term": "Smurfing (Yapılandırma / Parçalama)",
+      "definition": "Mevzuatça belirlenen yasal bildirim ve kimlik tespit eşiklerine takılmamak amacıyla, büyük tutardaki fonların birden fazla kişi veya hesap aracılığıyla küçük meblağlara bölünerek sisteme sokulması taktiğidir.",
+      "dateStr": "23 Eylül 2026"
+    },
+    {
+      "id": "g-8",
+      "term": "Para Katırı (Money Mule)",
+      "definition": "Suç gelirlerini veya dolandırıcılık yoluyla elde edilen paraları komisyon karşılığında veya kandırılarak kendi banka hesapları üzerinden transfer eden ve iz kaybettirmeyi amaçlayan aracı şahıslardır.",
+      "dateStr": "23 Eylül 2026"
+    },
+    {
+      "id": "g-9",
+      "term": "Kırmızı Bayrak Taraması (Red Flag Screening)",
+      "definition": "Müşterinin işlem profili, işlem sıklığı, coğrafi konumu ve karşı tarafları incelenerek olağandışı şüphe veya kara para aklama riskini gösteren erken uyarı sinyallerinin ve göstergelerinin taranması sürecidir.",
       "dateStr": "23 Eylül 2026"
     }
   ],

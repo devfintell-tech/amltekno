@@ -93,7 +93,7 @@ Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta 
 3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (Tam 3 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
 4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (Tam 3 adet CDD/KYC/UBO inovasyonu)
 5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Tam 4 adet resmi otorite duyurusu)
-6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 6 kavramı ve 2-3 cümlelik sade tanımı)
+6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 9 kavramı ve 2-3 cümlelik sade tanımı)
 
 Kurallar:
 - Açıklamaları öz, net ve doğrudan yaz (her madde için 2-3 cümle). Gereksiz ansiklopedik uzatmalardan kaçın.
@@ -319,14 +319,18 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
   }
 
   const durationSec = Math.round((Date.now() - startTime) / 1000);
+  const startTimeObj = new Date(startTime);
+  const endTimeObj = new Date();
+  const startedAt = startTimeObj.toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour12: false });
+  const completedAt = endTimeObj.toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour12: false });
 
   // Nihai Çift LLM Çıktısı
   return {
     date: p1Data.date || dateStr,
     isoDate: isoDate,
     durationSeconds: durationSec,
-    startedAt: "06:00:12",
-    completedAt: "06:01:21",
+    startedAt: startedAt,
+    completedAt: completedAt,
     activeModel: "DeepSeek v4.1 Flash",
     phase1Model: "DeepSeek v4.1 Flash",
     phase2Model: "DeepSeek v4.1 Flash",

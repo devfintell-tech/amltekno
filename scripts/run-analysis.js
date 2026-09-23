@@ -289,12 +289,13 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   const dateStr = today.toLocaleDateString('tr-TR', options);
   const isoDate = today.toISOString().slice(0, 10);
+  const nowTsi = today.toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour12: false });
 
   return {
     date: dateStr,
     isoDate: isoDate,
-    startedAt: "06:00:12",
-    completedAt: "06:01:21",
+    startedAt: nowTsi,
+    completedAt: nowTsi,
     durationSeconds: 34,
     activeModel: "DeepSeek v4.1 Flash",
     phase1Model: "DeepSeek v4.1 Flash",
