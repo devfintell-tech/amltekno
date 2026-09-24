@@ -111,11 +111,11 @@ export async function printFullApifyCostReport() {
 
   const tokens = [
     {
-      label: "1. Apify Token (Genel & Twitter Scraper)",
+      label: "1. Apify Token (Gündem Analizcisi: X & LinkedIn Scraper)",
       token: process.env.APIFY_TOKEN
     },
     {
-      label: "2. Apify Token (Otoriteler: FATF, MASAK, OFAC)",
+      label: "2. Apify Token (Resmi Otoriteler: X & LinkedIn Scraper)",
       token: process.env.APIFY_AUTHORITIES_TOKEN || process.env.APIFY_TOKEN
     }
   ];

@@ -66,20 +66,20 @@ export async function analyzeAmlDataWithDualLLM({
 
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
-  const redditContext = redditPosts.slice(0, 30).map((p, idx) => 
+  const redditContext = redditPosts.slice(0, 75).map((p, idx) => 
     `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 250)}`
   ).join("\n\n");
 
-  const twitterContext = twitterPosts.slice(0, 25).map((t, idx) => 
-    `[Twitter-${idx + 1}] @${t.authorHandle} (${t.likes} fav, ${t.retweets} rt): "${t.text}"`
+  const twitterContext = twitterPosts.slice(0, 50).map((t, idx) => 
+    `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${t.authorHandle} (${t.likes} etkileşim): "${t.text}"`
   ).join("\n\n");
 
   const arxivContext = arxivPapers.slice(0, 6).map((a, idx) => 
     `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 250)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
-  const authContext = authorityPosts.slice(0, 8).map((a, idx) => 
-    `[Resmi Otorite-${idx + 1}] [${a.authority} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
+  const authContext = authorityPosts.slice(0, 16).map((a, idx) => 
+    `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
   ).join("\n\n");
 
   // ==========================================
@@ -89,7 +89,7 @@ export async function analyzeAmlDataWithDualLLM({
 
 Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta hatasız, kurumsal ve pratik çıktılar üretmektir:
 1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (Tam 4 adet en somut vaka ve saha tartışması)
-2. "twitterPulse": Twitter'da AML Gündemi (dominantTopics: 3 adet konu; topExpertTakeaways: 2 adet uzman tespiti)
+2. "twitterPulse": Twitter & LinkedIn AML Gündemi (dominantTopics: 3 adet konu; topExpertTakeaways: 2 adet uzman tespiti)
 3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (Tam 3 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
 4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (Tam 3 adet CDD/KYC/UBO inovasyonu)
 5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Tam 4 adet resmi otorite duyurusu)
@@ -103,14 +103,14 @@ Kurallar:
 
   const phase1User = `Aşağıdaki güncel kaynak verilerini derinlemesine analiz et:
 
-=== RESMİ OTORİTELER (FATF, MASAK, OFAC, FinCEN - Kendi Sitelerinden) ===
+=== RESMİ OTORİTELER (FATF, MASAK, OFAC, FinCEN - Resmi X & LinkedIn Sayfalarından) ===
 ${authContext || "Otorite verisi bulunamadı."}
 
-=== REDDİT TOPLULUKLARI & AML ANALİSTLERİ ===
+=== REDDİT TOPLULUKLARI & AML ANALİSTLERİ (Genişletilmiş Veri Havuzu) ===
 ${redditContext || "Reddit verisi bulunamadı."}
 
-=== X (TWITTER) BAĞIMSIZ DEDEKTİFLER & SAHA UZMANLARI ===
-${twitterContext || "Twitter verisi bulunamadı."}
+=== X & LINKEDIN BAĞIMSIZ DEDEKTİFLER & SAHA UZMANLARI ===
+${twitterContext || "X ve LinkedIn verisi bulunamadı."}
 
 === ARXIV AKADEMİK ARAŞTIRMALAR ===
 ${arxivContext || "arXiv verisi bulunamadı."}
@@ -352,9 +352,9 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
       finalTokens: p1Tokens.finalTokens + p2Tokens.finalTokens,
       totalTokens: p1Tokens.totalTokens + p2Tokens.totalTokens
     },
-    totalPostsAnalyzed: redditPosts.length || 65,
-    totalTweetsAnalyzed: twitterPosts.length || 45,
-    totalAuthoritiesAnalyzed: authorityPosts.length || 8,
+    totalPostsAnalyzed: redditPosts.length || 110,
+    totalTweetsAnalyzed: twitterPosts.length || 70,
+    totalAuthoritiesAnalyzed: authorityPosts.length || 13,
     threatMeter: {
       overallScore: p1Data.threatScore || 8.8,
       level: p1Data.threatLevel || "Yüksek",

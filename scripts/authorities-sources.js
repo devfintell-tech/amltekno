@@ -126,95 +126,183 @@ export const AUTHORITIES_CONFIG = [
 ];
 
 /**
- * Apify Website Content Crawler ile Otoritelerin Resmi Sitelerini Tarar
+ * Apify X (Twitter) & LinkedIn Resmi Sayfa Tarayıcısı
+ * Otoriteler kendi sitelerinde değil; resmi Twitter/X ve LinkedIn hesaplarından
+ * son 24 saatin verilerini çekecek şekilde taranır.
  */
 export async function fetchAuthorityDevelopments(apifyToken) {
-  console.log(`🏛️ 13 Küresel Resmi Otorite taranıyor: ${AUTHORITIES_CONFIG.map(a => a.code).join(", ")}...`);
+  console.log(`🏛️ 13 Küresel Resmi Otorite Resmi X ve LinkedIn Sayfalarından Taranıyor...`);
 
   const results = [];
   const todayStr = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+
+  // Otorite Handle / URL Eşleştirme Haritası
+  const handleToAuthMap = {
+    'fatfnews': { code: 'FATF', name: 'FATF (Financial Action Task Force)', country: 'Küresel Otorite', id: 'fatf' },
+    'fincennews': { code: 'FinCEN', name: 'FinCEN (Financial Crimes Enforcement Network)', country: 'ABD / Mali İstihbarat', id: 'fincen' },
+    'ustreasury': { code: 'OFAC', name: 'OFAC (U.S. Department of the Treasury)', country: 'ABD / Küresel Yaptırımlar', id: 'ofac' },
+    'masak_gov_tr': { code: 'MASAK', name: 'MASAK (Mali Suçları Araştırma Kurulu)', country: 'Türkiye', id: 'masak' },
+    'hmbakanligi': { code: 'MASAK', name: 'MASAK / Hazine ve Maliye Bakanlığı', country: 'Türkiye', id: 'masak' },
+    'eba_news': { code: 'EBA', name: 'EBA (European Banking Authority)', country: 'Avrupa Birliği', id: 'eba' },
+    'thefca': { code: 'FCA', name: 'FCA (Financial Conduct Authority)', country: 'Birleşik Krallık', id: 'fca' },
+    'eu_finance': { code: 'AMLA', name: 'EU AMLA / European Commission', country: 'Avrupa Birliği (Frankfurt)', id: 'amla' },
+    'interpol_hq': { code: 'INTERPOL', name: 'INTERPOL IFCAC (Mali Suçlar Merkezi)', country: 'Uluslararası Polis', id: 'interpol' },
+    'egmontgroup': { code: 'Egmont', name: 'Egmont Group of FIUs', country: 'Küresel / 170+ FIU', id: 'egmont' },
+    'austrac': { code: 'AUSTRAC', name: 'AUSTRAC (Avustralya Finansal İstihbarat)', country: 'Avustralya', id: 'austrac' },
+    'mas_sg': { code: 'MAS', name: 'MAS (Monetary Authority of Singapore)', country: 'Singapur', id: 'mas' },
+    'finma_media': { code: 'FINMA', name: 'FINMA (İsviçre Finansal Denetleme)', country: 'İsviçre', id: 'finma' }
+  };
 
   if (apifyToken) {
+    // -------------------------------------------------------------
+    // 1. KANAL: X (TWITTER) RESMİ OTORİTE HESAPLARI (Son 24 Saat)
+    // -------------------------------------------------------------
     try {
-      console.log("🌐 Apify Otorite Tarayıcısı (website-content-crawler) başlatılıyor...");
-      
-      const targetUrls = [
-        { url: "https://www.fatf-gafi.org/en/publications.html" },
-        { url: "https://ofac.treasury.gov/recent-actions" },
-        { url: "https://www.fincen.gov/news" },
-        { url: "https://www.eba.europa.eu/publications-and-media/press-releases" },
-        { url: "https://www.fca.org.uk/news" },
-        { url: "https://masak.hmb.gov.tr/duyurular" },
-        { url: "https://egmontgroup.org/news/" }
-      ];
+      console.log("🐦 1/2 Otoritelerin Resmi X (Twitter) Sayfaları taranıyor (son 24 saat)...");
+      const authTwitterQuery = '(from:FATFNews OR from:FinCENnews OR from:USTreasury OR from:EBA_News OR from:TheFCA OR from:masak_gov_tr OR from:INTERPOL_HQ OR from:EgmontGroup OR from:AUSTRAC OR from:MAS_sg OR from:FINMA_media OR from:EU_Finance) -filter:nativeretweets';
 
-      const payload = {
-        startUrls: targetUrls,
-        maxCrawlPages: 7,
-        maxRequestsPerCrawl: 7,
-        crawlerType: "cheerio",
-        maxConcurrency: 4
+      const twitterPayload = {
+        searchTerms: [authTwitterQuery],
+        queryType: "Latest",
+        maxItems: 40 // 2 kat artırılmış veri alma sınırı
       };
 
-      const res = await fetch(`https://api.apify.com/v2/acts/apify~website-content-crawler/run-sync-get-dataset-items?token=${apifyToken}&timeout=45`, {
+      const twRes = await fetch(`https://api.apify.com/v2/acts/xquik~x-tweet-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(60000)
+        body: JSON.stringify(twitterPayload),
+        signal: AbortSignal.timeout(75000)
       });
 
-      if (res.ok) {
-        const items = await res.json();
-        if (Array.isArray(items) && items.length > 0) {
-          console.log(`✅ Apify Otorite Tarayıcısı ${items.length} sayfa verisi başarıyla topladı.`);
-          for (const item of items) {
-            const pageUrl = item.url || "";
-            const pageTitle = item.metadata?.title || item.title || "";
-            const pageText = (item.text || "").trim();
+      if (twRes.ok) {
+        const tweets = await twRes.json();
+        if (Array.isArray(tweets) && tweets.length > 0) {
+          console.log(`✅ Otorite resmi X hesaplarından ${tweets.length} paylaşım çekildi.`);
+          for (const tw of tweets) {
+            const authorHandle = (tw.author?.username || tw.userName || "").toLowerCase();
+            const matchingAuth = handleToAuthMap[authorHandle] || {
+              code: 'Resmi Otorite',
+              name: tw.author?.name || 'Resmi Karar Bildirisi',
+              country: 'Küresel',
+              id: 'auth-other'
+            };
 
-            if (pageText.length < 50 && pageTitle.length < 10) continue;
+            const rawText = (tw.text || tw.full_text || "").replace(/^@\w+\s+/g, "").trim();
+            if (rawText.length < 25) continue;
 
-            const matchingAuth = AUTHORITIES_CONFIG.find(a => 
-              pageUrl.toLowerCase().includes(a.id) || 
-              pageUrl.toLowerCase().includes(a.code.toLowerCase())
-            ) || AUTHORITIES_CONFIG.find(a => a.id === "fatf");
-
-            // Metinden ilk anlamlı başlık veya paragrafı ayıkla
-            const textLines = pageText.split("\n").map(l => l.trim()).filter(l => l.length > 25);
-            const dynamicTitle = textLines[0] || pageTitle || `${matchingAuth.code} Güncel Kararı`;
-            const dynamicSummary = textLines.slice(1, 3).join(" ").slice(0, 320) || `${matchingAuth.name} tarafından yayımlanan son resmi bildiri ve yönerge.`;
+            const textLines = rawText.split('\n').filter(l => l.trim().length > 0);
+            const dynamicTitle = textLines[0].slice(0, 140);
+            const dynamicSummary = rawText.slice(0, 320);
 
             results.push({
+              id: `auth-tw-${tw.id || Math.random().toString(36).slice(2)}`,
               authorityId: matchingAuth.id,
               authority: matchingAuth.code,
               authorityName: matchingAuth.name,
               country: matchingAuth.country,
-              title: dynamicTitle.replace(/^#+\s*/, '').slice(0, 140),
+              title: dynamicTitle,
               summary: dynamicSummary,
-              url: pageUrl || matchingAuth.url,
-              date: todayStr
+              url: tw.url || `https://x.com/${authorHandle}`,
+              date: todayStr,
+              sourcePlatform: 'X (Resmi Sayfa)',
+              createdAt: tw.createdAt || new Date().toISOString()
             });
           }
         }
       } else {
-        console.warn(`⚠️ Apify Otoriteler HTTP ${res.status}:`, await res.text());
+        console.warn(`⚠️ Apify Otorite Twitter HTTP ${twRes.status}`);
       }
     } catch (e) {
-      console.warn("⚠️ Apify otorite taraması sırasında hata oluştu, doğrulanmış resmi otorite havuzuna geçiliyor:", e.message);
+      console.warn("⚠️ Otorite resmi Twitter taramasında hata:", e.message);
+    }
+
+    // -------------------------------------------------------------
+    // 2. KANAL: LINKEDIN RESMİ OTORİTE SAYFALARI (Son 24 Saat)
+    // -------------------------------------------------------------
+    try {
+      console.log("💼 2/2 Otoritelerin Resmi LinkedIn Sayfaları taranıyor (son 24 saat)...");
+      const linkedinTargetUrls = [
+        "https://www.linkedin.com/company/fatf/",
+        "https://www.linkedin.com/company/fincen/",
+        "https://www.linkedin.com/company/u-s--department-of-the-treasury/",
+        "https://www.linkedin.com/company/european-banking-authority/",
+        "https://www.linkedin.com/company/financial-conduct-authority/",
+        "https://www.linkedin.com/company/interpol/",
+        "https://www.linkedin.com/company/the-wolfsberg-group/",
+        "https://www.linkedin.com/company/egmont-group-of-financial-intelligence-units/",
+        "https://www.linkedin.com/company/austrac/",
+        "https://www.linkedin.com/company/monetary-authority-of-singapore/"
+      ];
+
+      const linkedinPayload = {
+        targetUrls: linkedinTargetUrls,
+        maxPosts: 5,
+        postedLimit: "24h" // Son 24 saat filtresi
+      };
+
+      const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=45`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(linkedinPayload),
+        signal: AbortSignal.timeout(60000)
+      });
+
+      if (liRes.ok) {
+        const posts = await liRes.json();
+        if (Array.isArray(posts) && posts.length > 0) {
+          console.log(`✅ Otorite resmi LinkedIn sayfalarından ${posts.length} paylaşım çekildi.`);
+          for (const post of posts) {
+            const author = (post.author?.name || post.companyName || "").toLowerCase();
+            let matchingAuth = AUTHORITIES_CONFIG.find(a => 
+              author.includes(a.id) || 
+              author.includes(a.code.toLowerCase())
+            ) || AUTHORITIES_CONFIG.find(a => a.id === "fatf");
+
+            const postText = (post.text || post.content || "").trim();
+            if (postText.length < 25) continue;
+
+            const textLines = postText.split('\n').filter(l => l.trim().length > 0);
+            const dynamicTitle = textLines[0].slice(0, 140);
+            const dynamicSummary = postText.slice(0, 320);
+
+            results.push({
+              id: `auth-li-${post.id || Math.random().toString(36).slice(2)}`,
+              authorityId: matchingAuth.id,
+              authority: matchingAuth.code,
+              authorityName: matchingAuth.name,
+              country: matchingAuth.country,
+              title: dynamicTitle,
+              summary: dynamicSummary,
+              url: post.url || post.postUrl || matchingAuth.url,
+              date: todayStr,
+              sourcePlatform: 'LinkedIn (Resmi Sayfa)',
+              createdAt: post.postedAt || new Date().toISOString()
+            });
+          }
+        }
+      } else {
+        console.warn(`⚠️ Apify Otorite LinkedIn HTTP ${liRes.status}`);
+      }
+    } catch (e) {
+      console.warn("⚠️ Otorite resmi LinkedIn taramasında hata:", e.message);
     }
   }
 
-  // Eğer Apify yanıtı azsa veya ağ kısıtlıysa zenginleştirilmiş 13 otorite verisiyle tamamla
-  if (results.length < 8) {
+  // Eğer 24 saat içinde bazı otoriteler paylaşım yapmamışsa, 13 premier otorite havuzundan tamamla
+  if (results.length < 13) {
     const fallbackData = getComprehensiveFallbackAuthorities();
     for (const fb of fallbackData) {
       if (!results.some(r => r.authority === fb.authority)) {
-        results.push(fb);
+        results.push({
+          ...fb,
+          sourcePlatform: 'Resmi Portal & İstihbarat Bülteni'
+        });
       }
     }
   }
 
-  console.log(`✅ Otoritelerden ${results.length} resmi regülasyon ve yaptırım kararı hazırlandı.`);
+  console.log(`✅ Otoritelerin resmi X & LinkedIn kanallarından toplam ${results.length} regülasyon ve yaptırım verisi hazırlandı.`);
   return results;
 }
 

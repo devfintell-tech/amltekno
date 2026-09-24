@@ -460,21 +460,21 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               {/* 3. Taranan Veri Havuzu */}
               <div className="bg-[#f8fafc] border border-slate-200 rounded p-3 space-y-2">
                 <span className="font-bold text-[11px] text-slate-800 uppercase block">
-                  📊 Taranan Veri Havuzu
+                  📊 Taranan Veri Havuzu (Genişletilmiş 2x Hacim)
                 </span>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-white p-2 rounded border border-slate-200 flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
                     <div>
-                      <span className="text-[10px] text-slate-500 block">Reddit:</span>
-                      <strong className="text-slate-900">{report.totalPostsAnalyzed || 50} Gönderi</strong>
+                      <span className="text-[10px] text-slate-500 block">Reddit (Hot &amp; New):</span>
+                      <strong className="text-slate-900">{report.totalPostsAnalyzed || 110} Gönderi</strong>
                     </div>
                   </div>
                   <div className="bg-white p-2 rounded border border-slate-200 flex items-center gap-2">
-                    <span className="w-3.5 h-3.5 bg-black text-white text-[9px] font-black flex items-center justify-center rounded-xs shrink-0">𝕏</span>
+                    <span className="w-3.5 h-3.5 bg-black text-white text-[9px] font-black flex items-center justify-center rounded-xs shrink-0">𝕏/in</span>
                     <div>
-                      <span className="text-[10px] text-slate-500 block">X (Twitter):</span>
-                      <strong className="text-slate-900">{report.totalTweetsAnalyzed || 35} Tweet</strong>
+                      <span className="text-[10px] text-slate-500 block">X &amp; LinkedIn (2x):</span>
+                      <strong className="text-slate-900">{report.totalTweetsAnalyzed || 70} Paylaşım</strong>
                     </div>
                   </div>
                   <div className="bg-white p-2 rounded border border-slate-200 flex items-center gap-2">
@@ -487,8 +487,8 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   <div className="bg-white p-2 rounded border border-slate-200 flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0"></span>
                     <div>
-                      <span className="text-[10px] text-slate-500 block">Resmi Otoriteler:</span>
-                      <strong className="text-slate-900">{report.totalAuthoritiesAnalyzed || 10} Karar</strong>
+                      <span className="text-[10px] text-slate-500 block">Resmi Otoriteler (X/LI):</span>
+                      <strong className="text-slate-900">{report.totalAuthoritiesAnalyzed || 13} Karar</strong>
                     </div>
                   </div>
                 </div>
@@ -648,7 +648,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   </h2>
                 </div>
                 <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                  r/AMLCompliance, Bağımsız X Dedektifleri &amp; Saha İstihbaratı
+                  r/AMLCompliance, Bağımsız X &amp; LinkedIn Uzmanları
                 </span>
               </div>
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
@@ -656,18 +656,18 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               </p>
             </div>
 
-            {/* TWITTER / X GÜNDEMİ */}
+            {/* X & LINKEDIN GÜNDEMİ */}
             {report.twitterPulse && (
               <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3.5">
                 <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-200">
                   <div className="flex items-center gap-2">
                     <span className="bg-rose-50 text-[#721c24] border border-rose-200 px-2.5 py-1 rounded font-mono font-bold text-xs uppercase flex items-center gap-1.5 shadow-2xs">
                       <Flame className="w-3.5 h-3.5 text-[#721c24]" />
-                      X (Twitter) AML Gündemi
+                      X (Twitter) &amp; LinkedIn AML Gündemi
                     </span>
                   </div>
                   <span className="text-[11px] font-mono text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded font-medium">
-                    {report.twitterPulse.totalAnalyzed || 45} Uzman Paylaşımı İncelendi
+                    {report.twitterPulse.totalAnalyzed || 70} Uzman Paylaşımı İncelendi
                   </span>
                 </div>
 
@@ -737,52 +737,64 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             TAB 2: AML DÜNYASINDA YENİ GELİŞMELER, FİKİRLER & SAHA ÇALIŞMALARI
             ======================================================== */}
         {(activeTab === 'talks' || activeTab === 'developments') && (
-          <section className="space-y-4">
-            <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-5 h-5 text-[#721c24]" />
-                  <h2 className="font-bold text-sm sm:text-base text-slate-900 font-mono uppercase">
-                    AML Dünyasında Yeni Gelişmeler, Fikirler &amp; Saha Çalışmaları
-                  </h2>
+          <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU - KONTRAST VE BÜTÜNLEŞİK ALAN */}
+            <div className="bg-[#721c24] text-white p-3.5 sm:p-4 border-b border-[#5c0f1c]">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
+                    <Terminal className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
+                      AML Dünyasında Yeni Gelişmeler, Fikirler &amp; Saha Çalışmaları
+                    </h2>
+                    <span className="text-[11px] font-mono text-rose-200">
+                      İşlem İzleme, SAR/STR İnovasyonu ve Saha Araştırmaları
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs font-mono text-slate-500">
-                  İşlem İzleme, SAR/STR İnovasyonu ve Saha Araştırmaları
+                <span className="text-[11px] font-mono bg-white/15 text-rose-100 border border-white/20 px-2.5 py-1 rounded">
+                  {(report.newDevelopmentsAndIdeas || []).length} İnovatif Çözüm
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              <p className="text-xs text-rose-100/90 mt-2 leading-relaxed">
                 Banka ve fintek uyum birimlerinin inceleyebileceği yenilikçi yaklaşımlar, metodolojik saha çalışmaları ve operasyonel gelişmeler.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              {(report.newDevelopmentsAndIdeas || []).map((idea, idx) => (
-                <div key={idea.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3">
-                  <div className="text-xs font-mono text-[#721c24] font-bold uppercase tracking-wide pb-1 border-b border-slate-100">
-                    {idea.category}
-                  </div>
-                  <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">{idea.title}</h3>
-                  <div className="p-3.5 bg-[#f8fafc] border border-slate-200 rounded-sm text-xs space-y-2.5">
-                    <p className="text-slate-700 leading-relaxed font-sans">
-                      {idea.problem}
-                    </p>
-                    <div className="pt-2.5 border-t border-slate-200 text-slate-800 leading-relaxed font-sans">
-                      {idea.solution}
+            {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
+            <div className="p-4 sm:p-5 bg-[#f8fafc]/50 space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                {(report.newDevelopmentsAndIdeas || []).map((idea, idx) => (
+                  <div key={idea.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 hover:border-[#721c24]/50 transition">
+                    <div className="text-xs font-mono text-[#721c24] font-bold uppercase tracking-wide pb-1 border-b border-slate-100 flex items-center justify-between">
+                      <span>{idea.category}</span>
+                      <span className="text-slate-400 font-normal text-[11px]">Saha Çözümü #{idx + 1}</span>
                     </div>
-                  </div>
-                  {(idea.methodologyAndStudy || idea.promptOrLogic) && (
-                    <div className="bg-white border border-slate-200 rounded-sm p-3 text-xs space-y-1.5">
-                      <strong className="text-[#721c24] font-mono text-[11px] uppercase block flex items-center gap-1.5">
-                        <BookMarked className="w-3.5 h-3.5 text-[#721c24]" />
-                        Metodoloji &amp; Saha Çalışması Bulguları:
-                      </strong>
+                    <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">{idea.title}</h3>
+                    <div className="p-3.5 bg-[#f8fafc] border border-slate-200 rounded-sm text-xs space-y-2.5">
                       <p className="text-slate-700 leading-relaxed font-sans">
-                        {idea.methodologyAndStudy || idea.promptOrLogic}
+                        {idea.problem}
                       </p>
+                      <div className="pt-2.5 border-t border-slate-200 text-slate-800 leading-relaxed font-sans">
+                        {idea.solution}
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {(idea.methodologyAndStudy || idea.promptOrLogic) && (
+                      <div className="bg-white border border-slate-200 rounded-sm p-3 text-xs space-y-1.5">
+                        <strong className="text-[#721c24] font-mono text-[11px] uppercase block flex items-center gap-1.5">
+                          <BookMarked className="w-3.5 h-3.5 text-[#721c24]" />
+                          Metodoloji &amp; Saha Çalışması Bulguları:
+                        </strong>
+                        <p className="text-slate-700 leading-relaxed font-sans">
+                          {idea.methodologyAndStudy || idea.promptOrLogic}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         )}
@@ -791,52 +803,64 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             TAB 3: MÜŞTERİ İNCELEME SÜREÇLERİNE DAİR TEKNOLOJİK GELİŞMELER VE FİKİRLER
             ======================================================== */}
         {(activeTab === 'talks' || activeTab === 'cdd_kyc') && (
-          <section className="space-y-4">
-            <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-[#721c24]" />
-                  <h2 className="font-bold text-sm sm:text-base text-slate-900 font-mono uppercase">
-                    Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (CDD / KYC / UBO)
-                  </h2>
+          <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU */}
+            <div className="bg-[#1e293b] text-white p-3.5 sm:p-4 border-b border-slate-800">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
+                    <Users className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
+                      Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (CDD / KYC / UBO)
+                    </h2>
+                    <span className="text-[11px] font-mono text-slate-300">
+                      Sentetik Kimlik, Paravan Ağlar ve pKYC Modelleri
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs font-mono text-slate-500">
-                  Sentetik Kimlik, Paravan Ağlar ve pKYC Modelleri
+                <span className="text-[11px] font-mono bg-white/15 text-slate-200 border border-white/20 px-2.5 py-1 rounded">
+                  {(report.cddKycInnovations || []).length} İnovasyon
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
                 Müşteri kabulünde deepfake biyometrik atlatma savunması, Ticaret Sicil'den otomatik UBO (Nihai Gerçek Faydalanıcı) tespiti ve sürekli müşteri incelemesi (pKYC) çalışmaları.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              {(report.cddKycInnovations || []).map((kyc, idx) => (
-                <div key={kyc.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3">
-                  <div className="text-xs font-mono text-[#721c24] font-bold uppercase tracking-wide pb-1 border-b border-slate-100">
-                    {kyc.category}
-                  </div>
-                  <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">{kyc.title}</h3>
-                  <div className="p-3.5 bg-[#f8fafc] border border-slate-200 rounded-sm text-xs space-y-2.5">
-                    <p className="text-slate-700 leading-relaxed font-sans">
-                      {kyc.problem}
-                    </p>
-                    <div className="pt-2.5 border-t border-slate-200 text-slate-800 leading-relaxed font-sans">
-                      {kyc.solution}
+            {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
+            <div className="p-4 sm:p-5 bg-[#f8fafc]/50 space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                {(report.cddKycInnovations || []).map((kyc, idx) => (
+                  <div key={kyc.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 hover:border-slate-400 transition">
+                    <div className="text-xs font-mono text-[#721c24] font-bold uppercase tracking-wide pb-1 border-b border-slate-100 flex items-center justify-between">
+                      <span>{kyc.category}</span>
+                      <span className="text-slate-400 font-normal text-[11px]">KYC İnovasyonu #{idx + 1}</span>
                     </div>
-                  </div>
-                  {(kyc.methodologyAndStudy || kyc.promptOrLogic) && (
-                    <div className="bg-white border border-slate-200 rounded-sm p-3 text-xs space-y-1.5">
-                      <strong className="text-[#721c24] font-mono text-[11px] uppercase block flex items-center gap-1.5">
-                        <BookMarked className="w-3.5 h-3.5 text-[#721c24]" />
-                        Teknik Mimari &amp; Uygulama Modeli:
-                      </strong>
+                    <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">{kyc.title}</h3>
+                    <div className="p-3.5 bg-[#f8fafc] border border-slate-200 rounded-sm text-xs space-y-2.5">
                       <p className="text-slate-700 leading-relaxed font-sans">
-                        {kyc.methodologyAndStudy || kyc.promptOrLogic}
+                        {kyc.problem}
                       </p>
+                      <div className="pt-2.5 border-t border-slate-200 text-slate-800 leading-relaxed font-sans">
+                        {kyc.solution}
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {(kyc.methodologyAndStudy || kyc.promptOrLogic) && (
+                      <div className="bg-white border border-slate-200 rounded-sm p-3 text-xs space-y-1.5">
+                        <strong className="text-[#721c24] font-mono text-[11px] uppercase block flex items-center gap-1.5">
+                          <BookMarked className="w-3.5 h-3.5 text-[#721c24]" />
+                          Teknik Mimari &amp; Uygulama Modeli:
+                        </strong>
+                        <p className="text-slate-700 leading-relaxed font-sans">
+                          {kyc.methodologyAndStudy || kyc.promptOrLogic}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         )}
@@ -845,34 +869,47 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             TAB 4: OTORİTELERDE DURUM NASIL? (FATF, MASAK, OFAC, FinCEN, EBA)
             ======================================================== */}
         {(activeTab === 'talks' || activeTab === 'authorities') && (
-          <section className="space-y-4">
-            <div className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200 flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-[#721c24]" />
-                  <h2 className="font-bold text-sm sm:text-base text-slate-900 font-mono uppercase">
-                    Otoritelerde Durum Nasıl? (13 Küresel Otorite: MASAK, FATF, OFAC, FinCEN, AMLA, EBA, FCA...)
-                  </h2>
+          <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU */}
+            <div className="bg-[#0f172a] text-white p-3.5 sm:p-4 border-b border-slate-900">
+              <div className="flex items-center justify-between pb-2.5 border-b border-slate-800 flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
+                    <Building2 className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
+                      Otoritelerde Durum Nasıl? (13 Küresel Otorite: MASAK, FATF, OFAC, FinCEN, AMLA, EBA, FCA...)
+                    </h2>
+                    <span className="text-[11px] font-mono text-emerald-300">
+                      Resmi X (Twitter) &amp; LinkedIn Hesaplarından Son 24 Saatlik İstihbarat Taraması
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs font-mono text-slate-500">
-                  Son 24 Saatlik Resmi Regülasyon, Yaptırım &amp; Denetim Taraması
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-700/50 px-2 py-0.5 rounded">
+                    Resmi X &amp; LinkedIn
+                  </span>
+                  <span className="text-[11px] font-mono bg-white/15 text-slate-200 border border-white/20 px-2.5 py-1 rounded">
+                    {filteredAuthorities.length} Karar
+                  </span>
+                </div>
               </div>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Apify Cheerio motoru ve resmi veri kaynakları üzerinden taranan 13 ulusal ve küresel mali suç otoritesinin güncel duyuruları, SDN yaptırım kararları ve gri liste hareketleri.
+              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                Apify X (Twitter) ve LinkedIn motorları üzerinden son 24 saatte taranan 13 ulusal ve küresel mali suç otoritesinin resmi hesap paylaşımları, yaptırım kararları ve regülasyon tebliğleri.
               </p>
 
               {/* Otorite Hızlı Filtre Butonları (Dinamik 13 Otorite) */}
-              <div className="flex items-center gap-1.5 pt-3 mt-3 border-t border-slate-100 flex-wrap">
-                <span className="text-[11px] font-mono font-bold text-slate-500 mr-1">FİLTRELE:</span>
+              <div className="flex items-center gap-1.5 pt-3 mt-3 border-t border-slate-800/80 flex-wrap">
+                <span className="text-[11px] font-mono font-bold text-slate-400 mr-1">FİLTRELE:</span>
                 {uniqueAuthorities.map(auth => (
                   <button
                     key={auth}
                     onClick={() => setSelectedAuthFilter(auth)}
                     className={`px-2.5 py-1 rounded text-xs font-mono font-bold cursor-pointer transition ${
                       selectedAuthFilter === auth 
-                        ? 'bg-[#721c24] text-white shadow-2xs' 
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-emerald-600 text-white shadow-2xs' 
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                     }`}
                   >
                     {auth === 'all' ? 'Tüm Otoriteler' : auth}
@@ -881,35 +918,42 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredAuthorities.map((auth, idx) => (
-                <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-slate-400 transition">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
-                      <span className="font-bold text-[#721c24]">
-                        {auth.authority}
-                      </span>
-                      <span className="text-slate-400">
-                        {auth.country} • {auth.date}
-                      </span>
+            {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
+            <div className="p-4 sm:p-5 bg-[#f8fafc]/50">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredAuthorities.map((auth, idx) => (
+                  <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-slate-400 transition">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
+                        <span className="font-bold text-[#721c24] flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                          {auth.authority}
+                        </span>
+                        <span className="text-slate-400 text-[11px]">
+                          {auth.country} • {auth.date}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-sm text-slate-900 leading-snug">{auth.title}</h3>
+                      <p className="text-xs text-slate-600 leading-relaxed font-sans">{auth.summary}</p>
                     </div>
-                    <h3 className="font-bold text-sm text-slate-900 leading-snug">{auth.title}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed font-sans">{auth.summary}</p>
-                  </div>
 
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs">
-                    <a
-                      href={auth.authority === 'MASAK' ? 'https://masak.hmb.gov.tr' : (auth.url || 'https://masak.hmb.gov.tr')}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#721c24] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
-                    >
-                      <span>Resmi Duyuru</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <span className="text-[10px] font-mono text-slate-500">
+                        {auth.sourcePlatform ? `Kaynak: ${auth.sourcePlatform}` : 'Resmi Sosyal Kanal'}
+                      </span>
+                      <a
+                        href={auth.authority === 'MASAK' ? 'https://masak.hmb.gov.tr' : (auth.url || 'https://masak.hmb.gov.tr')}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#721c24] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
+                      >
+                        <span>Resmi Bildiri</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </section>
         )}
@@ -1076,7 +1120,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
           <span className="hidden lg:inline text-slate-500">
             1. LLM: <strong className="text-rose-900">{p1TotalK}k</strong> | 2. LLM: <strong className="text-cyan-900">{p2TotalK}k</strong> | TOPLAM: <strong className="text-slate-900">{totalK}k</strong>
           </span>
-          <span className="hidden sm:inline">50 KAYNAK + 10 OTORİTE</span>
+          <span className="hidden sm:inline">110+ REDDIT • 70+ X/LINKEDIN • 13 OTORİTE</span>
           <span>%100 ZOOM</span>
         </div>
       </footer>

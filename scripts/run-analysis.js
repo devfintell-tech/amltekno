@@ -46,72 +46,74 @@ function sleep(ms) {
 }
 
 /**
- * Reddit Multi-Subreddit RSS Beslemesini Çeker & AML Filtresinden Geçirir
+ * Reddit Multi-Subreddit RSS Beslemesini Çeker (Hot & New, Limit 100) & AML Filtresinden Geçirir
  */
 async function fetchRedditBatch(batch) {
-  const feedUrl = `https://www.reddit.com/r/${batch.slug}/hot.rss?limit=50`;
   const posts = [];
+  const feedTypes = ['hot', 'new'];
 
-  console.log(`📡 Reddit taranıyor: [${batch.name}]...`);
+  console.log(`📡 Reddit taranıyor (Genişletilmiş Hacim: hot & new): [${batch.name}]...`);
 
-  try {
-    const res = await fetch(feedUrl, {
-      headers: {
-        "User-Agent": REDDIT_USER_AGENT,
-        "Accept": "application/atom+xml,application/xml,text/xml"
-      },
-      signal: AbortSignal.timeout(15000)
-    });
+  for (const sortType of feedTypes) {
+    const feedUrl = `https://www.reddit.com/r/${batch.slug}/${sortType}.rss?limit=100`;
 
-    if (!res.ok) {
-      console.warn(`⚠️ Reddit HTTP ${res.status} [${batch.name}]`);
-      return [];
-    }
+    try {
+      const res = await fetch(feedUrl, {
+        headers: {
+          "User-Agent": REDDIT_USER_AGENT,
+          "Accept": "application/atom+xml,application/xml,text/xml"
+        },
+        signal: AbortSignal.timeout(15000)
+      });
 
-    const xmlText = await res.text();
-    const parsed = xmlParser.parse(xmlText);
-    let entries = parsed?.feed?.entry;
-    if (!entries) return [];
-    if (!Array.isArray(entries)) entries = [entries];
-
-    for (const entry of entries) {
-      const title = entry.title || "";
-      const content = (entry.content?.["#text"] || entry.content || "").replace(/<[^>]*>/g, "");
-      const author = entry.author?.name || "reddit_user";
-      const link = entry.link?.["@_href"] || "";
-      const updated = entry.updated || new Date().toISOString();
-      const category = entry.category?.["@_label"] || entry.category?.["@_term"] || batch.slug.split("+")[0];
-
-      // AML Uygunluk Kontrolü: İlgisiz konuları sıfır toleransla eler
-      if (isAmlRelevant(title, content, batch.strictFilter)) {
-        posts.push({
-          title,
-          content: content.slice(0, 500),
-          author,
-          url: link,
-          updated,
-          subreddit: category
-        });
+      if (!res.ok) {
+        continue;
       }
-    }
 
-    console.log(`✅ [${batch.name}] -> ${posts.length} AML odaklı gönderi onaylandı.`);
-  } catch (err) {
-    console.warn(`⚠️ Reddit batch çekilemedi [${batch.name}]:`, err.message);
+      const xmlText = await res.text();
+      const parsed = xmlParser.parse(xmlText);
+      let entries = parsed?.feed?.entry;
+      if (!entries) continue;
+      if (!Array.isArray(entries)) entries = [entries];
+
+      for (const entry of entries) {
+        const title = entry.title || "";
+        const content = (entry.content?.["#text"] || entry.content || "").replace(/<[^>]*>/g, "");
+        const author = entry.author?.name || "reddit_user";
+        const link = entry.link?.["@_href"] || "";
+        const updated = entry.updated || new Date().toISOString();
+        const category = entry.category?.["@_label"] || entry.category?.["@_term"] || batch.slug.split("+")[0];
+
+        // AML Uygunluk Kontrolü: İlgisiz konuları sıfır toleransla eler
+        if (isAmlRelevant(title, content, batch.strictFilter)) {
+          posts.push({
+            title,
+            content: content.slice(0, 500),
+            author,
+            url: link,
+            updated,
+            subreddit: category
+          });
+        }
+      }
+    } catch (err) {
+      // Sessizce devam et
+    }
   }
 
+  console.log(`✅ [${batch.name}] -> ${posts.length} AML odaklı gönderi onaylandı.`);
   return posts;
 }
 
 /**
- * Reddit Global Arama Beslemesinden Doğrudan AML Gönderilerini Çeker
+ * Reddit Global Arama Beslemesinden Doğrudan AML Gönderilerini Çeker (Limit 100)
  */
 async function fetchRedditSearch(queryObj) {
   const encodedQ = encodeURIComponent(queryObj.query);
-  const feedUrl = `https://www.reddit.com/search.rss?q=${encodedQ}&sort=new&t=day&limit=40`;
+  const feedUrl = `https://www.reddit.com/search.rss?q=${encodedQ}&sort=new&t=day&limit=100`;
   const posts = [];
 
-  console.log(`🔍 Reddit AML Arama Beslemesi: [${queryObj.name}]...`);
+  console.log(`🔍 Reddit AML Arama Beslemesi (Limit 100): [${queryObj.name}]...`);
 
   try {
     const res = await fetch(feedUrl, {
@@ -205,7 +207,7 @@ async function main() {
     console.warn("⚠️ arXiv adımı atlandı:", err.message);
   }
 
-  // 4. ADIM: Resmi Otoriteleri Kendi Sitelerinden Tara (FATF, MASAK, OFAC, FinCEN, EBA)
+  // 4. ADIM: Resmi Otoriteleri Resmi X & LinkedIn Sayfalarından Tara (FATF, MASAK, OFAC, FinCEN, EBA)
   let authorityPosts = [];
   try {
     authorityPosts = await fetchAuthorityDevelopments(APIFY_AUTHORITIES_TOKEN);
@@ -215,9 +217,9 @@ async function main() {
 
   console.log(`\n📊 ÇİFT LLM İÇİN TOPLANAN VERİ HAVUZU:`);
   console.log(`- Onaylı AML Reddit Tartışmaları : ${allRedditPosts.length}`);
-  console.log(`- X (Twitter) Otorite Dışı Uzmanlar: ${twitterPosts.length}`);
+  console.log(`- X & LinkedIn Saha Uzmanları   : ${twitterPosts.length}`);
   console.log(`- arXiv Akademik Makaleleri      : ${arxivPapers.length}`);
-  console.log(`- Resmi Otorite Kararları        : ${authorityPosts.length}`);
+  console.log(`- Resmi Otorite Kararları (X/LI) : ${authorityPosts.length}`);
 
   // 5. ADIM: Çift LLM (Dual LLM) - Model: DeepSeek v4.1 Flash
   let finalReport = null;

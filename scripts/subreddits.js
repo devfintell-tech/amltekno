@@ -50,12 +50,22 @@ export const REDDIT_SEARCH_QUERIES = [
   {
     name: "Küresel AML & Finansal Suç Tartışmaları",
     query: 'title:(AML OR "anti-money laundering" OR "money laundering" OR "FinCEN" OR "MASAK" OR "OFAC" OR "SAR narrative" OR "smurfing" OR "money mule")',
-    limit: 50
+    limit: 100
   },
   {
     name: "İşlem İzleme & Müşteri İnceleme (CDD/KYC) Zorlukları",
     query: 'title:("transaction monitoring" OR "KYC remediation" OR "beneficial ownership" OR "alert fatigue" OR "false positive" OR "PEP screening")',
-    limit: 50
+    limit: 100
+  },
+  {
+    name: "Sentetik Kimlik, Paravan Şirketler & Yaptırımlar",
+    query: 'title:("synthetic identity" OR "deepfake liveness" OR "sanctions evasion" OR "shadow fleet" OR "shell company" OR "wire fraud")',
+    limit: 100
+  },
+  {
+    name: "Kripto Fon Aklama, Mikser & Travel Rule",
+    query: 'title:("crypto mixer" OR "tornado cash" OR "travel rule" OR "unhosted wallet" OR "chain analysis" OR "crypto laundering")',
+    limit: 100
   }
 ];
 

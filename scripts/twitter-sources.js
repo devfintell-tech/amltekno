@@ -52,23 +52,31 @@ export const TWITTER_SEARCH_BATCHES = [
 ];
 
 /**
- * Apify Twitter Scraper ile Otorite Dışı Paylaşımları Çeker ve Tartım Yapar
+ * Apify X (Twitter) & LinkedIn Ortak Gündem & Saha Uzmanları Taraması
+ * Hem X (Twitter) hem LinkedIn üzerindeki bağımsız analistleri, dedektifleri,
+ * uyum görevlilerini ve RegTech düşünce önderlerini tarar.
+ * Her iki API için de veri sınırları 2 KATINA çıkarılmıştır.
  */
 export async function fetchAmlTwitterPosts(apifyToken) {
   if (!apifyToken) {
-    console.warn("⚠️ APIFY_TOKEN tanımlanmamış, Twitter adımı atlanıyor.");
+    console.warn("⚠️ APIFY_TOKEN tanımlanmamış, X & LinkedIn adımı atlanıyor.");
     return [];
   }
 
-  console.log("🐦 Twitter taranıyor (Bağımsız analistler, dedektifler ve saha paylaşımları)...");
+  const combinedPosts = [];
 
-  const payload = {
-    searchTerms: TWITTER_SEARCH_BATCHES,
-    queryType: "Latest",
-    maxItems: 120
-  };
-
+  // ==============================================================
+  // 1. KANAL: X (TWITTER) SAHA & TOPLULUK TARTIŞMALARI (2X LİMİT)
+  // ==============================================================
   try {
+    console.log("🐦 1/2 X (Twitter) taranıyor (2x Limit: 240 Gönderi, Bağımsız Analistler & Dedektifler)...");
+
+    const payload = {
+      searchTerms: TWITTER_SEARCH_BATCHES,
+      queryType: "Latest",
+      maxItems: 240 // 2 KATINA ÇIKARILDI (Eski: 120)
+    };
+
     const res = await fetch(`https://api.apify.com/v2/acts/xquik~x-tweet-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=180`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -76,67 +84,131 @@ export async function fetchAmlTwitterPosts(apifyToken) {
       signal: AbortSignal.timeout(200000)
     });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.warn(`⚠️ Apify HTTP ${res.status} döndü: ${errText.slice(0, 150)}`);
-      return getFallbackExpertTweets();
+    if (res.ok) {
+      const items = await res.json();
+      if (Array.isArray(items) && items.length > 0) {
+        // Nitelikli ve anlamlı AML tweetlerini filtrele
+        const meaningful = items.filter(t => {
+          const text = (t.text || t.full_text || "").replace(/^@\w+\s+/g, "").trim();
+          return text.length >= 35 && !text.startsWith("https://t.co");
+        });
+
+        // En güncel ve en çok etkileşim alanlara göre sırala
+        meaningful.sort((a, b) => {
+          const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          const scoreA = timeA + (a.likeCount || 0) * 1000000;
+          const scoreB = timeB + (b.likeCount || 0) * 1000000;
+          return scoreB - scoreA;
+        });
+
+        // 2 KATINA ÇIKARILDI: 35 yerine 70 tweet al
+        const mapped = meaningful.slice(0, 70).map(t => {
+          const handle = t.author?.username || t.userName || "aml_expert";
+          const name = t.author?.name || t.name || handle;
+          const avatar = t.author?.profilePicture || t.profilePicture || "";
+          const text = (t.text || t.full_text || "").trim();
+          return {
+            id: String(t.id || Math.random().toString(36).slice(2)),
+            platform: "twitter",
+            authorName: name,
+            authorHandle: handle,
+            authorAvatar: avatar,
+            text: text,
+            likes: t.likeCount || 0,
+            retweets: t.retweetCount || 0,
+            createdAt: t.createdAt || new Date().toISOString(),
+            url: t.url || `https://x.com/${handle}/status/${t.id || ''}`
+          };
+        });
+
+        combinedPosts.push(...mapped);
+        console.log(`✅ X (Twitter) analist ve dedektif havuzundan ${mapped.length} gönderi işlendi.`);
+      }
+    } else {
+      console.warn(`⚠️ Apify Twitter HTTP ${res.status}`);
     }
+  } catch (err) {
+    console.warn("⚠️ Apify Twitter çekimi sırasında hata oluştu:", err.message);
+  }
 
-    const items = await res.json();
-    if (!Array.isArray(items) || items.length === 0) {
-      console.log("ℹ️ Canlı tweet akışı boş döndü, doğrulanmış uzman havuzundan veri sağlanıyor.");
-      return getFallbackExpertTweets();
+  // ==============================================================
+  // 2. KANAL: LINKEDIN UZMAN & TOPLULUK GÜNDEMİ (Son 24 Saat)
+  // ==============================================================
+  try {
+    console.log("💼 2/2 LinkedIn AML Gündemi taranıyor (Son 24 Saat, Uyum & FinCrime Profesyonelleri)...");
+
+    const linkedinPayload = {
+      searchQueries: [
+        "AML compliance",
+        "financial crime transaction monitoring",
+        "sanctions evasion OFAC",
+        "money mule smurfing"
+      ],
+      postedLimit: "24h", // Son 24 saat
+      maxPosts: 10
+    };
+
+    const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-post-search/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(linkedinPayload),
+      signal: AbortSignal.timeout(75000)
+    });
+
+    if (liRes.ok) {
+      const liItems = await liRes.json();
+      if (Array.isArray(liItems) && liItems.length > 0) {
+        const meaningfulLi = liItems.filter(p => {
+          const text = (p.content || p.text || "").trim();
+          return text.length >= 35;
+        });
+
+        const mappedLi = meaningfulLi.slice(0, 25).map(p => {
+          const author = p.author?.name || p.authorName || "LinkedIn AML Uzmanı";
+          const headline = p.author?.info || p.author?.headline || "Compliance & FinCrime Professional";
+          const text = (p.content || p.text || "").trim();
+          const postUrl = p.linkedinUrl || p.shareLinkedinUrl || p.socialContent?.shareUrl || "https://www.linkedin.com";
+          const createdAt = p.postedAt?.date || p.postedAt || new Date().toISOString();
+          const likes = p.engagement?.likes || p.numLikes || 0;
+          const comments = p.engagement?.comments || p.numComments || 0;
+          return {
+            id: `li-${p.id || p.entityId || Math.random().toString(36).slice(2)}`,
+            platform: "linkedin",
+            authorName: author,
+            authorHandle: headline.slice(0, 45),
+            authorAvatar: p.author?.avatar?.url || p.author?.profilePicture || "",
+            text: text,
+            likes: likes,
+            retweets: comments,
+            createdAt: createdAt,
+            url: postUrl
+          };
+        });
+
+        combinedPosts.push(...mappedLi);
+        console.log(`✅ LinkedIn AML uzman paylaşımlarından ${mappedLi.length} gönderi işlendi.`);
+      }
+    } else {
+      console.warn(`⚠️ Apify LinkedIn Post Search HTTP ${liRes.status}`);
     }
+  } catch (err) {
+    console.warn("⚠️ Apify LinkedIn çekimi sırasında hata:", err.message);
+  }
 
-    // Nitelikli ve anlamlı AML tweetlerini filtrele
-    const meaningful = items.filter(t => {
-      const text = (t.text || t.full_text || "").replace(/^@\w+\s+/g, "").trim();
-      return text.length >= 35 && !text.startsWith("https://t.co");
-    });
-
-    // En güncel ve en çok etkileşim alanlara göre sırala
-    meaningful.sort((a, b) => {
-      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      const scoreA = timeA + (a.likeCount || 0) * 1000000;
-      const scoreB = timeB + (b.likeCount || 0) * 1000000;
-      return scoreB - scoreA;
-    });
-
-    const mapped = meaningful.slice(0, 35).map(t => {
-      const handle = t.author?.username || t.userName || "aml_expert";
-      const name = t.author?.name || t.name || handle;
-      const avatar = t.author?.profilePicture || t.profilePicture || "";
-      const text = (t.text || t.full_text || "").trim();
-      return {
-        id: String(t.id || Math.random().toString(36).slice(2)),
-        authorName: name,
-        authorHandle: handle,
-        authorAvatar: avatar,
-        text: text,
-        likes: t.likeCount || 0,
-        retweets: t.retweetCount || 0,
-        createdAt: t.createdAt || new Date().toISOString(),
-        url: t.url || `https://twitter.com/${handle}/status/${t.id || ''}`
-      };
-    });
-
-    if (mapped.length < 5) {
-      console.log("ℹ️ Canlı tweet sayısı az olduğu için uzman havuzuyla birleştiriliyor.");
-      const fallback = getFallbackExpertTweets();
-      for (const fb of fallback) {
-        if (!mapped.some(m => m.authorHandle === fb.authorHandle)) {
-          mapped.push(fb);
-        }
+  // Eğer toplam gönderi sayısı azsa zenginleştirilmiş uzman havuzundan destekle
+  if (combinedPosts.length < 10) {
+    console.log("ℹ️ Canlı sosyal akış sayısı az olduğu için doğrulanmış uzman havuzuyla birleştiriliyor.");
+    const fallback = getFallbackExpertTweets();
+    for (const fb of fallback) {
+      if (!combinedPosts.some(m => m.authorHandle === fb.authorHandle)) {
+        combinedPosts.push(fb);
       }
     }
-
-    console.log(`✅ X (Twitter) analist ve dedektif havuzundan ${mapped.length} gönderi hazırlandı.`);
-    return mapped;
-  } catch (err) {
-    console.warn("⚠️ Apify Twitter çekimi sırasında hata oluştu, yedek uzman havuzuna geçiliyor:", err.message);
-    return getFallbackExpertTweets();
   }
+
+  console.log(`🎯 Toplam X (Twitter) & LinkedIn Saha İstihbaratı: ${combinedPosts.length} gönderi.`);
+  return combinedPosts;
 }
 
 /**
