@@ -642,20 +642,23 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {/* ========================================================
             TAB 1: AML DÜNYASINDA NELER KONUŞULUYOR?
             ======================================================== */}
+        {/* ========================================================
+            TAB 1: AML DÜNYASINDA NELER KONUŞULUYOR?
+            ======================================================== */}
         {activeTab === 'talks' && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
-            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT WARM AMBER / TURUNCU */}
-            <div className="bg-gradient-to-r from-[#b45309] to-[#d97706] text-white p-3.5 sm:p-4 border-b border-[#92400e]">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT TURUNCU / WARM AMBER */}
+            <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded bg-white/15 flex items-center justify-center shrink-0 border border-white/20 shadow-xs">
-                    <MessageSquare className="w-4 h-4 text-amber-100" />
+                    <MessageSquare className="w-4 h-4 text-orange-100" />
                   </div>
                   <div>
                     <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
                       AML Dünyasında Neler Konuşuluyor? (Saha &amp; Topluluk Nabzı)
                     </h2>
-                    <span className="text-[11px] font-mono text-amber-100">
+                    <span className="text-[11px] font-mono text-orange-100">
                       r/AMLCompliance, Bağımsız X (Twitter) &amp; LinkedIn Uzmanları
                     </span>
                   </div>
@@ -664,7 +667,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   {report.twitterPulse?.totalAnalyzed || 95} Sosyal İstihbarat &amp; {(report.amlTalks || []).length} Saha Vakası
                 </span>
               </div>
-              <p className="text-xs text-amber-100/90 mt-2 leading-relaxed">
+              <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Uyum görevlilerinin, MASAK/OFAC analistlerinin ve bağımsız on-chain dedektiflerinin son 24 saat içinde tartıştığı pratik sorunlar, saha bulguları ve çözüm önerileri.
               </p>
             </div>
@@ -676,8 +679,8 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-200">
                     <div className="flex items-center gap-2">
-                      <span className="bg-amber-50 text-[#b45309] border border-amber-200 px-2.5 py-1 rounded font-mono font-bold text-xs uppercase flex items-center gap-1.5 shadow-2xs">
-                        <Flame className="w-3.5 h-3.5 text-[#b45309]" />
+                      <span className="bg-orange-50 text-[#c2410c] border border-orange-200/90 px-2.5 py-1 rounded font-mono font-bold text-xs uppercase flex items-center gap-1.5 shadow-2xs">
+                        <Flame className="w-3.5 h-3.5 text-[#ea580c]" />
                         X (Twitter) &amp; LinkedIn AML Gündemi
                       </span>
                     </div>
@@ -689,9 +692,9 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   {/* Twitter'da Öne Çıkan Başlıklar & Hacim Payları (Excel Hücre Kartları) */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {(report.twitterPulse.dominantTopics || []).map((t, idx) => (
-                      <div key={idx} className="bg-white border border-[#cbd5e1] rounded-sm p-3 space-y-1.5 hover:border-amber-500/50 transition shadow-2xs">
+                      <div key={idx} className="bg-white border border-[#cbd5e1] rounded-sm p-3 space-y-1.5 hover:border-orange-400 transition shadow-2xs">
                         <div className="flex items-center justify-between text-[11px] font-mono pb-1 border-b border-slate-100">
-                          <span className="font-bold text-[#b45309]">
+                          <span className="font-bold text-[#c2410c]">
                             Gündem #{idx + 1}
                           </span>
                           <span className="text-slate-500">
@@ -712,8 +715,8 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                       </span>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                         {report.twitterPulse.topExpertTakeaways.map((exp, idx) => (
-                          <div key={idx} className="bg-amber-50/40 border border-amber-200/60 rounded-sm p-2.5 text-xs space-y-1 shadow-2xs">
-                            <strong className="text-[#b45309] font-mono block text-[11px] font-bold">{exp.expert}</strong>
+                          <div key={idx} className="bg-orange-50/50 border border-orange-200/60 rounded-sm p-2.5 text-xs space-y-1 shadow-2xs">
+                            <strong className="text-[#c2410c] font-mono block text-[11px] font-bold">{exp.expert}</strong>
                             <p className="text-slate-600 text-[11px] leading-relaxed">{exp.highlight}</p>
                           </div>
                         ))}
@@ -738,7 +741,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                     <div key={talk.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-slate-400 transition">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
-                          <span className="font-bold text-[#b45309]">
+                          <span className="font-bold text-[#c2410c]">
                             {talk.category}
                           </span>
                           <span className="text-slate-400">
@@ -748,7 +751,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                         <h3 className="font-bold text-sm text-slate-900 leading-snug">{talk.title}</h3>
                         <p className="text-xs text-slate-600 leading-relaxed font-sans">{talk.summary}</p>
                       </div>
-                      <div className="p-3 bg-amber-50/50 border border-amber-200/80 rounded-sm text-xs mt-2">
+                      <div className="p-3 bg-orange-50/50 border border-orange-200/80 rounded-sm text-xs mt-2">
                         <p className="text-slate-800 leading-relaxed font-sans">{talk.keyInsight}</p>
                       </div>
                     </div>
@@ -766,17 +769,17 @@ ${(report.authoritiesPulse || []).map((a, i) => `
         {(activeTab === 'talks' || activeTab === 'developments') && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
             {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT TURUNCU / WARM AMBER */}
-            <div className="bg-gradient-to-r from-[#c2410c] to-[#d97706] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
+            <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded bg-white/15 flex items-center justify-center shrink-0 border border-white/20 shadow-xs">
-                    <Terminal className="w-4 h-4 text-amber-100" />
+                    <Terminal className="w-4 h-4 text-orange-100" />
                   </div>
                   <div>
                     <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
                       AML Dünyasında Yeni Gelişmeler, Fikirler &amp; Saha Çalışmaları
                     </h2>
-                    <span className="text-[11px] font-mono text-amber-100">
+                    <span className="text-[11px] font-mono text-orange-100">
                       İşlem İzleme, SAR/STR İnovasyonu ve Saha Araştırmaları
                     </span>
                   </div>
@@ -785,7 +788,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   {(report.newDevelopmentsAndIdeas || []).length} İnovatif Çözüm
                 </span>
               </div>
-              <p className="text-xs text-amber-100/90 mt-2 leading-relaxed">
+              <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Banka ve fintek uyum birimlerinin inceleyebileceği yenilikçi yaklaşımlar, metodolojik saha çalışmaları ve operasyonel gelişmeler.
               </p>
             </div>
@@ -831,18 +834,18 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             ======================================================== */}
         {(activeTab === 'talks' || activeTab === 'cdd_kyc') && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
-            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT WARM AMBER / BAKIR */}
-            <div className="bg-gradient-to-r from-[#b45309] to-[#c2410c] text-white p-3.5 sm:p-4 border-b border-[#92400e]">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT TURUNCU / WARM AMBER */}
+            <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded bg-white/15 flex items-center justify-center shrink-0 border border-white/20 shadow-xs">
-                    <Users className="w-4 h-4 text-amber-100" />
+                    <Users className="w-4 h-4 text-orange-100" />
                   </div>
                   <div>
                     <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
                       Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (CDD / KYC / UBO)
                     </h2>
-                    <span className="text-[11px] font-mono text-amber-100">
+                    <span className="text-[11px] font-mono text-orange-100">
                       Sentetik Kimlik, Paravan Ağlar ve pKYC Modelleri
                     </span>
                   </div>
@@ -851,7 +854,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   {(report.cddKycInnovations || []).length} İnovasyon
                 </span>
               </div>
-              <p className="text-xs text-amber-100/90 mt-2 leading-relaxed">
+              <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Müşteri kabulünde deepfake biyometrik atlatma savunması, Ticaret Sicil'den otomatik UBO (Nihai Gerçek Faydalanıcı) tespiti ve sürekli müşteri incelemesi (pKYC) çalışmaları.
               </p>
             </div>
@@ -897,46 +900,46 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             ======================================================== */}
         {(activeTab === 'talks' || activeTab === 'authorities') && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
-            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT WARM TERRACOTTA / AMBER */}
-            <div className="bg-gradient-to-r from-[#9a3412] to-[#b45309] text-white p-3.5 sm:p-4 border-b border-[#7c2d12]">
-              <div className="flex items-center justify-between pb-2.5 border-b border-orange-800/60 flex-wrap gap-2">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT TURUNCU / WARM AMBER */}
+            <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
+              <div className="flex items-center justify-between pb-2.5 border-b border-white/20 flex-wrap gap-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded bg-white/15 flex items-center justify-center shrink-0 border border-white/20 shadow-xs">
-                    <Building2 className="w-4 h-4 text-amber-200" />
+                    <Building2 className="w-4 h-4 text-orange-100" />
                   </div>
                   <div>
                     <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
                       Otoritelerde Durum Nasıl? (13 Küresel Otorite: MASAK, FATF, OFAC, FinCEN, AMLA, EBA, FCA...)
                     </h2>
-                    <span className="text-[11px] font-mono text-amber-100">
+                    <span className="text-[11px] font-mono text-orange-100">
                       Resmi X (Twitter) &amp; LinkedIn Hesaplarından Son 24 Saatlik İstihbarat Taraması
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-mono bg-white/15 text-amber-100 border border-white/20 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono bg-white/15 text-white border border-white/20 px-2 py-0.5 rounded">
                     Resmi X &amp; LinkedIn
                   </span>
-                  <span className="text-[11px] font-mono bg-white/20 text-white border border-white/25 px-2.5 py-1 rounded">
+                  <span className="text-[11px] font-mono bg-white/20 text-white border border-white/25 px-2.5 py-1 rounded font-bold">
                     {filteredAuthorities.length} Karar
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-amber-100/90 mt-2 leading-relaxed">
+              <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Apify X (Twitter) ve LinkedIn motorları üzerinden son 24 saatte taranan 13 ulusal ve küresel mali suç otoritesinin resmi hesap paylaşımları, yaptırım kararları ve regülasyon tebliğleri.
               </p>
 
               {/* Otorite Hızlı Filtre Butonları (Dinamik 13 Otorite) */}
-              <div className="flex items-center gap-1.5 pt-3 mt-3 border-t border-orange-800/60 flex-wrap">
-                <span className="text-[11px] font-mono font-bold text-amber-200 mr-1">FİLTRELE:</span>
+              <div className="flex items-center gap-1.5 pt-3 mt-3 border-t border-white/20 flex-wrap">
+                <span className="text-[11px] font-mono font-bold text-orange-100 mr-1">FİLTRELE:</span>
                 {uniqueAuthorities.map(auth => (
                   <button
                     key={auth}
                     onClick={() => setSelectedAuthFilter(auth)}
                     className={`px-2.5 py-1 rounded text-xs font-mono font-bold cursor-pointer transition ${
                       selectedAuthFilter === auth 
-                        ? 'bg-amber-400 text-slate-950 shadow-2xs' 
-                        : 'bg-white/15 text-amber-100 hover:bg-white/25 border border-white/15'
+                        ? 'bg-white text-orange-950 shadow-xs border border-white' 
+                        : 'bg-white/15 text-white hover:bg-white/25 border border-white/20'
                     }`}
                   >
                     {auth === 'all' ? 'Tüm Otoriteler' : auth}
@@ -949,11 +952,11 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             <div className="p-4 sm:p-5 bg-[#f8fafc]/50">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredAuthorities.map((auth, idx) => (
-                  <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-slate-400 transition">
+                  <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-orange-400 transition">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
-                        <span className="font-bold text-[#b45309] flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span className="font-bold text-[#c2410c] flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-orange-600"></span>
                           {auth.authority}
                         </span>
                         <span className="text-slate-400 text-[11px]">
@@ -972,7 +975,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                         href={auth.authority === 'MASAK' ? 'https://masak.hmb.gov.tr' : (auth.url || 'https://masak.hmb.gov.tr')}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#b45309] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
+                        className="text-[#c2410c] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
                       >
                         <span>Resmi Bildiri</span>
                         <ExternalLink className="w-3 h-3" />
@@ -990,18 +993,18 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             ======================================================== */}
         {(activeTab === 'talks' || activeTab === 'glossary') && (
           <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
-            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT WARM AMBER / TURUNCU */}
-            <div className="bg-gradient-to-r from-[#b45309] to-[#d97706] text-white p-3.5 sm:p-4 border-b border-[#92400e]">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT TURUNCU / WARM AMBER */}
+            <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded bg-white/15 flex items-center justify-center shrink-0 border border-white/20 shadow-xs">
-                    <BookMarked className="w-4 h-4 text-amber-100" />
+                    <BookMarked className="w-4 h-4 text-orange-100" />
                   </div>
                   <div>
                     <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
                       Günün AML Sözlüğü ({report.date || '22 Eylül 2026'})
                     </h2>
-                    <span className="text-[11px] font-mono text-amber-100">
+                    <span className="text-[11px] font-mono text-orange-100">
                       Bugün Sitede ve Gündemde Geçen 9 Kilit FinCrime &amp; AML Kavramı
                     </span>
                   </div>
@@ -1010,7 +1013,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   {todayGlossary.length} Kilit Terim
                 </span>
               </div>
-              <p className="text-xs text-amber-100/90 mt-2 leading-relaxed">
+              <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Mali suçlar, regülasyonlar ve uyum teknolojisi literatüründe bugün öne çıkan terimler, metodolojik tanımlar ve operasyonel karşılıkları.
               </p>
             </div>
