@@ -240,33 +240,33 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               title={`1. LLM (${report.phase1Model || 'DeepSeek v4.1 Flash'}): Girdi: ${p1.promptTokens?.toLocaleString()} | Düşünce: ${(p1.reasoningTokens || 0)?.toLocaleString()} | Nihai: ${(p1.finalTokens || 0)?.toLocaleString()} | Toplam: ${p1.totalTokens?.toLocaleString()}\n2. LLM (${report.phase2Model || 'DeepSeek v4.1 Flash'}): Girdi: ${p2.promptTokens?.toLocaleString()} | Düşünce: ${(p2.reasoningTokens || 0)?.toLocaleString()} | Nihai: ${(p2.finalTokens || 0)?.toLocaleString()} | Toplam: ${p2.totalTokens?.toLocaleString()}`}
             >
               {/* SATIR 1: 1. LLM */}
-              <div className="grid grid-cols-[64px_130px_14px_minmax(65px,1fr)_14px_minmax(80px,1.2fr)_14px_minmax(65px,1fr)_14px_minmax(75px,1fr)] items-center leading-none">
+              <div className="grid grid-cols-[62px_155px_14px_minmax(66px,1fr)_14px_minmax(82px,1.15fr)_14px_minmax(66px,1fr)_14px_minmax(76px,1.1fr)] items-center leading-none">
                 <span className="font-bold text-amber-300 flex items-center gap-1 whitespace-nowrap">
                   <Zap className="w-3 h-3 text-amber-300 flex-shrink-0" />
                   1. LLM:
                 </span>
                 <div className="w-full">
-                  <span className="bg-[#4a0b16] text-white px-1.5 py-0.5 rounded font-semibold text-[10px] border border-rose-300/20 whitespace-nowrap text-center block w-full truncate">
+                  <span className="bg-[#4a0b16] text-white px-2 py-0.5 rounded font-semibold text-[10.5px] border border-rose-300/20 whitespace-nowrap text-center block w-full">
                     {report.phase1Model || 'DeepSeek v4.1 Flash'}
                   </span>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Girdi:</span>
                   <strong className="text-white font-bold tabular-nums">{p1PromptK}k</strong>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Düşünce:</span>
                   <strong className="text-purple-300 font-bold tabular-nums">{p1ReasoningK}k</strong>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Nihai:</span>
                   <strong className="text-yellow-300 font-bold tabular-nums">{p1FinalK}k</strong>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Toplam:</span>
                   <strong className="text-white font-bold tabular-nums">{p1TotalK}k</strong>
                 </div>
@@ -276,33 +276,33 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               <div className="w-full h-px bg-rose-300/20 my-auto"></div>
 
               {/* SATIR 2: 2. LLM */}
-              <div className="grid grid-cols-[64px_130px_14px_minmax(65px,1fr)_14px_minmax(80px,1.2fr)_14px_minmax(65px,1fr)_14px_minmax(75px,1fr)] items-center leading-none">
+              <div className="grid grid-cols-[62px_155px_14px_minmax(66px,1fr)_14px_minmax(82px,1.15fr)_14px_minmax(66px,1fr)_14px_minmax(76px,1.1fr)] items-center leading-none">
                 <span className="font-bold text-cyan-300 flex items-center gap-1 whitespace-nowrap">
                   <Zap className="w-3 h-3 text-cyan-300 flex-shrink-0" />
                   2. LLM:
                 </span>
                 <div className="w-full">
-                  <span className="bg-[#4a0b16] text-white px-1.5 py-0.5 rounded font-semibold text-[10px] border border-rose-300/20 whitespace-nowrap text-center block w-full truncate">
+                  <span className="bg-[#4a0b16] text-white px-2 py-0.5 rounded font-semibold text-[10.5px] border border-rose-300/20 whitespace-nowrap text-center block w-full">
                     {report.phase2Model || 'DeepSeek v4.1 Flash'}
                   </span>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Girdi:</span>
                   <strong className="text-white font-bold tabular-nums">{p2PromptK}k</strong>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Düşünce:</span>
                   <strong className="text-purple-300 font-bold tabular-nums">{p2ReasoningK}k</strong>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Nihai:</span>
                   <strong className="text-yellow-300 font-bold tabular-nums">{p2FinalK}k</strong>
                 </div>
                 <span className="text-rose-300/40 text-center">|</span>
-                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                <div className="flex items-center justify-start gap-1 text-rose-100 whitespace-nowrap pl-1">
                   <span className="text-rose-200">Toplam:</span>
                   <strong className="text-white font-bold tabular-nums">{p2TotalK}k</strong>
                 </div>
