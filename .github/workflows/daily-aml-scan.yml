@@ -2,14 +2,14 @@ name: Günlük AML Tekno Radar Taraması & Otomatik Dağıtım
 
 on:
   schedule:
-    # Her gece saat 03:00 TSİ (00:00 UTC) otomatik çalışır
-    - cron: '0 0 * * *'
+    # Her gece saat 03:17 TSİ (00:17 UTC) otomatik çalışır (saat başı kuyruk sıkışıklığını önlemek için rastgele dakika)
+    - cron: '17 0 * * *'
   workflow_dispatch: # GitHub Actions panelinden tek tıkla manuel çalıştırma butonu
 
 jobs:
   daily-scan-and-publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     permissions:
       contents: write # Repoya güncellenen verileri commit & push yapabilme izni
 
