@@ -218,92 +218,121 @@ ${(report.authoritiesPulse || []).map((a, i) => `
           <div className="flex items-center gap-2 w-full">
             
             {/* Süre Kutusu */}
-            <div className="flex flex-col justify-between py-1 px-2.5 bg-[#5c0f1c] border border-rose-300/25 rounded text-[11px] font-mono shadow-xs h-[48px] shrink-0">
+            <div className="flex flex-col justify-between py-1.5 px-2.5 bg-[#5c0f1c] border border-rose-300/25 rounded text-[11px] font-mono shadow-xs h-[54px] shrink-0">
               <div 
-                className="flex items-center gap-1 text-amber-300 font-semibold whitespace-nowrap leading-none pt-0.5"
+                className="flex items-center gap-1.5 text-amber-300 font-semibold whitespace-nowrap leading-tight"
                 title={`Toplam Çalışma Süresi: ${report.durationSeconds || 36} saniye`}
               >
-                <Clock className="w-3 h-3 text-amber-300 flex-shrink-0" />
-                <span>{report.durationSeconds ? `${report.durationSeconds}s` : '36s'}</span>
+                <Clock className="w-3.5 h-3.5 text-amber-300 flex-shrink-0" />
+                <span className="text-[11.5px]">{report.durationSeconds ? `${report.durationSeconds}s` : '36s'}</span>
               </div>
               <div 
-                className="flex items-center gap-1 text-rose-200 font-medium whitespace-nowrap border-t border-rose-300/20 pt-1 leading-none text-[10px]"
+                className="flex items-center gap-1 text-rose-200 font-medium whitespace-nowrap border-t border-rose-300/20 pt-1 leading-tight text-[10px]"
                 title={`Tetiklenme: ${report.startedAt || '03:17'} (TSİ) | Çıktı: ${report.completedAt || '03:18'} (TSİ)`}
               >
                 <span>{report.startedAt ? `TSİ: ${report.startedAt.slice(0, 5)} ➔ ${report.completedAt ? report.completedAt.slice(0, 5) : '03:18'}` : 'TSİ: 03:17 ➔ 03:18'}</span>
               </div>
             </div>
 
-            {/* Çift LLM Ayrı Telemetri Kutusu (2 Satır 10 Sütun Hizalı) */}
+            {/* Çift LLM Ayrı Telemetri Kutusu (2 Satır Mükemmel Hizalı Grid) */}
             <div 
-              className="flex-1 grid grid-cols-[auto_auto_auto_auto_auto_auto_auto_auto_auto_auto] items-center gap-x-2 gap-y-1 bg-[#5c0f1c] border border-rose-300/25 px-3 py-1 rounded text-[11px] font-mono shadow-xs h-[48px]"
+              className="flex-1 flex flex-col justify-between bg-[#5c0f1c] border border-rose-300/25 px-3 py-1.5 rounded text-[11px] font-mono shadow-xs h-[54px]"
               title={`1. LLM (${report.phase1Model || 'DeepSeek v4.1 Flash'}): Girdi: ${p1.promptTokens?.toLocaleString()} | Düşünce: ${(p1.reasoningTokens || 0)?.toLocaleString()} | Nihai: ${(p1.finalTokens || 0)?.toLocaleString()} | Toplam: ${p1.totalTokens?.toLocaleString()}\n2. LLM (${report.phase2Model || 'DeepSeek v4.1 Flash'}): Girdi: ${p2.promptTokens?.toLocaleString()} | Düşünce: ${(p2.reasoningTokens || 0)?.toLocaleString()} | Nihai: ${(p2.finalTokens || 0)?.toLocaleString()} | Toplam: ${p2.totalTokens?.toLocaleString()}`}
             >
               {/* SATIR 1: 1. LLM */}
-              <span className="font-bold text-amber-300 flex items-center gap-1 whitespace-nowrap">
-                <Zap className="w-3 h-3 text-amber-300 flex-shrink-0" />
-                1. LLM:
-              </span>
-              <div>
-                <span className="bg-[#4a0b16] text-white px-1.5 py-0.2 rounded font-semibold text-[10.5px] border border-rose-300/20 whitespace-nowrap text-center inline-block">
-                  {report.phase1Model || 'DeepSeek v4.1 Flash'}
+              <div className="grid grid-cols-[64px_130px_14px_minmax(65px,1fr)_14px_minmax(80px,1.2fr)_14px_minmax(65px,1fr)_14px_minmax(75px,1fr)] items-center leading-none">
+                <span className="font-bold text-amber-300 flex items-center gap-1 whitespace-nowrap">
+                  <Zap className="w-3 h-3 text-amber-300 flex-shrink-0" />
+                  1. LLM:
                 </span>
+                <div className="w-full">
+                  <span className="bg-[#4a0b16] text-white px-1.5 py-0.5 rounded font-semibold text-[10px] border border-rose-300/20 whitespace-nowrap text-center block w-full truncate">
+                    {report.phase1Model || 'DeepSeek v4.1 Flash'}
+                  </span>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Girdi:</span>
+                  <strong className="text-white font-bold tabular-nums">{p1PromptK}k</strong>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Düşünce:</span>
+                  <strong className="text-purple-300 font-bold tabular-nums">{p1ReasoningK}k</strong>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Nihai:</span>
+                  <strong className="text-yellow-300 font-bold tabular-nums">{p1FinalK}k</strong>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Toplam:</span>
+                  <strong className="text-white font-bold tabular-nums">{p1TotalK}k</strong>
+                </div>
               </div>
-              <span className="text-rose-300/40">|</span>
-              <span className="whitespace-nowrap text-rose-100">Girdi: <strong className="text-white font-bold">{p1PromptK}k</strong></span>
-              <span className="text-rose-300/40">|</span>
-              <span className="whitespace-nowrap text-rose-100">Düşünce: <strong className="text-purple-300 font-bold">{p1ReasoningK}k</strong></span>
-              <span className="text-rose-300/40">|</span>
-              <span className="whitespace-nowrap text-rose-100">Nihai: <strong className="text-yellow-300 font-bold">{p1FinalK}k</strong></span>
-              <span className="text-rose-300/40">|</span>
-              <span className="whitespace-nowrap text-rose-100">Toplam: <strong className="text-white font-bold">{p1TotalK}k</strong></span>
+
+              {/* Ara Ayırıcı İnce Çizgi */}
+              <div className="w-full h-px bg-rose-300/20 my-auto"></div>
 
               {/* SATIR 2: 2. LLM */}
-              <span className="font-bold text-cyan-300 flex items-center gap-1 whitespace-nowrap border-t border-rose-300/20 pt-1">
-                <Zap className="w-3 h-3 text-cyan-300 shrink-0" />
-                2. LLM:
-              </span>
-              <div className="border-t border-rose-300/20 pt-1">
-                <span className="bg-[#4a0b16] text-white px-1.5 py-0.2 rounded font-semibold text-[10.5px] border border-rose-300/20 whitespace-nowrap text-center inline-block w-full">
-                  {report.phase2Model || 'DeepSeek v4.1 Flash'}
+              <div className="grid grid-cols-[64px_130px_14px_minmax(65px,1fr)_14px_minmax(80px,1.2fr)_14px_minmax(65px,1fr)_14px_minmax(75px,1fr)] items-center leading-none">
+                <span className="font-bold text-cyan-300 flex items-center gap-1 whitespace-nowrap">
+                  <Zap className="w-3 h-3 text-cyan-300 flex-shrink-0" />
+                  2. LLM:
                 </span>
+                <div className="w-full">
+                  <span className="bg-[#4a0b16] text-white px-1.5 py-0.5 rounded font-semibold text-[10px] border border-rose-300/20 whitespace-nowrap text-center block w-full truncate">
+                    {report.phase2Model || 'DeepSeek v4.1 Flash'}
+                  </span>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Girdi:</span>
+                  <strong className="text-white font-bold tabular-nums">{p2PromptK}k</strong>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Düşünce:</span>
+                  <strong className="text-purple-300 font-bold tabular-nums">{p2ReasoningK}k</strong>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Nihai:</span>
+                  <strong className="text-yellow-300 font-bold tabular-nums">{p2FinalK}k</strong>
+                </div>
+                <span className="text-rose-300/40 text-center">|</span>
+                <div className="flex items-center justify-between gap-1 text-rose-100 whitespace-nowrap px-0.5">
+                  <span className="text-rose-200">Toplam:</span>
+                  <strong className="text-white font-bold tabular-nums">{p2TotalK}k</strong>
+                </div>
               </div>
-              <span className="text-rose-300/40 border-t border-rose-300/20 pt-1">|</span>
-              <span className="whitespace-nowrap border-t border-rose-300/20 pt-1 text-rose-100">Girdi: <strong className="text-white font-bold">{p2PromptK}k</strong></span>
-              <span className="text-rose-300/40 border-t border-rose-300/20 pt-1">|</span>
-              <span className="whitespace-nowrap border-t border-rose-300/20 pt-1 text-rose-100">Düşünce: <strong className="text-purple-300 font-bold">{p2ReasoningK}k</strong></span>
-              <span className="text-rose-300/40 border-t border-rose-300/20 pt-1">|</span>
-              <span className="whitespace-nowrap border-t border-rose-300/20 pt-1 text-rose-100">Nihai: <strong className="text-yellow-300 font-bold">{p2FinalK}k</strong></span>
-              <span className="text-rose-300/40 border-t border-rose-300/20 pt-1">|</span>
-              <span className="whitespace-nowrap border-t border-rose-300/20 pt-1 text-rose-100">Toplam: <strong className="text-white font-bold">{p2TotalK}k</strong></span>
             </div>
 
             {/* Bileşik Toplam Rozeti */}
             <div 
-              className="flex flex-col justify-center items-center bg-[#4a0b16] border border-rose-300/35 px-3 py-1 rounded font-mono shadow-xs text-center h-[48px] shrink-0 cursor-help"
+              className="flex flex-col justify-center items-center bg-[#4a0b16] border border-rose-300/35 px-3.5 py-1 rounded font-mono shadow-xs text-center h-[54px] shrink-0 cursor-help"
               title={`Bileşik Token Toplamı (1. LLM + 2. LLM):\n• Girdi: ${tu.promptTokens?.toLocaleString()} token\n• Düşünce: ${(tu.reasoningTokens || 0)?.toLocaleString()} token\n• Nihai Çıktı: ${(tu.finalTokens || 0)?.toLocaleString()} token\n• Toplam: ${tu.totalTokens?.toLocaleString()} token`}
             >
-              <span className="text-yellow-300 font-bold text-[9.5px] uppercase">Bileşik Toplam</span>
-              <span className="text-xs font-black text-white">{totalK}k</span>
+              <span className="text-yellow-300 font-bold text-[9.5px] uppercase tracking-wider">Bileşik Toplam</span>
+              <span className="text-[15px] font-black text-white leading-tight">{totalK}k</span>
             </div>
 
             {/* Veri Kaynağı Hacim Rozetleri (Reddit, X) */}
             {(report.totalPostsAnalyzed || report.totalTweetsAnalyzed) && (
               <div 
-                className="flex flex-col justify-between py-1 px-2.5 bg-[#5c0f1c] border border-rose-300/25 rounded text-[11px] font-mono shadow-xs h-[48px] shrink-0"
+                className="flex flex-col justify-between py-1.5 px-3 bg-[#5c0f1c] border border-rose-300/25 rounded text-[11px] font-mono shadow-xs h-[54px] shrink-0"
                 title={`Taranan Veri Havuzu:\n• Reddit: ${report.totalPostsAnalyzed || 50} onaylı gönderi ve tartışma\n• X (Twitter): ${report.totalTweetsAnalyzed || 35} uzman ve dedektif paylaşımı`}
               >
-                <div className="grid grid-cols-[14px_48px_6px_auto] items-center gap-x-1 leading-none pt-0.5">
+                <div className="grid grid-cols-[14px_48px_auto] items-center gap-x-1.5 leading-tight">
                   <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0"></span>
-                  <span className="text-rose-100 font-semibold">Reddit:</span>
-                  <span></span>
-                  <strong className="text-white font-bold">{report.totalPostsAnalyzed || 50}</strong>
+                  <span className="text-rose-100 font-semibold text-[10.5px]">Reddit:</span>
+                  <strong className="text-white font-bold text-right text-[11px]">{report.totalPostsAnalyzed || 50}</strong>
                 </div>
-                <div className="grid grid-cols-[14px_48px_6px_auto] items-center gap-x-1 border-t border-rose-300/20 pt-1 leading-none text-[10.5px]">
+                <div className="grid grid-cols-[14px_48px_auto] items-center gap-x-1.5 border-t border-rose-300/20 pt-1 leading-tight text-[10.5px]">
                   <span className="w-3 h-3 bg-black text-white text-[8px] font-black flex items-center justify-center rounded-xs shrink-0">𝕏</span>
-                  <span className="text-rose-200 font-semibold">X:</span>
-                  <span></span>
-                  <strong className="text-white font-bold">{report.totalTweetsAnalyzed || 35}</strong>
+                  <span className="text-rose-200 font-semibold text-[10.5px]">X:</span>
+                  <strong className="text-white font-bold text-right text-[11px]">{report.totalTweetsAnalyzed || 35}</strong>
                 </div>
               </div>
             )}
