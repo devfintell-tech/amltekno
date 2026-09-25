@@ -663,9 +663,6 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                     </span>
                   </div>
                 </div>
-                <span className="text-[11px] font-mono bg-white/15 text-white border border-white/20 px-2.5 py-1 rounded">
-                  {report.twitterPulse?.totalAnalyzed || 95} Sosyal İstihbarat &amp; {(report.amlTalks || []).length} Saha Vakası
-                </span>
               </div>
               <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Uyum görevlilerinin, MASAK/OFAC analistlerinin ve bağımsız on-chain dedektiflerinin son 24 saat içinde tartıştığı pratik sorunlar, saha bulguları ve çözüm önerileri.
@@ -784,9 +781,6 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                     </span>
                   </div>
                 </div>
-                <span className="text-[11px] font-mono bg-white/15 text-white border border-white/20 px-2.5 py-1 rounded">
-                  {(report.newDevelopmentsAndIdeas || []).length} İnovatif Çözüm
-                </span>
               </div>
               <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Banka ve fintek uyum birimlerinin inceleyebileceği yenilikçi yaklaşımlar, metodolojik saha çalışmaları ve operasyonel gelişmeler.
@@ -850,9 +844,6 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                     </span>
                   </div>
                 </div>
-                <span className="text-[11px] font-mono bg-white/15 text-white border border-white/20 px-2.5 py-1 rounded">
-                  {(report.cddKycInnovations || []).length} İnovasyon
-                </span>
               </div>
               <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Müşteri kabulünde deepfake biyometrik atlatma savunması, Ticaret Sicil'den otomatik UBO (Nihai Gerçek Faydalanıcı) tespiti ve sürekli müşteri incelemesi (pKYC) çalışmaları.
@@ -915,14 +906,6 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                       Resmi X (Twitter) &amp; LinkedIn Hesaplarından Son 24 Saatlik İstihbarat Taraması
                     </span>
                   </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-mono bg-white/15 text-white border border-white/20 px-2 py-0.5 rounded">
-                    Resmi X &amp; LinkedIn
-                  </span>
-                  <span className="text-[11px] font-mono bg-white/20 text-white border border-white/25 px-2.5 py-1 rounded font-bold">
-                    {filteredAuthorities.length} Karar
-                  </span>
                 </div>
               </div>
               <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
@@ -1005,13 +988,10 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                       Günün AML Sözlüğü ({report.date || '22 Eylül 2026'})
                     </h2>
                     <span className="text-[11px] font-mono text-orange-100">
-                      Bugün Sitede ve Gündemde Geçen 9 Kilit FinCrime &amp; AML Kavramı
+                      Bugün Sitede ve Gündemde Geçen Kilit FinCrime &amp; AML Kavramları
                     </span>
                   </div>
                 </div>
-                <span className="text-[11px] font-mono bg-white/15 text-white border border-white/20 px-2.5 py-1 rounded">
-                  {todayGlossary.length} Kilit Terim
-                </span>
               </div>
               <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
                 Mali suçlar, regülasyonlar ve uyum teknolojisi literatüründe bugün öne çıkan terimler, metodolojik tanımlar ve operasyonel karşılıkları.
@@ -1020,7 +1000,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
 
             {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK */}
             <div className="p-4 sm:p-5 bg-[#f8fafc]/50 space-y-6">
-              {/* 1. KISIM: GÜNÜN 9 KİLİT KAVRAMI */}
+              {/* 1. KISIM: GÜNÜN KİLİT KAVRAMLARI */}
               <div className="space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {todayGlossary.map((item) => (
@@ -1028,11 +1008,10 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                       key={item.id}
                       className="bg-white border border-[#cbd5e1] rounded-sm p-3.5 hover:border-amber-500/50 transition flex flex-col justify-between shadow-2xs"
                     >
-                      <div className="pb-2 border-b border-slate-100 flex items-center justify-between">
+                      <div className="pb-2 border-b border-slate-100">
                         <h4 className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 tracking-tight leading-snug">
                           {item.term}
                         </h4>
-                        <span className="text-[10px] font-mono text-[#b45309] font-bold">KAVRAM</span>
                       </div>
                       <p className="text-xs sm:text-[12.5px] text-slate-600 leading-relaxed font-normal pt-2 font-sans">
                         {item.definition}
