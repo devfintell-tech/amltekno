@@ -241,6 +241,30 @@ async function main() {
   if (!finalReport) {
     console.log("ℹ️ Yerel hazır veri şablonu kullanılıyor...");
     finalReport = generateFallbackReport(allRedditPosts, twitterPosts, arxivPapers, authorityPosts);
+  } else if (Array.isArray(authorityPosts) && authorityPosts.length > 0) {
+    // Taranan otoritelerin sitede ve raporda eksiksiz yer almasını sağla (Aşırı filtreyi kaldır)
+    if (!Array.isArray(finalReport.authoritiesPulse)) finalReport.authoritiesPulse = [];
+    const existingTitles = new Set(finalReport.authoritiesPulse.map(a => a.title?.toLowerCase()));
+    const existingAuths = new Set(finalReport.authoritiesPulse.map(a => a.authority?.toUpperCase()));
+    
+    for (const authPost of authorityPosts) {
+      if (!existingTitles.has(authPost.title?.toLowerCase())) {
+        if (!existingAuths.has(authPost.authority?.toUpperCase()) || finalReport.authoritiesPulse.length < 24) {
+          finalReport.authoritiesPulse.push({
+            id: authPost.id || `auth-${Math.random().toString(36).slice(2)}`,
+            authority: authPost.authority,
+            country: authPost.country || "Küresel",
+            title: authPost.title,
+            summary: authPost.summary,
+            date: authPost.date || finalReport.date,
+            url: authPost.url,
+            sourcePlatform: authPost.sourcePlatform
+          });
+          existingTitles.add(authPost.title?.toLowerCase());
+          existingAuths.add(authPost.authority?.toUpperCase());
+        }
+      }
+    }
   }
 
   // 6. ADIM: Verileri Kaydet

@@ -151,28 +151,37 @@ export async function fetchAuthorityDevelopments(apifyToken) {
     'egmontgroup': { code: 'Egmont', name: 'Egmont Group of FIUs', country: 'Küresel / 170+ FIU', id: 'egmont' },
     'austrac': { code: 'AUSTRAC', name: 'AUSTRAC (Avustralya Finansal İstihbarat)', country: 'Avustralya', id: 'austrac' },
     'mas_sg': { code: 'MAS', name: 'MAS (Monetary Authority of Singapore)', country: 'Singapur', id: 'mas' },
-    'finma_media': { code: 'FINMA', name: 'FINMA (İsviçre Finansal Denetleme)', country: 'İsviçre', id: 'finma' }
+    'finma_media': { code: 'FINMA', name: 'FINMA (İsviçre Finansal Denetleme)', country: 'İsviçre', id: 'finma' },
+    'europol': { code: 'Europol', name: 'Europol (Avrupa Polis Teşkilatı)', country: 'Avrupa Birliği', id: 'europol' },
+    'acams_fincrime': { code: 'ACAMS', name: 'ACAMS FinCrime Specialists', country: 'Küresel Uyum', id: 'acams' },
+    'secgov': { code: 'SEC', name: 'U.S. SEC', country: 'ABD', id: 'sec' },
+    'thejusticedept': { code: 'DOJ', name: 'U.S. Department of Justice', country: 'ABD', id: 'doj' }
   };
 
   if (apifyToken) {
     // -------------------------------------------------------------
-    // 1. KANAL: X (TWITTER) RESMİ OTORİTE HESAPLARI (Son 24 Saat)
+    // 1. KANAL: X (TWITTER) RESMİ OTORİTE HESAPLARI (Genişletilmiş Kapsam)
     // -------------------------------------------------------------
     try {
-      console.log("🐦 1/2 Otoritelerin Resmi X (Twitter) Sayfaları taranıyor (son 24 saat)...");
-      const authTwitterQuery = '(from:FATFNews OR from:FinCENnews OR from:USTreasury OR from:EBA_News OR from:TheFCA OR from:masak_gov_tr OR from:INTERPOL_HQ OR from:EgmontGroup OR from:AUSTRAC OR from:MAS_sg OR from:FINMA_media OR from:EU_Finance) -filter:nativeretweets';
+      console.log("🐦 1/2 Otoritelerin Resmi X (Twitter) Sayfaları taranıyor (Genişletilmiş 200 Gönderi Hacmi)...");
+      const authTwitterQueries = [
+        '(from:FATFNews OR from:FinCENnews OR from:USTreasury) -filter:nativeretweets',
+        '(from:EBA_News OR from:TheFCA OR from:EU_Finance OR from:masak_gov_tr OR from:hmbakanligi) -filter:nativeretweets',
+        '(from:INTERPOL_HQ OR from:EgmontGroup OR from:AUSTRAC OR from:MAS_sg OR from:FINMA_media) -filter:nativeretweets',
+        '(from:Europol OR from:ACAMS_FinCrime OR from:SecGov OR from:TheJusticeDept) ("AML" OR "sanctions" OR "money laundering" OR "fraud" OR "crypto" OR "compliance" OR "enforcement") -filter:nativeretweets'
+      ];
 
       const twitterPayload = {
-        searchTerms: [authTwitterQuery],
+        searchTerms: authTwitterQueries,
         queryType: "Latest",
-        maxItems: 40 // 2 kat artırılmış veri alma sınırı
+        maxItems: 200 // 5 katına çıkarıldı (~3.0 - 3.5 sent)
       };
 
-      const twRes = await fetch(`https://api.apify.com/v2/acts/xquik~x-tweet-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
+      const twRes = await fetch(`https://api.apify.com/v2/acts/xquik~x-tweet-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=90`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(twitterPayload),
-        signal: AbortSignal.timeout(75000)
+        signal: AbortSignal.timeout(100000)
       });
 
       if (twRes.ok) {
@@ -189,7 +198,7 @@ export async function fetchAuthorityDevelopments(apifyToken) {
             };
 
             const rawText = (tw.text || tw.full_text || "").replace(/^@\w+\s+/g, "").trim();
-            if (rawText.length < 25) continue;
+            if (rawText.length < 10) continue; // Aşırı filtre kaldırıldı
 
             const textLines = rawText.split('\n').filter(l => l.trim().length > 0);
             const dynamicTitle = textLines[0].slice(0, 140);
@@ -218,10 +227,10 @@ export async function fetchAuthorityDevelopments(apifyToken) {
     }
 
     // -------------------------------------------------------------
-    // 2. KANAL: LINKEDIN RESMİ OTORİTE SAYFALARI (Son 24 Saat)
+    // 2. KANAL: LINKEDIN RESMİ OTORİTE SAYFALARI (15+ Küresel Kurum, 7 Günlük Taze Kararlar)
     // -------------------------------------------------------------
     try {
-      console.log("💼 2/2 Otoritelerin Resmi LinkedIn Sayfaları taranıyor (son 24 saat)...");
+      console.log("💼 2/2 Otoritelerin Resmi LinkedIn Sayfaları taranıyor (15 Kurum, max 15 karar)...");
       const linkedinTargetUrls = [
         "https://www.linkedin.com/company/fatf/",
         "https://www.linkedin.com/company/fincen/",
@@ -232,20 +241,25 @@ export async function fetchAuthorityDevelopments(apifyToken) {
         "https://www.linkedin.com/company/the-wolfsberg-group/",
         "https://www.linkedin.com/company/egmont-group-of-financial-intelligence-units/",
         "https://www.linkedin.com/company/austrac/",
-        "https://www.linkedin.com/company/monetary-authority-of-singapore/"
+        "https://www.linkedin.com/company/monetary-authority-of-singapore/",
+        "https://www.linkedin.com/company/finma/",
+        "https://www.linkedin.com/company/europol/",
+        "https://www.linkedin.com/company/acams/",
+        "https://www.linkedin.com/company/bank-for-international-settlements/",
+        "https://www.linkedin.com/company/eu-finance/"
       ];
 
       const linkedinPayload = {
         targetUrls: linkedinTargetUrls,
-        maxPosts: 5,
-        postedLimit: "24h" // Son 24 saat filtresi
+        maxPosts: 15, // 3 katına çıkarıldı (~8.5 - 9.5 sent)
+        postedLimit: "7d" // Otoritelerin haftalık resmi kararlarını kaçırmamak için 7 gün
       };
 
-      const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=45`, {
+      const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(linkedinPayload),
-        signal: AbortSignal.timeout(60000)
+        signal: AbortSignal.timeout(75000)
       });
 
       if (liRes.ok) {
@@ -260,7 +274,7 @@ export async function fetchAuthorityDevelopments(apifyToken) {
             ) || AUTHORITIES_CONFIG.find(a => a.id === "fatf");
 
             const postText = (post.text || post.content || "").trim();
-            if (postText.length < 25) continue;
+            if (postText.length < 10) continue; // Aşırı filtre kaldırıldı
 
             const textLines = postText.split('\n').filter(l => l.trim().length > 0);
             const dynamicTitle = textLines[0].slice(0, 140);

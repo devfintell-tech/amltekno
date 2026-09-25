@@ -87,10 +87,10 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     if (res.ok) {
       const items = await res.json();
       if (Array.isArray(items) && items.length > 0) {
-        // Nitelikli ve anlamlı AML tweetlerini filtrele
+        // Nitelikli ve anlamlı AML tweetlerini filtrele (Aşırı filtre kaldırıldı)
         const meaningful = items.filter(t => {
           const text = (t.text || t.full_text || "").replace(/^@\w+\s+/g, "").trim();
-          return text.length >= 35 && !text.startsWith("https://t.co");
+          return text.length >= 15 && !text.startsWith("https://t.co");
         });
 
         // En güncel ve en çok etkileşim alanlara göre sırala
@@ -102,8 +102,8 @@ export async function fetchAmlTwitterPosts(apifyToken) {
           return scoreB - scoreA;
         });
 
-        // 2 KATINA ÇIKARILDI: 35 yerine 70 tweet al
-        const mapped = meaningful.slice(0, 70).map(t => {
+        // 100 tweet al (Eski: 70)
+        const mapped = meaningful.slice(0, 100).map(t => {
           const handle = t.author?.username || t.userName || "aml_expert";
           const name = t.author?.name || t.name || handle;
           const avatar = t.author?.profilePicture || t.profilePicture || "";
@@ -143,10 +143,11 @@ export async function fetchAmlTwitterPosts(apifyToken) {
         "AML compliance",
         "financial crime transaction monitoring",
         "sanctions evasion OFAC",
-        "money mule smurfing"
+        "money mule smurfing",
+        "trade based money laundering"
       ],
       postedLimit: "24h", // Son 24 saat
-      maxPosts: 10
+      maxPosts: 20 // 2 katına çıkarıldı (Eski: 10)
     };
 
     const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-post-search/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
@@ -161,10 +162,10 @@ export async function fetchAmlTwitterPosts(apifyToken) {
       if (Array.isArray(liItems) && liItems.length > 0) {
         const meaningfulLi = liItems.filter(p => {
           const text = (p.content || p.text || "").trim();
-          return text.length >= 35;
+          return text.length >= 15; // 35'ten 15'e düşürüldü - aşırı filtre kaldırıldı
         });
 
-        const mappedLi = meaningfulLi.slice(0, 25).map(p => {
+        const mappedLi = meaningfulLi.slice(0, 50).map(p => {
           const author = p.author?.name || p.authorName || "LinkedIn AML Uzmanı";
           const headline = p.author?.info || p.author?.headline || "Compliance & FinCrime Professional";
           const text = (p.content || p.text || "").trim();

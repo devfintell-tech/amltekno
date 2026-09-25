@@ -69,7 +69,6 @@ export const REDDIT_SEARCH_QUERIES = [
   }
 ];
 
-// 3. Kesin AML Uygunluk Anahtar Kelimeleri (Gereksiz gönderileri %100 ayıklar)
 export const AML_KEYWORDS = [
   "aml", "anti-money laundering", "money laundering", "kara para", "aklama",
   "fincen", "fatf", "masak", "ofac", "sanctions", "yaptırım", "yaptırımlar",
@@ -82,18 +81,17 @@ export const AML_KEYWORDS = [
   "deepfake liveness", "trade-based money laundering", "tbml",
   "crypto mixer", "tornado cash", "de-risking", "regtech", "wire fraud",
   "shell company", "paravan şirket", "source of funds", "source of wealth",
-  "travel rule", "unhosted wallet", "sanction evasion", "asset tracing"
+  "travel rule", "unhosted wallet", "sanction evasion", "asset tracing",
+  "fraud", "scam", "phishing", "forensics", "investigation", "compliance",
+  "regulatory", "audit", "laundering", "mule", "sepa", "swift", "fiu", "bribery", "corruption"
 ];
 
 /**
  * Gönderinin AML ile doğrudan ilişkili olup olmadığını denetler
+ * (Aşırı filtreleme yapmaz; AML/FinCrime ile ilgiliyse kabul eder)
  */
 export function isAmlRelevant(title = "", content = "", isStrict = true) {
   if (!isStrict) return true;
   const haystack = `${title} ${content}`.toLowerCase();
-  return AML_KEYWORDS.some(kw => {
-    // Kelime sınırı ile arama (örn: 'aml' tek başına veya noktalama ile eşleşsin)
-    const regex = new RegExp(`\\b${kw}\\b`, 'i');
-    return regex.test(haystack);
-  });
+  return AML_KEYWORDS.some(kw => haystack.includes(kw.toLowerCase()));
 }

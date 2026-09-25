@@ -66,19 +66,19 @@ export async function analyzeAmlDataWithDualLLM({
 
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
-  const redditContext = redditPosts.slice(0, 75).map((p, idx) => 
-    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 250)}`
+  const redditContext = redditPosts.slice(0, 90).map((p, idx) => 
+    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 300)}`
   ).join("\n\n");
 
-  const twitterContext = twitterPosts.slice(0, 50).map((t, idx) => 
+  const twitterContext = twitterPosts.slice(0, 90).map((t, idx) => 
     `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${t.authorHandle} (${t.likes} etkileşim): "${t.text}"`
   ).join("\n\n");
 
-  const arxivContext = arxivPapers.slice(0, 6).map((a, idx) => 
-    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 250)}\nLink: ${a.arxivUrl}`
+  const arxivContext = arxivPapers.slice(0, 8).map((a, idx) => 
+    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 300)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
-  const authContext = authorityPosts.slice(0, 16).map((a, idx) => 
+  const authContext = authorityPosts.slice(0, 45).map((a, idx) => 
     `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
   ).join("\n\n");
 
@@ -88,11 +88,11 @@ export async function analyzeAmlDataWithDualLLM({
   const phase1System = `Sen küresel düzeyde kıdemli bir AML/CFT, Finansal Suçlar, Yaptırımlar, MASAK mevzuatı ve Müşteri İnceleme (CDD/KYC) Baş Mimarı ve Danışmanısın.
 
 Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta hatasız, kurumsal ve pratik çıktılar üretmektir:
-1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (Tam 4 adet en somut vaka ve saha tartışması)
-2. "twitterPulse": Twitter & LinkedIn AML Gündemi (dominantTopics: 3 adet konu; topExpertTakeaways: 2 adet uzman tespiti)
-3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (Tam 3 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
-4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (Tam 3 adet CDD/KYC/UBO inovasyonu)
-5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Tam 4 adet resmi otorite duyurusu)
+1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (En az 5-6 adet somut vaka ve saha tartışması)
+2. "twitterPulse": Twitter & LinkedIn AML Gündemi (dominantTopics: 4-5 adet konu; topExpertTakeaways: 3 adet uzman tespiti)
+3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (En az 4 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
+4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (En az 4 adet CDD/KYC/UBO inovasyonu)
+5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Taranan resmi otoritelerden gelen en az 8-12 adet somut karar ve bildiri. Farklı otoritelerden [FATF, OFAC, FinCEN, MASAK, EBA, FCA, AMLA, INTERPOL, AUSTRAC vb.] maksimum çeşitlilik sağla)
 6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 9 kavramı ve 2-3 cümlelik sade tanımı)
 
 Kurallar:
