@@ -171,17 +171,18 @@ ${(report.authoritiesPulse || []).map((a, i) => `
       <header className="bg-[#721c24] text-white select-none shadow-md w-full max-w-full overflow-hidden">
         
         {/* 1. ÜST SATIR: Logo ve Tarih Seçici (ÜSTTE - AYNI SATIRDA) */}
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 pt-3 pb-1.5 flex items-center justify-between gap-3 w-full">
-          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
-            <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 pt-3 pb-1 w-full">
+          <div className="flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
+            {/* Logo */}
+            <div className="flex items-center gap-2 shrink-0">
               <div className="flex items-center justify-center w-7 h-7 bg-white text-[#721c24] font-black rounded text-xs shadow-inner tracking-tighter shrink-0">
                 AML
               </div>
               <span className="font-bold text-base sm:text-lg tracking-wide font-mono text-white">aml.aitrendleri.com</span>
             </div>
 
-            {/* Geçmiş Tarih / Arşiv Seçici Dropdown Hapı (Logo ile Yan Yana Üst Satırda) */}
-            <div className="flex items-center gap-1.5 bg-[#5c0f1c] border border-rose-300/30 px-2.5 py-1 rounded text-white shadow-xs">
+            {/* Geçmiş Tarih / Arşiv Seçici Dropdown Hapı (Logo ile Yan Yana) */}
+            <div className="flex items-center gap-1.5 bg-[#5c0f1c] border border-rose-300/30 px-2.5 py-1 rounded text-white shadow-xs shrink-0">
               <Calendar className="w-3.5 h-3.5 text-rose-200 shrink-0" />
               <select
                 value={selectedDateId}
@@ -201,16 +202,21 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             </div>
           </div>
 
-          {/* 📱 MOBİL: "Sistem Bilgileri" Butonu */}
-          <button
-            type="button"
-            onClick={() => setIsSystemInfoOpen(true)}
-            className="lg:hidden flex items-center gap-1.5 bg-[#5c0f1c] hover:bg-[#4a0b16] active:scale-95 border border-rose-300/40 px-2.5 py-1 rounded text-[11px] font-mono font-bold text-white shadow-xs transition cursor-pointer"
-            title="Sistem Bilgileri ve Telemetri Verilerini Görüntüle"
-          >
-            <Cpu className="w-3.5 h-3.5 text-rose-200 shrink-0" />
-            <span>Sistem Bilgileri</span>
-          </button>
+          {/* 📱 MOBİL: Tarihin Altında Yatay "Sistem Bilgileri" Butonu */}
+          <div className="lg:hidden w-full pt-2 pb-0.5">
+            <button
+              type="button"
+              onClick={() => setIsSystemInfoOpen(true)}
+              className="w-full flex items-center justify-center gap-2 bg-[#5c0f1c] hover:bg-[#4a0b16] active:scale-[0.99] border border-rose-300/35 py-1.5 px-3 rounded text-[11px] sm:text-xs font-mono font-bold text-white shadow-xs transition cursor-pointer"
+              title="Sistem Bilgileri ve Telemetri Verilerini Görüntüle"
+            >
+              <Cpu className="w-3.5 h-3.5 text-rose-200 shrink-0" />
+              <span>Sistem Bilgileri & Telemetri</span>
+              <span className="text-[10px] text-rose-200/80 font-normal">
+                ({totalK}k token • {report.durationSeconds || 36}s)
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* 2. ORTA SATIR: LLM BİLGİLERİ VE TELEMETRİ (TARİH VE LOGONUN ALTINDA) */}
