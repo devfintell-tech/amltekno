@@ -66,19 +66,19 @@ export async function analyzeAmlDataWithDualLLM({
 
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
-  const redditContext = redditPosts.slice(0, 90).map((p, idx) => 
-    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 300)}`
+  const redditContext = redditPosts.slice(0, 150).map((p, idx) => 
+    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 320)}`
   ).join("\n\n");
 
-  const twitterContext = twitterPosts.slice(0, 90).map((t, idx) => 
+  const twitterContext = twitterPosts.slice(0, 200).map((t, idx) => 
     `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${t.authorHandle} (${t.likes} etkileşim): "${t.text}"`
   ).join("\n\n");
 
-  const arxivContext = arxivPapers.slice(0, 8).map((a, idx) => 
-    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 300)}\nLink: ${a.arxivUrl}`
+  const arxivContext = arxivPapers.slice(0, 15).map((a, idx) => 
+    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 320)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
-  const authContext = authorityPosts.slice(0, 45).map((a, idx) => 
+  const authContext = authorityPosts.slice(0, 80).map((a, idx) => 
     `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
   ).join("\n\n");
 

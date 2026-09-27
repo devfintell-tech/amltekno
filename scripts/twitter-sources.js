@@ -74,7 +74,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     const payload = {
       searchTerms: TWITTER_SEARCH_BATCHES,
       queryType: "Latest",
-      maxItems: 240 // 2 KATINA ÇIKARILDI (Eski: 120)
+      maxItems: 200 // ~3.1 sent
     };
 
     const res = await fetch(`https://api.apify.com/v2/acts/xquik~x-tweet-scraper/run-sync-get-dataset-items?token=${apifyToken}&timeout=180`, {
@@ -87,10 +87,10 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     if (res.ok) {
       const items = await res.json();
       if (Array.isArray(items) && items.length > 0) {
-        // Nitelikli ve anlamlı AML tweetlerini filtrele (Aşırı filtre kaldırıldı)
+        // Nitelikli ve anlamlı AML tweetlerini filtrele (Aşırı filtre kaldırıldı - olabildiğince havuza al)
         const meaningful = items.filter(t => {
           const text = (t.text || t.full_text || "").replace(/^@\w+\s+/g, "").trim();
-          return text.length >= 15 && !text.startsWith("https://t.co");
+          return text.length >= 10 && !text.startsWith("https://t.co");
         });
 
         // En güncel ve en çok etkileşim alanlara göre sırala
@@ -102,8 +102,8 @@ export async function fetchAmlTwitterPosts(apifyToken) {
           return scoreB - scoreA;
         });
 
-        // 100 tweet al (Eski: 70)
-        const mapped = meaningful.slice(0, 100).map(t => {
+        // Olabildiğince çok tweet al (180 gönderi)
+        const mapped = meaningful.slice(0, 180).map(t => {
           const handle = t.author?.username || t.userName || "aml_expert";
           const name = t.author?.name || t.name || handle;
           const avatar = t.author?.profilePicture || t.profilePicture || "";
@@ -134,6 +134,8 @@ export async function fetchAmlTwitterPosts(apifyToken) {
 
   // ==============================================================
   // 2. KANAL: LINKEDIN UZMAN & TOPLULUK GÜNDEMİ (Son 24 Saat)
+  // Toplam 5 sorgu * 12 gönderi = 60 gönderi ($0.120)
+  // X ($0.035) + LinkedIn ($0.120) = ~15.5 - 16 sent hedefi
   // ==============================================================
   try {
     console.log("💼 2/2 LinkedIn AML Gündemi taranıyor (Son 24 Saat, Uyum & FinCrime Profesyonelleri)...");
@@ -147,7 +149,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
         "trade based money laundering"
       ],
       postedLimit: "24h", // Son 24 saat
-      maxPosts: 20 // 2 katına çıkarıldı (Eski: 10)
+      maxPosts: 12 // 5 sorgu * 12 gönderi = 60 gönderi = $0.120 (16 sent hedefi)
     };
 
     const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-post-search/run-sync-get-dataset-items?token=${apifyToken}&timeout=90`, {
@@ -162,10 +164,10 @@ export async function fetchAmlTwitterPosts(apifyToken) {
       if (Array.isArray(liItems) && liItems.length > 0) {
         const meaningfulLi = liItems.filter(p => {
           const text = (p.content || p.text || "").trim();
-          return text.length >= 15; // 35'ten 15'e düşürüldü - aşırı filtre kaldırıldı
+          return text.length >= 10; // Aşırı filtre kaldırıldı
         });
 
-        const mappedLi = meaningfulLi.slice(0, 50).map(p => {
+        const mappedLi = meaningfulLi.slice(0, 60).map(p => {
           const author = p.author?.name || p.authorName || "LinkedIn AML Uzmanı";
           const headline = p.author?.info || p.author?.headline || "Compliance & FinCrime Professional";
           const text = (p.content || p.text || "").trim();
