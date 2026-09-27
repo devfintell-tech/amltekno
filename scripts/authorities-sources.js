@@ -252,14 +252,14 @@ export async function fetchAuthorityDevelopments(apifyToken) {
       const linkedinPayload = {
         targetUrls: linkedinTargetUrls,
         maxPosts: 15, // 3 katına çıkarıldı (~8.5 - 9.5 sent)
-        postedLimit: "7d" // Otoritelerin haftalık resmi kararlarını kaçırmamak için 7 gün
+        postedLimit: "week" // Otoritelerin haftalık resmi kararlarını kaçırmamak için 7 gün
       };
 
-      const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
+      const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=90`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(linkedinPayload),
-        signal: AbortSignal.timeout(75000)
+        signal: AbortSignal.timeout(105000)
       });
 
       if (liRes.ok) {
