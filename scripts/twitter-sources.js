@@ -150,11 +150,11 @@ export async function fetchAmlTwitterPosts(apifyToken) {
       maxPosts: 20 // 2 katına çıkarıldı (Eski: 10)
     };
 
-    const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-post-search/run-sync-get-dataset-items?token=${apifyToken}&timeout=60`, {
+    const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-post-search/run-sync-get-dataset-items?token=${apifyToken}&timeout=90`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(linkedinPayload),
-      signal: AbortSignal.timeout(75000)
+      signal: AbortSignal.timeout(105000)
     });
 
     if (liRes.ok) {

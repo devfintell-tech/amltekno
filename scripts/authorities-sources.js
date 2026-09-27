@@ -251,8 +251,8 @@ export async function fetchAuthorityDevelopments(apifyToken) {
 
       const linkedinPayload = {
         targetUrls: linkedinTargetUrls,
-        maxPosts: 15, // 3 katına çıkarıldı (~8.5 - 9.5 sent)
-        postedLimit: "week" // Otoritelerin haftalık resmi kararlarını kaçırmamak için 7 gün
+        maxPosts: 25, // Zengin veri havuzu için artırıldı (~8-10 sent)
+        postedLimit: "month" // Otoritelerin aylık resmi genelge, rehber ve yaptırım kararlarını kaçırmamak için month
       };
 
       const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=90`, {
@@ -267,11 +267,16 @@ export async function fetchAuthorityDevelopments(apifyToken) {
         if (Array.isArray(posts) && posts.length > 0) {
           console.log(`✅ Otorite resmi LinkedIn sayfalarından ${posts.length} paylaşım çekildi.`);
           for (const post of posts) {
-            const author = (post.author?.name || post.companyName || "").toLowerCase();
+            const searchStr = `${post.author?.name || ''} ${post.companyName || ''} ${post.query || ''} ${post.header || ''}`.toLowerCase();
             let matchingAuth = AUTHORITIES_CONFIG.find(a => 
-              author.includes(a.id) || 
-              author.includes(a.code.toLowerCase())
-            ) || AUTHORITIES_CONFIG.find(a => a.id === "fatf");
+              searchStr.includes(a.id) || 
+              searchStr.includes(a.code.toLowerCase())
+            );
+            if (!matchingAuth) {
+              if (searchStr.includes("treasury")) matchingAuth = AUTHORITIES_CONFIG.find(a => a.id === "ofac");
+              else if (searchStr.includes("singapore")) matchingAuth = AUTHORITIES_CONFIG.find(a => a.id === "mas");
+              else matchingAuth = AUTHORITIES_CONFIG.find(a => a.id === "fatf");
+            }
 
             const postText = (post.text || post.content || "").trim();
             if (postText.length < 10) continue; // Aşırı filtre kaldırıldı
@@ -281,17 +286,17 @@ export async function fetchAuthorityDevelopments(apifyToken) {
             const dynamicSummary = postText.slice(0, 320);
 
             results.push({
-              id: `auth-li-${post.id || Math.random().toString(36).slice(2)}`,
+              id: `auth-li-${post.id || post.entityId || Math.random().toString(36).slice(2)}`,
               authorityId: matchingAuth.id,
               authority: matchingAuth.code,
               authorityName: matchingAuth.name,
               country: matchingAuth.country,
               title: dynamicTitle,
               summary: dynamicSummary,
-              url: post.url || post.postUrl || matchingAuth.url,
+              url: post.linkedinUrl || post.shareLinkedinUrl || post.url || post.postUrl || matchingAuth.url,
               date: todayStr,
               sourcePlatform: 'LinkedIn (Resmi Sayfa)',
-              createdAt: post.postedAt || new Date().toISOString()
+              createdAt: post.postedAt?.date || post.postedAt || new Date().toISOString()
             });
           }
         }
