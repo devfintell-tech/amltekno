@@ -282,7 +282,7 @@ export async function fetchAuthorityDevelopments(apifyToken) {
 
       const linkedinPayload = {
         targetUrls: linkedinTargetUrls,
-        maxPosts: 25,
+        maxPosts: 13, // 13 post * $0.010 = $0.130 + Twitter ($0.031) = ~16 sent hedefi (28 sentten 16 sente kalibre edildi)
         postedLimit: "24h" // Kesinlikle son 24 saat
       };
 
