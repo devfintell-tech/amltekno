@@ -70,28 +70,46 @@ export const REDDIT_SEARCH_QUERIES = [
 ];
 
 export const AML_KEYWORDS = [
-  "aml", "anti-money laundering", "money laundering", "kara para", "aklama",
+  "anti-money laundering", "money laundering", "kara para", "aklama",
   "fincen", "fatf", "masak", "ofac", "sanctions", "yaptırım", "yaptırımlar",
-  "cdd", "edd", "kyc", "ubo", "beneficial owner", "gerçek faydalanıcı",
-  "sar", "str", "ctr", "bsa", "şüpheli işlem", "suspicious activity",
+  "beneficial owner", "gerçek faydalanıcı",
+  "şüpheli işlem", "suspicious activity",
   "smurfing", "structuring", "money mule", "kurye hesap", "para katırı",
-  "layering", "placement", "integration", "pep", "politically exposed",
+  "layering", "placement", "integration", "politically exposed",
   "transaction monitoring", "işlem izleme", "anomali", "alert fatigue",
   "false positive", "yanlış alarm", "synthetic identity", "sentetik kimlik",
-  "deepfake liveness", "trade-based money laundering", "tbml",
+  "deepfake liveness", "trade-based money laundering",
   "crypto mixer", "tornado cash", "de-risking", "regtech", "wire fraud",
   "shell company", "paravan şirket", "source of funds", "source of wealth",
   "travel rule", "unhosted wallet", "sanction evasion", "asset tracing",
   "fraud", "scam", "phishing", "forensics", "investigation", "compliance",
-  "regulatory", "audit", "laundering", "mule", "sepa", "swift", "fiu", "bribery", "corruption"
+  "regulatory", "laundering", "sepa", "swift", "bribery", "corruption"
+];
+
+// Kısa kısaltmalar: 'necessary' veya 'string' gibi alakasız kelimelerin içinde sahte eşleşme yapmaması için
+// tam kelime sınırı (\b) ile aranır.
+export const SHORT_AML_ACRONYMS = [
+  "aml", "cdd", "edd", "kyc", "ubo", "pep", "sar", "str", "ctr", "bsa", "fiu", "tbml", "vasp", "fast", "mule"
 ];
 
 /**
  * Gönderinin AML ile doğrudan ilişkili olup olmadığını denetler
- * (Aşırı filtreleme yapmaz; AML/FinCrime ile ilgiliyse kabul eder)
+ * (Aşırı filtreleme yapmaz; AML/FinCrime ile ilgiliyse kabul eder, sahte alakasız kelimeleri eler)
  */
 export function isAmlRelevant(title = "", content = "", isStrict = true) {
   if (!isStrict) return true;
   const haystack = `${title} ${content}`.toLowerCase();
-  return AML_KEYWORDS.some(kw => haystack.includes(kw.toLowerCase()));
+
+  // 1. Kısa AML kısaltmaları için kelime sınırı kontrolü (\b)
+  for (const acr of SHORT_AML_ACRONYMS) {
+    const rx = new RegExp(`\\b${acr}\\b`, 'i');
+    if (rx.test(haystack)) return true;
+  }
+
+  // 2. Uzun AML terimleri ve çok kelimeli kavramlar
+  for (const kw of AML_KEYWORDS) {
+    if (haystack.includes(kw.toLowerCase())) return true;
+  }
+
+  return false;
 }

@@ -35,10 +35,7 @@ ${ideas.map((idea, i) => `
 ### #${i + 1} ${idea.title} [${idea.category}]
 - **Problem:** ${idea.problem}
 - **Önerilen Çözüm:** ${idea.solution}
-- **Metodoloji / Kural:**
-\`\`\`
-${idea.promptOrLogic || idea.methodologyAndStudy || ''}
-\`\`\`
+- **Uygulama Metodolojisi & Saha Çözümü:** ${(idea.promptOrLogic || idea.methodologyAndStudy || '').replace(/[\r\n]+/g, ' ')}
 - **Beklenen Etki:** ${idea.expectedImpact}
 `).join("\n")}
 
@@ -171,9 +168,10 @@ ${typologies.map(t => `| ${t.name} | ${t.riskScore}/10 | ${t.delta} | ${t.target
               <p className="text-xs text-slate-300 mb-3">
                 <strong>Çözüm:</strong> {idea.solution}
               </p>
-              {idea.promptOrLogic && (
-                <div className="p-3 rounded-lg bg-slate-900 font-mono text-[11px] text-emerald-300 border border-slate-800 whitespace-pre-wrap mb-2">
-                  {idea.promptOrLogic}
+              {(idea.promptOrLogic || idea.methodologyAndStudy) && (
+                <div className="p-3 rounded-lg bg-slate-900/90 text-xs text-slate-300 border border-slate-800 leading-relaxed mb-2">
+                  <span className="font-semibold text-emerald-400 block mb-1">📋 Saha Çözümü &amp; Metodoloji:</span>
+                  {idea.promptOrLogic || idea.methodologyAndStudy}
                 </div>
               )}
               <div className="text-[11px] font-mono text-slate-400">

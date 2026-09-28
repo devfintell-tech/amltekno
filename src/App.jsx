@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { CATEGORY_DEFINITIONS, DEFAULT_AML_GLOSSARY } from './data/mockData.js';
+import { CATEGORY_DEFINITIONS, DEFAULT_AML_GLOSSARY, OFFICIAL_AUTHORITY_URLS } from './data/mockData.js';
 import latestReportData from './data/latest-aml-report.json';
 import archiveIndexData from './data/archive-index.json';
 import { 
@@ -29,11 +29,42 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileText,
-  Filter
+  Filter,
+  ArrowRight
 } from 'lucide-react';
 
+// Tüm geçmiş günlerin arşiv dosyalarını Vite ile dinamik yükle
+const archiveFiles = import.meta.glob('./data/archive/*.json', { eager: true });
+
+// Kripto Terimleri Regex Filtresi
+export const CRYPTO_KEYWORD_REGEX = /\b(kripto|crypto|bitcoin|btc|ethereum|eth|tether|usdt|vasp|mixer|karıştırıcı|karıştırıcılar|tornado\s*cash|mixguard|defi|on-chain|blockchain|zincir\s*üstü|cüzdan|wallet|köprü|bridge|dex|binance|bitget|bitbank|xinbi|coinbase|smart\s*contract|akıllı\s*sözleşme|web3|sanal\s*para|sanal\s*varlık|travel\s*rule)\b/i;
+
+export function isCryptoItem(item) {
+  if (!item) return false;
+  if (typeof item === 'string') return CRYPTO_KEYWORD_REGEX.test(item);
+  const cat = (item.category || item.tag || '').toLowerCase();
+  if (cat.includes('kripto') || cat.includes('crypto') || cat.includes('on-chain') || cat.includes('mixer') || cat.includes('vasp')) return true;
+  const combinedText = `${item.title || ''} ${item.summary || ''} ${item.description || ''} ${item.problem || ''} ${item.solution || ''} ${item.keyInsight || ''} ${item.name || ''} ${item.highlight || ''}`;
+  return CRYPTO_KEYWORD_REGEX.test(combinedText);
+}
+
+// Sözde Kod (Pseudo-Code) Temizleyici: Kodlu metinleri doğal Türkçe AML anlatımına dönüştürür
+export function cleanMethodologyText(text) {
+  if (!text) return '';
+  if (text.includes('IF (') || text.includes('THEN:') || text.includes('MATCH (c:Company)') || text.includes('calculate_ultimate_beneficial_ownership')) {
+    return text
+      .replace(/IF\s*\((.*?)\)\s*AND\s*\((.*?)\)\s*AND\s*\((.*?)\)\s*AND\s*\((.*?)\)\s*AND\s*\((.*?)\)\s*THEN:[\s\S]*?DISPATCH.*?\(\)/gi, 
+        'Metodoloji ve Operasyonel Mantık: Hesap yaşı 90 günün altında olan, son 1 saatte 3 veya daha fazla gelen transferle 50.000 TL üzeri fon toplayan hesaplar kural motoru tarafından izlemeye alınır. 180 saniye içinde anlık FAST, ATM veya kripto borsasına çıkış denendiğinde işlem 5 dakika süreyle bekletilir, kurye alarmı tetiklenir ve biyometrik onay istenir.')
+      .replace(/\/\/ Python\/SQL Graph Sorgu Mantığı[\s\S]*?ORDER BY company_count DESC;/gi,
+        'Metodoloji ve Ağ Analitiği: Ticaret Sicil ve şirket kuruluş kayıtlarında ortak adres sorgulaması yapılarak, ortak çalışma alanı haricindeki tek bir adreste 5 veya daha fazla şirket bulunup bulunmadığı taranır ve ilişkili yönetim kurulu üyeleri paravan şirket şüphesiyle haritalandırılır.')
+      .replace(/def calculate_ultimate_beneficial_ownership[\s\S]*?return ubo_candidates/gi,
+        'Metodoloji ve Uyum Modeli: Çok katmanlı kurumsal holding yapılarında doğrudan ve dolaylı sermaye payları yukarıdan aşağıya zincirleme oranlama yöntemiyle taranarak %25 eşiğini aşan nihai gerçek faydalanıcılar (UBO) otomatik olarak tespit edilir.');
+  }
+  return text;
+}
+
 export default function App() {
-  // Tablar: 'talks' | 'developments' | 'cdd_kyc' | 'authorities' | 'glossary' | 'report'
+  // Tablar: 'talks' | 'developments' | 'cdd_kyc' | 'authorities' | 'crypto' | 'glossary' | 'report'
   const [activeTab, setActiveTab] = useState('talks');
   const [selectedAuthFilter, setSelectedAuthFilter] = useState('all');
   const [isBriefExpanded, setIsBriefExpanded] = useState(true);
@@ -44,10 +75,91 @@ export default function App() {
   const [subscribeMessage, setSubscribeMessage] = useState('');
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [glossarySearch, setGlossarySearch] = useState('');
-  const [selectedDateId, setSelectedDateId] = useState('latest');
+  
+  // URL parametresinden tarihi oku (?date=2026-09-26) veya varsayılan canlı yap
+  const [selectedDateId, setSelectedDateId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const dateParam = params.get('date');
+      if (dateParam) return dateParam;
+    }
+    return 'latest';
+  });
+  
   const [copiedMd, setCopiedMd] = useState(false);
 
-  const report = latestReportData;
+  // Tarih değiştiğinde URL parametresini güncelle ve raporu dinamik çek
+  const handleDateChange = (newDateId) => {
+    setSelectedDateId(newDateId);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location);
+      if (newDateId === 'latest') {
+        url.searchParams.delete('date');
+      } else {
+        url.searchParams.set('date', newDateId);
+      }
+      window.history.replaceState({}, '', url);
+    }
+  };
+
+  // Dinamik Rapor Yükleme (Geçmiş gün seçildiğinde o güne ait veriyi arşivden getirir)
+  const report = useMemo(() => {
+    if (!selectedDateId || selectedDateId === 'latest') {
+      return latestReportData;
+    }
+    const key = `./data/archive/${selectedDateId}.json`;
+    const f = archiveFiles[key];
+    if (f) {
+      return f.default || f;
+    }
+    return latestReportData;
+  }, [selectedDateId]);
+
+  // Arşiv Seçici İçin Tüm Mevcut Tarihler Listesi (Sıralı)
+  const availableArchiveDates = useMemo(() => {
+    const datesMap = new Map();
+    (archiveIndexData || []).forEach(item => {
+      if (item?.isoDate) {
+        datesMap.set(item.isoDate, item);
+      }
+    });
+    Object.keys(archiveFiles).forEach(p => {
+      const m = p.match(/(\d{4}-\d{2}-\d{2})\.json$/);
+      if (m) {
+        const iso = m[1];
+        if (!datesMap.has(iso)) {
+          const mod = archiveFiles[p];
+          const rep = mod?.default || mod;
+          datesMap.set(iso, {
+            isoDate: iso,
+            date: rep?.date || iso,
+            threatScore: rep?.threatMeter?.overallScore || 8.8,
+            flashTitle: rep?.morningBrief?.flashAlert?.title || 'AML Günlük Raporu'
+          });
+        }
+      }
+    });
+    return Array.from(datesMap.values()).sort((a, b) => b.isoDate.localeCompare(a.isoDate));
+  }, []);
+
+  // Otorite Link Doğrulayıcı: ASLA kırık link bırakmaz, resmi portala yönlendirir
+  const getVerifiedAuthorityUrl = (auth) => {
+    if (!auth) return 'https://masak.hmb.gov.tr/duyurular';
+    const authCode = (auth.authority || '').toUpperCase().trim();
+    const canonical = OFFICIAL_AUTHORITY_URLS[authCode];
+    const u = auth.url || '';
+    if (
+      !u ||
+      u.includes('hazine.gov.tr') ||
+      u.includes('amla.europa.eu') ||
+      u.includes('wolfsberg-principles.com') ||
+      u.includes('example.com') ||
+      !u.startsWith('http')
+    ) {
+      return canonical || 'https://masak.hmb.gov.tr/duyurular';
+    }
+    return u;
+  };
 
   const handleCopyCmd = (id, text) => {
     navigator.clipboard.writeText(text);
@@ -67,7 +179,7 @@ export default function App() {
 
   const handleCopyMarkdown = () => {
     const mdText = `# AML TEKNO RADAR - GÜNLÜK İSTİHBARAT BÜLTENİ
-Tarih: ${report.date || '22 Eylül 2026'}
+Tarih: ${report.date || '28 Eylül 2026'}
 Risk Skoru: ${report.threatMeter?.overallScore || 8.8}/10 (${report.threatMeter?.level || 'Yüksek'})
 
 ## GÜNÜN FLAŞ TEHDİDİ
@@ -90,7 +202,7 @@ ${(report.newDevelopmentsAndIdeas || []).map((idea, i) => `
 - Problem: ${idea.problem}
 - Çözüm: ${idea.solution}
 - Saha Bulguları / Metodoloji:
-${idea.methodologyAndStudy || idea.promptOrLogic || ''}
+${cleanMethodologyText(idea.methodologyAndStudy || idea.promptOrLogic || '')}
 - Beklenen Etki: ${idea.expectedImpact}
 `).join('\n')}
 
@@ -104,23 +216,114 @@ ${(report.authoritiesPulse || []).map((a, i) => `
     setTimeout(() => setCopiedMd(false), 2500);
   };
 
-  // Günün Sözlüğü (O günkü 9 kavram)
+  // Günün Sözlüğü (O günkü 9 kavram - 2. LLM çıktısı)
   const todayGlossary = useMemo(() => {
     return report.dailyGlossary || DEFAULT_AML_GLOSSARY.slice(0, 9);
   }, [report]);
 
-  // Geçmiş Sözlük Arşivi (Tüm kavramlar birikimli)
-  const filteredArchiveGlossary = useMemo(() => {
-    if (!glossarySearch) return DEFAULT_AML_GLOSSARY;
-    return DEFAULT_AML_GLOSSARY.filter(item => 
-      item.term.toLowerCase().includes(glossarySearch.toLowerCase()) ||
-      item.definition.toLowerCase().includes(glossarySearch.toLowerCase())
-    );
-  }, [glossarySearch]);
+  // Geçmiş Sözlük Arşivi: Tüm geçmiş günlerin arşiv dosyalarını tara ve birikimli tekilleştir
+  const allArchiveGlossary = useMemo(() => {
+    const termMap = new Map();
 
-  // Otoriteler Filtresi & Dinamik Liste (MASAK Her Zaman En Üstte)
+    // 1. Önce güncel görüntülenen raporun sözlüğü
+    const currentGlossary = report.dailyGlossary || [];
+    currentGlossary.forEach(item => {
+      if (item?.term) {
+        termMap.set(item.term.toLowerCase().trim(), {
+          ...item,
+          dateStr: item.dateStr || report.date || 'Bugün'
+        });
+      }
+    });
+
+    // 2. Tüm arşiv dosyalarından geçmiş günlerin sözlükleri
+    Object.entries(archiveFiles).forEach(([filePath, mod]) => {
+      const data = mod?.default || mod;
+      if (data && Array.isArray(data.dailyGlossary)) {
+        data.dailyGlossary.forEach(item => {
+          if (item?.term) {
+            const key = item.term.toLowerCase().trim();
+            if (!termMap.has(key)) {
+              termMap.set(key, {
+                ...item,
+                dateStr: item.dateStr || data.date || filePath.replace(/.*\/(\d{4}-\d{2}-\d{2})\.json/, '$1')
+              });
+            }
+          }
+        });
+      }
+    });
+
+    // 3. Varsayılan zengin sözlük listesinden eksikleri tamamla
+    DEFAULT_AML_GLOSSARY.forEach(item => {
+      if (item?.term) {
+        const key = item.term.toLowerCase().trim();
+        if (!termMap.has(key)) {
+          termMap.set(key, {
+            ...item,
+            dateStr: item.dateStr || 'Standart Kılavuz'
+          });
+        }
+      }
+    });
+
+    return Array.from(termMap.values());
+  }, [report, archiveFiles]);
+
+  const filteredArchiveGlossary = useMemo(() => {
+    if (!glossarySearch.trim()) return allArchiveGlossary;
+    const q = glossarySearch.toLowerCase().trim();
+    return allArchiveGlossary.filter(item =>
+      item.term?.toLowerCase().includes(q) ||
+      item.definition?.toLowerCase().includes(q)
+    );
+  }, [allArchiveGlossary, glossarySearch]);
+
+  // ========================================================
+  // KRİPTO AYRIMI: "kripto ile ilgili her şey orda olsun, diğer yerlerde kripto olmasın"
+  // ========================================================
+  const normalAmlTalks = useMemo(() => {
+    return (report.amlTalks || []).filter(item => !isCryptoItem(item));
+  }, [report.amlTalks]);
+
+  const normalDevelopments = useMemo(() => {
+    return (report.newDevelopmentsAndIdeas || []).filter(item => !isCryptoItem(item));
+  }, [report.newDevelopmentsAndIdeas]);
+
+  const normalKyc = useMemo(() => {
+    return (report.cddKycInnovations || []).filter(item => !isCryptoItem(item));
+  }, [report.cddKycInnovations]);
+
+  const normalAuthorities = useMemo(() => {
+    return (report.authoritiesPulse || []).filter(item => !isCryptoItem(item));
+  }, [report.authoritiesPulse]);
+
+  // Kripto Sekmesine Özel Toplanan Tüm Kripto Verileri
+  const cryptoTalks = useMemo(() => {
+    return (report.amlTalks || []).filter(item => isCryptoItem(item));
+  }, [report.amlTalks]);
+
+  const cryptoDevelopments = useMemo(() => {
+    return (report.newDevelopmentsAndIdeas || []).filter(item => isCryptoItem(item));
+  }, [report.newDevelopmentsAndIdeas]);
+
+  const cryptoKyc = useMemo(() => {
+    return (report.cddKycInnovations || []).filter(item => isCryptoItem(item));
+  }, [report.cddKycInnovations]);
+
+  const cryptoAuthorities = useMemo(() => {
+    return (report.authoritiesPulse || []).filter(item => isCryptoItem(item));
+  }, [report.authoritiesPulse]);
+
+  const cryptoExpertTakeaways = useMemo(() => {
+    return (report.twitterPulse?.topExpertTakeaways || []).filter(exp => 
+      isCryptoItem(`${exp.expert} ${exp.highlight}`)
+    );
+  }, [report.twitterPulse]);
+
+  // Normal Otoriteler Filtresi & Dinamik Liste (MASAK Her Zaman En Üstte)
   const uniqueAuthorities = useMemo(() => {
-    const list = report.authoritiesPulse || [];
+    const list = normalAuthorities;
     const authSet = new Set(list.map(a => a.authority).filter(Boolean));
     const arr = Array.from(authSet);
     const masakIndex = arr.findIndex(a => a.toUpperCase() === 'MASAK' || a.toUpperCase().includes('MASAK'));
@@ -129,10 +332,10 @@ ${(report.authoritiesPulse || []).map((a, i) => `
       arr.unshift(masak);
     }
     return ['all', ...arr];
-  }, [report.authoritiesPulse]);
+  }, [normalAuthorities]);
 
   const filteredAuthorities = useMemo(() => {
-    const list = report.authoritiesPulse || [];
+    const list = normalAuthorities;
     const filtered = selectedAuthFilter === 'all' 
       ? [...list] 
       : list.filter(a => a.authority?.toLowerCase().includes(selectedAuthFilter.toLowerCase()));
@@ -145,7 +348,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
       if (!aIsMasak && bIsMasak) return 1;
       return 0;
     });
-  }, [report, selectedAuthFilter]);
+  }, [normalAuthorities, selectedAuthFilter]);
 
   // Token Telemetrisi Hesabı (Çift LLM)
   const p1 = report.phase1TokenUsage || {};
@@ -186,14 +389,14 @@ ${(report.authoritiesPulse || []).map((a, i) => `
               <Calendar className="w-3.5 h-3.5 text-rose-200 shrink-0" />
               <select
                 value={selectedDateId}
-                onChange={(e) => setSelectedDateId(e.target.value)}
+                onChange={(e) => handleDateChange(e.target.value)}
                 className="bg-transparent text-white font-mono text-[11px] sm:text-xs font-semibold focus:outline-none cursor-pointer pr-1"
                 title="Geçmiş günlerin raporunu görüntüle"
               >
                 <option value="latest" className="bg-slate-800 text-white font-sans text-xs">
-                  {report.date || "25 Eylül 2026"} (Canlı)
+                  {latestReportData.date || "28 Eylül 2026"} (Canlı / Güncel)
                 </option>
-                {archiveIndexData.map(d => (
+                {availableArchiveDates.map(d => (
                   <option key={d.isoDate} value={d.isoDate} className="bg-slate-800 text-white font-sans text-xs">
                     {d.date} • Risk: {d.threatScore}/10
                   </option>
@@ -348,12 +551,13 @@ ${(report.authoritiesPulse || []).map((a, i) => `
 
         {/* 3. ANA SEKMELER ÇUBUĞU (ŞIK HAP BUTONLAR) */}
         <div className="max-w-7xl mx-auto px-2 sm:px-4 border-t border-rose-300/20 pt-2 pb-2 w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5 w-full">
             {[
               { id: 'talks', label: 'AML Dünyasında Konuşulanlar', icon: '📊' },
               { id: 'developments', label: 'Yeni Gelişmeler & Fikirler', icon: '💡' },
               { id: 'cdd_kyc', label: 'Müşteri İnceleme (CDD / KYC)', icon: '🛡️' },
               { id: 'authorities', label: 'Otoritelerde Durum Nasıl?', icon: '🏛️' },
+              { id: 'crypto', label: 'Kripto Varlık & On-Chain', icon: '🪙' },
               { id: 'glossary', label: 'Günün AML Sözlüğü', icon: '📖' },
               { id: 'report', label: 'Danışman Bülteni', icon: '📑' }
             ].map((tab) => (
@@ -373,6 +577,24 @@ ${(report.authoritiesPulse || []).map((a, i) => `
           </div>
         </div>
       </header>
+
+      {/* 📅 GEÇMİŞ ARŞİV BİLGİLENDİRME ŞERİDİ (Geçmiş gün seçildiğinde görünür) */}
+      {selectedDateId !== 'latest' && (
+        <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 px-3 sm:px-4 py-2 text-xs font-mono font-bold flex items-center justify-between border-b border-amber-600/60 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-slate-950 shrink-0" />
+            <span>📅 Arşiv İnceleme Modu: <strong>{report.date}</strong> Raporu Görüntüleniyor (Risk Skoru: {report.threatMeter?.overallScore || 8.8}/10)</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleDateChange('latest')}
+            className="bg-slate-950 hover:bg-slate-800 text-white px-2.5 py-1 rounded text-[11px] font-mono cursor-pointer transition flex items-center gap-1.5 shadow-xs"
+          >
+            <span>Canlı Güncel Rapora Dön</span>
+            <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+      )}
 
       {/* 📱 1'E 1 ÖNCEKİ PROJEYLE AYNI SİSTEM BİLGİLERİ VE TELEMETRİ MODALI */}
       {isSystemInfoOpen && (
@@ -787,7 +1009,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                   </span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {(report.amlTalks || []).map((talk, idx) => (
+                  {(normalAmlTalks || []).map((talk, idx) => (
                     <div key={talk.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-slate-400 transition">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
@@ -843,7 +1065,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
             <div className="p-4 sm:p-5 bg-[#f8fafc]/50 space-y-4">
               <div className="grid grid-cols-1 gap-4">
-                {(report.newDevelopmentsAndIdeas || []).map((idea, idx) => (
+                {(normalDevelopments || []).map((idea, idx) => (
                   <div key={idea.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 hover:border-amber-500/50 transition">
                     <div className="text-xs font-mono text-[#b45309] font-bold uppercase tracking-wide pb-1 border-b border-slate-100 flex items-center justify-between">
                       <span>{idea.category}</span>
@@ -865,7 +1087,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                           Metodoloji &amp; Saha Çalışması Bulguları:
                         </strong>
                         <p className="text-slate-700 leading-relaxed font-sans">
-                          {idea.methodologyAndStudy || idea.promptOrLogic}
+                          {cleanMethodologyText(idea.methodologyAndStudy || idea.promptOrLogic)}
                         </p>
                       </div>
                     )}
@@ -906,7 +1128,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
             <div className="p-4 sm:p-5 bg-[#f8fafc]/50 space-y-4">
               <div className="grid grid-cols-1 gap-4">
-                {(report.cddKycInnovations || []).map((kyc, idx) => (
+                {(normalKyc || []).map((kyc, idx) => (
                   <div key={kyc.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 hover:border-amber-500/50 transition">
                     <div className="text-xs font-mono text-[#b45309] font-bold uppercase tracking-wide pb-1 border-b border-slate-100 flex items-center justify-between">
                       <span>{kyc.category}</span>
@@ -928,7 +1150,7 @@ ${(report.authoritiesPulse || []).map((a, i) => `
                           Teknik Mimari &amp; Uygulama Modeli:
                         </strong>
                         <p className="text-slate-700 leading-relaxed font-sans">
-                          {kyc.methodologyAndStudy || kyc.promptOrLogic}
+                          {cleanMethodologyText(kyc.methodologyAndStudy || kyc.promptOrLogic)}
                         </p>
                       </div>
                     )}
@@ -985,41 +1207,278 @@ ${(report.authoritiesPulse || []).map((a, i) => `
             </div>
 
             {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
+            {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK KARTLARI */}
             <div className="p-4 sm:p-5 bg-[#f8fafc]/50">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredAuthorities.map((auth, idx) => (
-                  <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-orange-400 transition">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
-                        <span className="font-bold text-[#c2410c] flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-600"></span>
-                          {auth.authority}
-                        </span>
-                        <span className="text-slate-400 text-[11px]">
-                          {auth.country} • {auth.date}
-                        </span>
+              {filteredAuthorities.length === 0 ? (
+                <div className="p-8 text-center bg-white border border-slate-200 rounded-sm space-y-2">
+                  <p className="text-sm font-semibold text-slate-800">
+                    {selectedAuthFilter === 'all' 
+                      ? "Son 24 saat içerisinde resmi otoriteler tarafından yeni bir tebliğ veya basın bildirisi yayınlanmadı." 
+                      : `Son 24 saat içerisinde ${selectedAuthFilter} tarafından yeni bir resmi tebliğ veya bildiri yayınlanmadı.`}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Otoritenin resmi mevzuat portalını ziyaret etmek için arşiv tarihini değiştirebilir veya doğrulanmış resmi web sitesini kontrol edebilirsiniz.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredAuthorities.map((auth, idx) => (
+                    <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-orange-400 transition">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
+                          <span className="font-bold text-[#c2410c] flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-600"></span>
+                            {auth.authority}
+                          </span>
+                          <span className="text-slate-400 text-[11px]">
+                            {auth.country} • {auth.date}
+                          </span>
+                        </div>
+                        <h3 className="font-bold text-sm text-slate-900 leading-snug">{auth.title}</h3>
+                        <p className="text-xs text-slate-600 leading-relaxed font-sans">{auth.summary}</p>
                       </div>
-                      <h3 className="font-bold text-sm text-slate-900 leading-snug">{auth.title}</h3>
-                      <p className="text-xs text-slate-600 leading-relaxed font-sans">{auth.summary}</p>
-                    </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span className="text-[10px] font-mono text-slate-500">
-                        {auth.sourcePlatform ? `Kaynak: ${auth.sourcePlatform}` : 'Resmi Sosyal Kanal'}
-                      </span>
-                      <a
-                        href={auth.authority === 'MASAK' ? 'https://masak.hmb.gov.tr' : (auth.url || 'https://masak.hmb.gov.tr')}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#c2410c] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
-                      >
-                        <span>Resmi Bildiri</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span className="text-[10px] font-mono text-slate-500">
+                          {auth.sourcePlatform ? `Kaynak: ${auth.sourcePlatform}` : 'Resmi Sosyal Kanal'}
+                        </span>
+                        <a
+                          href={getVerifiedAuthorityUrl(auth)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#c2410c] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
+                        >
+                          <span>Resmi Bildiri</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ========================================================
+            TAB: KRİPTO VARLIK & ON-CHAIN AML ("kripto ile ilgili her şey burada")
+            ======================================================== */}
+        {activeTab === 'crypto' && (
+          <section className="bg-white border border-[#cbd5e1] rounded-sm shadow-xs overflow-hidden">
+            {/* ENTEGRE BAŞLIK ÇUBUĞU - SOFT TURUNCU / WARM AMBER */}
+            <div className="bg-gradient-to-r from-[#c2410c] to-[#ea580c] text-white p-3.5 sm:p-4 border-b border-[#9a3412]">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded bg-white/15 flex items-center justify-center shrink-0 border border-white/20 shadow-xs text-base">
+                    🪙
                   </div>
-                ))}
+                  <div>
+                    <h2 className="font-bold text-sm sm:text-base text-white font-mono uppercase tracking-wide">
+                      Kripto Varlık &amp; On-Chain AML İstihbarat Merkezi
+                    </h2>
+                    <span className="text-[11px] font-mono text-orange-100">
+                      VASP, Travel Rule, Kripto Mikserler, DeFi &amp; Zincir Üstü Adli Analiz
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-white/15 border border-white/25 px-2.5 py-1 rounded text-xs font-mono font-bold text-white shadow-xs">
+                    {cryptoTalks.length + cryptoDevelopments.length + cryptoKyc.length + cryptoAuthorities.length} Kripto İstihbarat Kaydı
+                  </span>
+                </div>
               </div>
+              <p className="text-xs text-orange-100/90 mt-2 leading-relaxed">
+                Tüm kripto para borsaları (VASP), zincir içi adli bilişim analistleri (@zachxbt, Chainalysis, TRM Labs) ve MASAK/FATF/OFAC'ın kripto varlıklara yönelik tebliğ ve yaptırım kararları bu özel merkezde toplanmaktadır.
+              </p>
+            </div>
+
+            {/* BAŞLIK ALTINDA AYNI ALANDA YER ALAN İÇERİK */}
+            <div className="p-4 sm:p-5 bg-[#f8fafc]/50 space-y-6">
+              
+              {/* 1. KRİPTO & ON-CHAIN SAHA TARTIŞMALARI */}
+              {cryptoTalks.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span className="text-xs font-mono font-bold text-slate-800 uppercase flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                      Kripto &amp; On-Chain Saha ve Vaka Tartışmaları
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-500">{cryptoTalks.length} Vaka</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {cryptoTalks.map((talk, idx) => (
+                      <div key={talk.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-orange-400 transition">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
+                            <span className="font-bold text-[#c2410c]">{talk.category || 'Kripto Varlık & On-Chain'}</span>
+                            <span className="text-slate-400">{talk.source}</span>
+                          </div>
+                          <h3 className="font-bold text-sm text-slate-900 leading-snug">{talk.title}</h3>
+                          <p className="text-xs text-slate-600 leading-relaxed font-sans">{talk.summary}</p>
+                        </div>
+                        <div className="p-3 bg-orange-50/70 border border-orange-200/60 rounded-xs text-xs space-y-1">
+                          <strong className="text-[#9a3412] font-mono text-[11px] uppercase block">Zincir İçi Çıkarım &amp; Çözüm:</strong>
+                          <p className="text-slate-700 leading-relaxed font-sans">{talk.keyInsight}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 2. ON-CHAIN AML TEKNOLOJİLERİ VE ÇÖZÜMLER */}
+              {cryptoDevelopments.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span className="text-xs font-mono font-bold text-slate-800 uppercase flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                      Kripto Suç &amp; Aklama Savunma Teknolojileri (On-Chain Modeller)
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-500">{cryptoDevelopments.length} Çözüm</span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    {cryptoDevelopments.map((idea, idx) => (
+                      <div key={idea.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 hover:border-orange-400 transition">
+                        <div className="text-xs font-mono text-[#b45309] font-bold uppercase tracking-wide pb-1 border-b border-slate-100 flex items-center justify-between">
+                          <span>{idea.category || 'Kripto Savunma Teknolojisi'}</span>
+                          <span className="text-slate-400 font-normal text-[11px]">On-Chain Metodoloji #{idx + 1}</span>
+                        </div>
+                        <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">{idea.title}</h3>
+                        <div className="p-3.5 bg-[#f8fafc] border border-slate-200 rounded-sm text-xs space-y-2.5">
+                          <p className="text-slate-700 leading-relaxed font-sans">{idea.problem}</p>
+                          <div className="pt-2.5 border-t border-slate-200 text-slate-800 leading-relaxed font-sans">{idea.solution}</div>
+                        </div>
+                        {(idea.methodologyAndStudy || idea.promptOrLogic) && (
+                          <div className="bg-white border border-slate-200 rounded-sm p-3 text-xs space-y-1.5">
+                            <strong className="text-[#b45309] font-mono text-[11px] uppercase block flex items-center gap-1.5">
+                              <BookMarked className="w-3.5 h-3.5 text-[#b45309]" />
+                              Metodoloji &amp; Saha Bulguları:
+                            </strong>
+                            <p className="text-slate-700 leading-relaxed font-sans">
+                              {cleanMethodologyText(idea.methodologyAndStudy || idea.promptOrLogic)}
+                            </p>
+                          </div>
+                        )}
+                        {idea.expectedImpact && (
+                          <div className="text-xs text-slate-600 font-mono">
+                            <span className="text-[#b45309] font-bold">Beklenen Etki:</span> {idea.expectedImpact}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. KRİPTO VASP MÜŞTERİ TANIMA (KYC) & TRAVEL RULE */}
+              {cryptoKyc.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span className="text-xs font-mono font-bold text-slate-800 uppercase flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                      Kripto VASP Müşteri Tanıma &amp; Travel Rule İnovasyonları
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-500">{cryptoKyc.length} Model</span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    {cryptoKyc.map((kyc, idx) => (
+                      <div key={kyc.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 hover:border-orange-400 transition">
+                        <div className="text-xs font-mono text-[#b45309] font-bold uppercase tracking-wide pb-1 border-b border-slate-100 flex items-center justify-between">
+                          <span>{kyc.category || 'VASP Müşteri Tanıma'}</span>
+                          <span className="text-slate-400 font-normal text-[11px]">VASP Modeli #{idx + 1}</span>
+                        </div>
+                        <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-snug">{kyc.title}</h3>
+                        <div className="p-3.5 bg-[#f8fafc] border border-slate-200 rounded-sm text-xs space-y-2.5">
+                          <p className="text-slate-700 leading-relaxed font-sans">{kyc.problem}</p>
+                          <div className="pt-2.5 border-t border-slate-200 text-slate-800 leading-relaxed font-sans">{kyc.solution}</div>
+                        </div>
+                        {(kyc.methodologyAndStudy || kyc.promptOrLogic) && (
+                          <div className="bg-white border border-slate-200 rounded-sm p-3 text-xs space-y-1.5">
+                            <strong className="text-[#b45309] font-mono text-[11px] uppercase block flex items-center gap-1.5">
+                              <BookMarked className="w-3.5 h-3.5 text-[#b45309]" />
+                              Uygulama Modeli:
+                            </strong>
+                            <p className="text-slate-700 leading-relaxed font-sans">
+                              {cleanMethodologyText(kyc.methodologyAndStudy || kyc.promptOrLogic)}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. OTORİTELERİN KRİPTO & VASP KARARLARI */}
+              {cryptoAuthorities.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span className="text-xs font-mono font-bold text-slate-800 uppercase flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                      Resmi Otoritelerin Kripto, VASP &amp; Travel Rule Kararları
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-500">{cryptoAuthorities.length} Karar</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {cryptoAuthorities.map((auth, idx) => (
+                      <div key={auth.id || idx} className="bg-white border border-[#cbd5e1] rounded-sm p-4 shadow-xs space-y-3 flex flex-col justify-between hover:border-orange-400 transition">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs font-mono pb-1.5 border-b border-slate-100">
+                            <span className="font-bold text-[#c2410c] flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-orange-600"></span>
+                              {auth.authority}
+                            </span>
+                            <span className="text-slate-400 text-[11px]">{auth.country} • {auth.date}</span>
+                          </div>
+                          <h3 className="font-bold text-sm text-slate-900 leading-snug">{auth.title}</h3>
+                          <p className="text-xs text-slate-600 leading-relaxed font-sans">{auth.summary}</p>
+                        </div>
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                          <span className="text-[10px] font-mono text-slate-500">
+                            {auth.sourcePlatform ? `Kaynak: ${auth.sourcePlatform}` : 'Resmi Sosyal Kanal'}
+                          </span>
+                          <a
+                            href={getVerifiedAuthorityUrl(auth)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#c2410c] hover:underline font-mono text-xs font-bold inline-flex items-center gap-1"
+                          >
+                            <span>Resmi Tebliğ / Bildiri</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 5. ON-CHAIN UZMAN VE DEDEKTİF ÇIKARIMLARI */}
+              {cryptoExpertTakeaways.length > 0 && (
+                <div className="bg-white border border-slate-200 rounded-sm p-4 space-y-2.5">
+                  <span className="text-xs font-mono font-bold text-slate-800 uppercase flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                    Bağımsız On-Chain Dedektif &amp; Analist Çıkarımları
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    {cryptoExpertTakeaways.map((exp, idx) => (
+                      <div key={idx} className="bg-orange-50/50 border border-orange-200/60 rounded-sm p-3 text-xs space-y-1.5 shadow-2xs">
+                        <strong className="text-[#c2410c] font-mono block text-xs font-bold">{exp.expert}</strong>
+                        <p className="text-slate-700 text-xs leading-relaxed">{exp.highlight}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* EĞER BU GÜN İÇİN KRİPTO VERİSİ AZSA BİLGİLENDİRME KUTUSU */}
+              {cryptoTalks.length === 0 && cryptoDevelopments.length === 0 && cryptoAuthorities.length === 0 && (
+                <div className="p-6 bg-white border border-slate-200 rounded text-center space-y-2">
+                  <p className="text-sm font-semibold text-slate-800">Bu tarihli raporda doğrudan kripto odaklı yeni bir vaka kaydedilmedi.</p>
+                  <p className="text-xs text-slate-500">Kripto varlıklarla ilgili tüm geçmiş ve canlı verileri görmek için diğer günlerin arşivlerini seçebilirsiniz.</p>
+                </div>
+              )}
+
             </div>
           </section>
         )}

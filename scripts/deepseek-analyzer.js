@@ -67,19 +67,19 @@ export async function analyzeAmlDataWithDualLLM({
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
   const redditContext = redditPosts.slice(0, 150).map((p, idx) => 
-    `[Reddit-${idx + 1}] [r/${p.subreddit}] "${p.title}"\n${(p.content || "").slice(0, 320)}`
+    `[Reddit-${idx + 1}] [r/${p.subreddit}] [Son 24 Saat / Zaman: ${p.updated}] "${p.title}"\n${(p.content || "").slice(0, 350)}\nLink: ${p.url}`
   ).join("\n\n");
 
   const twitterContext = twitterPosts.slice(0, 200).map((t, idx) => 
-    `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${t.authorHandle} (${t.likes} etkileşim): "${t.text}"`
+    `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${t.authorHandle} [Son 24 Saat / Zaman: ${t.createdAt}] (${t.likes} beğeni, ${t.retweets} paylaşım): "${t.text}"\nLink: ${t.url}`
   ).join("\n\n");
 
   const arxivContext = arxivPapers.slice(0, 15).map((a, idx) => 
-    `[arXiv-${idx + 1}] [${a.id}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 320)}\nLink: ${a.arxivUrl}`
+    `[arXiv-${idx + 1}] [${a.id}] [Yayın Tarihi: ${a.published}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 320)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
   const authContext = authorityPosts.slice(0, 80).map((a, idx) => 
-    `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
+    `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] [Son 24 Saat / Zaman: ${a.createdAt || a.date}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
   ).join("\n\n");
 
   // ==========================================
@@ -87,35 +87,40 @@ export async function analyzeAmlDataWithDualLLM({
   // ==========================================
   const phase1System = `Sen küresel düzeyde kıdemli bir AML/CFT, Finansal Suçlar, Yaptırımlar, MASAK mevzuatı ve Müşteri İnceleme (CDD/KYC) Baş Mimarı ve Danışmanısın.
 
-Görevin taranan ham verileri titizlikle işleyip aşağıdaki 6 ana başlıkta hatasız, kurumsal ve pratik çıktılar üretmektir:
+Görevin son 24 saatte taranan ham verileri titizlikle işleyip aşağıdaki 5 ana başlıkta hatasız, kurumsal ve pratik çıktılar üretmektir:
 1. "amlTalks": AML Dünyasında Neler Konuşuluyor? (En az 5-6 adet somut vaka ve saha tartışması)
 2. "twitterPulse": Twitter & LinkedIn AML Gündemi (dominantTopics: 4-5 adet konu; topExpertTakeaways: 3 adet uzman tespiti)
-3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (En az 4 adet yeni teknolojik fikir ve çalışma. Asla prompt kopyalama veya hazır şablon verme; fikirlerden, saha çalışmalarından ve teknik kural mantığından bahset)
+3. "newDevelopmentsAndIdeas": AML Dünyasında Yeni Gelişmeler ve Fikirler? (En az 4 adet yeni teknolojik fikir ve çalışma)
 4. "cddKycInnovations": Müşteri İnceleme Süreçlerine Dair Teknolojik Gelişmeler ve Fikirler (En az 4 adet CDD/KYC/UBO inovasyonu)
-5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Taranan resmi otoritelerden gelen en az 8-12 adet somut karar ve bildiri. Farklı otoritelerden [FATF, OFAC, FinCEN, MASAK, EBA, FCA, AMLA, INTERPOL, AUSTRAC vb.] maksimum çeşitlilik sağla)
-6. "dailyGlossary": Günün AML Sözlüğü (Günün en kilit 9 kavramı ve 2-3 cümlelik sade tanımı)
+5. "authoritiesPulse": Otoritelerde Durum Nasıl? (Taranan resmi otoritelerden gelen somut kararlar ve bildiriler. MASAK, FATF, OFAC, FinCEN, EBA, FCA, AMLA, INTERPOL, AUSTRAC vb.)
 
-Kurallar:
+KESİN VE TAVİZSİZ KURALLAR:
+- KESİN 24 SAAT KURALI: Bu rapor KESİNLİKLE SON 24 SAATİN (son 24 saatlik taranan gerçek girdilerin) nabzını yansıtmalıdır. 48 saat, 1 hafta veya genel geçmiş bilgileri son 24 saatin olayı gibi sunma! Girdi havuzunda son 24 saatte ne varsa onu analiz et.
+- GİRDİLERİ DERİNLEMESİNE VE ETKİN KULLAN: Reddit'teki analist tartışmalarını (SAR yazma yükü, false-positive yorgunluğu, kurye hesap şebekeleri, sahte kimlikler vb.), X ve LinkedIn'deki uzman dedektif paylaşımlarını ve resmi otoritelerin son 24 saatlik tebliğlerini BİREBİR KULLAN. Her tartışma ve çıkarımın arkasında taranan gerçek bir girdi (Reddit postu, uzman tweeti, resmi bildiri) bulunmalıdır.
+- EĞER BİR OTORİTEDE VEYA ALANDA SON 24 SAATTE YENİ BİR GELİŞME OLMADIYSA: Yapay veya asılsız olay uydurma; mevcut olan taze verileri derinleştir.
+- ASLA kod, sözde kod (pseudo-code), SQL sorgusu, Python betiği veya 'IF (...) AND (...) THEN: SET ... TRIGGER ...' gibi programlama kuralları YAZMA! Kullanıcı kesinlikle kodlu teknik çözümler istememektedir. Çözüm, kural ve metodolojileri tamamen profesyonel, doğal bir AML/CFT uzmanı ve baş denetçisi üslubuyla Türkçe anlat (operasyonel süreç, saha analizi, risk parametreleri ve denetim adımları şeklinde).
+- KRİPTO AYRIMI: Kripto varlıklar, DeFi, mikserler (mixer), Travel Rule, VASP ve on-chain aklama ile ilgili tüm maddelerin kategori alanına net olarak "Kripto Varlık & On-Chain" yaz; diğer geleneksel bankacılık, FAST, yaptırım ve KYC başlıklarına kripto karıştırma.
+- LİNKLER: authoritiesPulse içindeki 'url' alanına ASLA uydurma alan adı (masak.hazine.gov.tr, amla.europa.eu vb.) yazma; sadece verilen gerçek linki kullan ya da resmi portal linkini koru.
 - Açıklamaları öz, net ve doğrudan yaz (her madde için 2-3 cümle). Gereksiz ansiklopedik uzatmalardan kaçın.
 - Kesinlikle emoji kullanma.
 - 'Kritik', 'Önem: Yüksek', 'Acil' gibi yapay zeka klişesi etiketlerden ve 'OPERASYONEL ÇIKARIM:' gibi yapay başlıklardan kaçın; doğrudan konuyu ve çözümü akıcı anlat.
 - Çıktıyı SADECE geçerli ve hatasız bir JSON objesi olarak ver.`;
 
-  const phase1User = `Aşağıdaki güncel kaynak verilerini derinlemesine analiz et:
+  const phase1User = `Aşağıdaki son 24 saatlik güncel kaynak verilerini derinlemesine analiz et:
 
-=== RESMİ OTORİTELER (FATF, MASAK, OFAC, FinCEN - Resmi X & LinkedIn Sayfalarından) ===
-${authContext || "Otorite verisi bulunamadı."}
+=== RESMİ OTORİTELER (FATF, MASAK, OFAC, FinCEN - Son 24 Saat Resmi Paylaşımları) ===
+${authContext || "Son 24 saat içinde resmi otorite bildirisi bulunamadı."}
 
-=== REDDİT TOPLULUKLARI & AML ANALİSTLERİ (Genişletilmiş Veri Havuzu) ===
-${redditContext || "Reddit verisi bulunamadı."}
+=== REDDİT TOPLULUKLARI & AML ANALİSTLERİ (Son 24 Saat Taraması) ===
+${redditContext || "Son 24 saat içinde onaylı Reddit gönderisi bulunamadı."}
 
-=== X & LINKEDIN BAĞIMSIZ DEDEKTİFLER & SAHA UZMANLARI ===
-${twitterContext || "X ve LinkedIn verisi bulunamadı."}
+=== X & LINKEDIN BAĞIMSIZ DEDEKTİFLER & SAHA UZMANLARI (Son 24 Saat) ===
+${twitterContext || "Son 24 saat içinde X ve LinkedIn gönderisi bulunamadı."}
 
 === ARXIV AKADEMİK ARAŞTIRMALAR ===
 ${arxivContext || "arXiv verisi bulunamadı."}
 
-Şu JSON şemasında çıktı ver:
+Şu JSON şemasında çıktı ver (ASLA kod veya IF...THEN yazma, doğal Türkçe analist anlatımı kullan):
 {
   "date": "${dateStr}",
   "threatScore": 8.8,
@@ -126,7 +131,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
       "title": "Tartışma Başlığı",
       "category": "Operasyon ve Saha Tartışmaları",
       "summary": "Analistlerin ne konuştuğu ve acı noktaları",
-      "keyInsight": "Operasyonel çıkarım ve uygulanabilir çözüm yolu",
+      "keyInsight": "Operasyonel çıkarım ve uygulanabilir çözüm yolu (Doğal Türkçe)",
       "source": "r/AMLCompliance"
     }
   ],
@@ -155,7 +160,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
       "category": "İşlem İzleme ve Anomali",
       "problem": "Mevcut darboğaz veya problem tanımı",
       "solution": "Teknolojik çözüm ve yaklaşım",
-      "promptOrLogic": "Uygulanan yöntem, mimari veya kural mantığı",
+      "promptOrLogic": "Uygulanan metodoloji, denetim adımları veya kural mantığı (Doğal Türkçe, KODSUZ)",
       "expectedImpact": "Beklenen ölçülebilir etki"
     }
   ],
@@ -166,7 +171,7 @@ ${arxivContext || "arXiv verisi bulunamadı."}
       "category": "Sentetik Kimlik ve Biyometri",
       "problem": "Kimlik kabul veya UBO sürecindeki açık",
       "solution": "Uygulanacak teknoloji (GNN, Liveness, Device Fingerprint)",
-      "promptOrLogic": "Test edilmiş yöntem veya kural mantığı",
+      "promptOrLogic": "Test edilmiş yöntem veya inceleme modeli (Doğal Türkçe, KODSUZ)",
       "expectedImpact": "Süreç ve güvenlik faydası"
     }
   ],
@@ -179,14 +184,6 @@ ${arxivContext || "arXiv verisi bulunamadı."}
       "summary": "Açıklama ve kapsam",
       "date": "${dateStr}",
       "url": "https://..."
-    }
-  ],
-  "dailyGlossary": [
-    {
-      "id": "g-1",
-      "term": "Kavram Adı",
-      "definition": "Sade ve anlaşılır tanımı (2-3 cümle)",
-      "dateStr": "${dateStr}"
     }
   ]
 }`;
@@ -237,17 +234,34 @@ ${arxivContext || "arXiv verisi bulunamadı."}
   // 2. AŞAMA: PHASE 2 LLM ÇAĞRISI
   // ==========================================
   const phase2System = `Sen küresel bir AML & RegTech Baş Danışmanısın. 
-Görevin 1. LLM'in ürettiği verileri okuyup yöneticilerin 30 saniyede okuyacağı kusursuz 'Günün Sentezi' ve 'Yönetici Brifingini' oluşturmaktır.
-Kesinlikle emoji kullanma. SADECE JSON döndür.`;
+Görevin 1. LLM'in ürettiği verileri okuyup iki temel çıktı üretmektir:
+1. Yöneticilerin 30 saniyede okuyacağı kusursuz 'Günün Sentezi' (morningBrief) ve 'Yönetici Brifingini' (executiveSummary) oluşturmak.
+2. GÜNÜN AML SÖZLÜĞÜ (dailyGlossary): Bugün sitede yer alan tüm verileri (konuşulanlar, yeni gelişmeler, KYC modelleri, resmi otoriteler) baştan sona oku. Sitede geçen ve bugünün gündemini oluşturan EN KİLİT 9 KAVRAMI seçerek her biri için sade, anlaşılır 2-3 cümlelik tanım üret.
 
-  const phase2User = `1. LLM Çıktıları:
-- Konuşulanlar: ${(p1Data.amlTalks || []).map(t => t.title).join(", ")}
-- Twitter Nabzı: ${(p1Data.twitterPulse?.dominantTopics || []).map(t => `${t.topic} (%${t.sharePercentage})`).join(", ")}
-- Yeni Fikirler: ${(p1Data.newDevelopmentsAndIdeas || []).map(t => t.title).join(", ")}
-- KYC/CDD: ${(p1Data.cddKycInnovations || []).map(t => t.title).join(", ")}
-- Otoriteler: ${(p1Data.authoritiesPulse || []).map(t => `${t.authority}: ${t.title}`).join(", ")}
+KURALLAR:
+- ASLA kod, sözde kod veya IF...THEN yazma.
+- Kesinlikle emoji kullanma.
+- SADECE geçerli bir JSON döndür.`;
 
-Şu şemada JSON üret:
+  const phase2User = `Aşağıda bugün sitede yayınlanacak 1. LLM çıktıları yer almaktadır:
+
+=== AML DÜNYASINDA KONUŞULANLAR ===
+${(p1Data.amlTalks || []).map(t => `• ${t.title} [${t.category}]: ${t.summary}`).join("\n")}
+
+=== TWITTER & LINKEDIN GÜNDEMİ ===
+${(p1Data.twitterPulse?.dominantTopics || []).map(t => `• ${t.topic} (%${t.sharePercentage}): ${t.summary}`).join("\n")}
+${(p1Data.twitterPulse?.topExpertTakeaways || []).map(e => `• ${e.expert}: ${e.highlight}`).join("\n")}
+
+=== YENİ GELİŞMELER & ÇÖZÜMLER ===
+${(p1Data.newDevelopmentsAndIdeas || []).map(d => `• ${d.title} [${d.category}]: ${d.problem} -> ${d.solution}`).join("\n")}
+
+=== CDD / KYC / UBO İNOVASYONLARI ===
+${(p1Data.cddKycInnovations || []).map(k => `• ${k.title} [${k.category}]: ${k.problem} -> ${k.solution}`).join("\n")}
+
+=== RESMİ OTORİTE KARARLARI ===
+${(p1Data.authoritiesPulse || []).map(a => `• [${a.authority} - ${a.country}] ${a.title}: ${a.summary}`).join("\n")}
+
+Yukarıdaki TÜM güncel verileri okuyarak şu JSON şemasında çıktı üret:
 {
   "morningBrief": {
     "flashAlert": {
@@ -273,7 +287,15 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
       { "tag": "Kripto ve Zincir Üstü Takip", "text": "Net açıklama" }
     ]
   },
-  "executiveSummary": "Günün 3 paragraflık derinlemesine AML yönetici brifingi."
+  "executiveSummary": "Günün 3 paragraflık derinlemesine AML yönetici brifingi.",
+  "dailyGlossary": [
+    {
+      "id": "g-1",
+      "term": "Bugün Sitede Geçen Kilit Kavram Adı (Türkçe ve İngilizce karşılığı)",
+      "definition": "Bugün sitedeki kullanım bağlamıyla uyumlu, analist ve yöneticiler için sade, anlaşılır 2-3 cümlelik tanım.",
+      "dateStr": "${dateStr}"
+    }
+  ]
 }`;
 
   let p2Data = {};
@@ -423,7 +445,7 @@ Kesinlikle emoji kullanma. SADECE JSON döndür.`;
     newDevelopmentsAndIdeas: p1Data.newDevelopmentsAndIdeas || [],
     cddKycInnovations: p1Data.cddKycInnovations || [],
     authoritiesPulse: p1Data.authoritiesPulse || [],
-    dailyGlossary: p1Data.dailyGlossary || [],
+    dailyGlossary: (p2Data.dailyGlossary && p2Data.dailyGlossary.length > 0) ? p2Data.dailyGlossary : (p1Data.dailyGlossary || []),
     arxivHighlights: arxivPapers.slice(0, 3)
   };
 }

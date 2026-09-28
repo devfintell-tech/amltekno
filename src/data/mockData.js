@@ -2,6 +2,26 @@
  * AML Tekno Radar - Kategori ve Model/Tipoloji Veri Tanımları
  */
 
+export const OFFICIAL_AUTHORITY_URLS = {
+  MASAK: "https://masak.hmb.gov.tr/duyurular",
+  FATF: "https://www.fatf-gafi.org/en/publications.html",
+  OFAC: "https://ofac.treasury.gov/recent-actions",
+  FINCEN: "https://www.fincen.gov/news-room/news",
+  AMLA: "https://finance.ec.europa.eu/financial-markets/anti-money-laundering-and-countering-financing-terrorism_en",
+  WOLFSBERG: "https://www.wolfsberg-group.org",
+  EBA: "https://www.eba.europa.eu/publications-and-media/press-releases",
+  EGMONT: "https://egmontgroup.org/news/",
+  INTERPOL: "https://www.interpol.int/en/Crimes/Financial-crime",
+  FCA: "https://www.fca.org.uk/news",
+  FINMA: "https://www.finma.ch/en/news/",
+  MAS: "https://www.mas.gov.sg/news",
+  AUSTRAC: "https://www.austrac.gov.au/news-and-media",
+  EUROPOL: "https://www.europol.europa.eu/newsroom",
+  ACAMS: "https://www.acams.org/en/news",
+  SEC: "https://www.sec.gov/newsroom/press-releases",
+  DOJ: "https://www.justice.gov/news"
+};
+
 export const CATEGORY_DEFINITIONS = [
   { id: "all", label: "Tümü", badgeColor: "bg-slate-800 text-slate-300 border-slate-700" },
   { id: "SAR/STR", label: "SAR / STR Otomasyonu", desc: "Şüpheli işlem bildirim taslağı yazan ve vaka özetleyen LLM ajanları", badgeColor: "bg-red-950/60 text-red-300 border-red-600/40" },

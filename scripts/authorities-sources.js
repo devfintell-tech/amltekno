@@ -5,6 +5,26 @@ const xmlParser = new XMLParser({
   attributeNamePrefix: "@_"
 });
 
+export const OFFICIAL_AUTHORITY_URLS = {
+  MASAK: "https://masak.hmb.gov.tr/duyurular",
+  FATF: "https://www.fatf-gafi.org/en/publications.html",
+  OFAC: "https://ofac.treasury.gov/recent-actions",
+  FINCEN: "https://www.fincen.gov/news-room/news",
+  AMLA: "https://finance.ec.europa.eu/financial-markets/anti-money-laundering-and-countering-financing-terrorism_en",
+  WOLFSBERG: "https://www.wolfsberg-group.org",
+  EBA: "https://www.eba.europa.eu/publications-and-media/press-releases",
+  EGMONT: "https://egmontgroup.org/news/",
+  INTERPOL: "https://www.interpol.int/en/Crimes/Financial-crime",
+  FCA: "https://www.fca.org.uk/news",
+  FINMA: "https://www.finma.ch/en/news/",
+  MAS: "https://www.mas.gov.sg/news",
+  AUSTRAC: "https://www.austrac.gov.au/news-and-media",
+  EUROPOL: "https://www.europol.europa.eu/newsroom",
+  ACAMS: "https://www.acams.org/en/news",
+  SEC: "https://www.sec.gov/newsroom/press-releases",
+  DOJ: "https://www.justice.gov/news"
+};
+
 /**
  * Küresel ve Ulusal Premier AML, Finansal Suçlar & Yaptırım Otoriteleri
  * Dünyanın en saygın 13 resmi karar alıcı ve standart belirleyici kurumu
@@ -34,7 +54,7 @@ export const AUTHORITIES_CONFIG = [
     code: "Wolfsberg",
     name: "Wolfsberg Group (Küresel Bankacılık Standartları)",
     country: "Küresel / 13 Büyük Banka",
-    url: "https://wolfsberg-principles.com",
+    url: "https://www.wolfsberg-group.org",
     description: "Barclays, Citi, JPMorgan, UBS vb. 13 dev bankanın oluşturduğu küresel muhabir bankacılık ve yaptırım tarama ilkeleri."
   },
   {
@@ -68,7 +88,7 @@ export const AUTHORITIES_CONFIG = [
     code: "FinCEN",
     name: "FinCEN (Financial Crimes Enforcement Network)",
     country: "ABD / Mali İstihbarat",
-    url: "https://www.fincen.gov/news",
+    url: "https://www.fincen.gov/news-room/news",
     description: "ABD finansal suç istihbaratı, SAR istatistikleri ve BOI (Gerçek Faydalanıcı Bildirimi) düzenlemeleri."
   },
 
@@ -187,8 +207,19 @@ export async function fetchAuthorityDevelopments(apifyToken) {
       if (twRes.ok) {
         const tweets = await twRes.json();
         if (Array.isArray(tweets) && tweets.length > 0) {
+          const now = Date.now();
+          const cutoff24h = now - (24 * 60 * 60 * 1000);
+
           console.log(`✅ Otorite resmi X hesaplarından ${tweets.length} paylaşım çekildi.`);
           for (const tw of tweets) {
+            // Kesin 24 saat kontrolü: 24 saatten eskiyse atla
+            if (tw.createdAt) {
+              const twTime = new Date(tw.createdAt).getTime();
+              if (!isNaN(twTime) && twTime < cutoff24h) {
+                continue;
+              }
+            }
+
             const authorHandle = (tw.author?.username || tw.userName || "").toLowerCase();
             const matchingAuth = handleToAuthMap[authorHandle] || {
               code: 'Resmi Otorite',
@@ -227,10 +258,10 @@ export async function fetchAuthorityDevelopments(apifyToken) {
     }
 
     // -------------------------------------------------------------
-    // 2. KANAL: LINKEDIN RESMİ OTORİTE SAYFALARI (15+ Küresel Kurum, 7 Günlük Taze Kararlar)
+    // 2. KANAL: LINKEDIN RESMİ OTORİTE SAYFALARI (15+ Küresel Kurum, Son 24 Saat)
     // -------------------------------------------------------------
     try {
-      console.log("💼 2/2 Otoritelerin Resmi LinkedIn Sayfaları taranıyor (15 Kurum, max 15 karar)...");
+      console.log("💼 2/2 Otoritelerin Resmi LinkedIn Sayfaları taranıyor (15 Kurum, Son 24 Saat)...");
       const linkedinTargetUrls = [
         "https://www.linkedin.com/company/fatf/",
         "https://www.linkedin.com/company/fincen/",
@@ -251,8 +282,8 @@ export async function fetchAuthorityDevelopments(apifyToken) {
 
       const linkedinPayload = {
         targetUrls: linkedinTargetUrls,
-        maxPosts: 25, // Zengin veri havuzu için artırıldı (~8-10 sent)
-        postedLimit: "month" // Otoritelerin aylık resmi genelge, rehber ve yaptırım kararlarını kaçırmamak için month
+        maxPosts: 25,
+        postedLimit: "24h" // Kesinlikle son 24 saat
       };
 
       const liRes = await fetch(`https://api.apify.com/v2/acts/harvestapi~linkedin-company-posts/run-sync-get-dataset-items?token=${apifyToken}&timeout=90`, {
@@ -265,8 +296,20 @@ export async function fetchAuthorityDevelopments(apifyToken) {
       if (liRes.ok) {
         const posts = await liRes.json();
         if (Array.isArray(posts) && posts.length > 0) {
+          const now = Date.now();
+          const cutoff24h = now - (24 * 60 * 60 * 1000);
+
           console.log(`✅ Otorite resmi LinkedIn sayfalarından ${posts.length} paylaşım çekildi.`);
           for (const post of posts) {
+            // Kesin 24 saat kontrolü: 24 saatten eskiyse atla
+            const postDate = post.postedAt?.date || post.postedAt;
+            if (postDate) {
+              const pTime = new Date(postDate).getTime();
+              if (!isNaN(pTime) && pTime < cutoff24h) {
+                continue;
+              }
+            }
+
             const searchStr = `${post.author?.name || ''} ${post.companyName || ''} ${post.query || ''} ${post.header || ''}`.toLowerCase();
             let matchingAuth = AUTHORITIES_CONFIG.find(a => 
               searchStr.includes(a.id) || 
@@ -308,20 +351,19 @@ export async function fetchAuthorityDevelopments(apifyToken) {
     }
   }
 
-  // Eğer 24 saat içinde bazı otoriteler paylaşım yapmamışsa, 13 premier otorite havuzundan tamamla
-  if (results.length < 13) {
+  // SADECE ve SADECE API token tanımlı değilse ve veri hiç çekilemediyse (geliştirme ortamı) fallback kullan
+  if (results.length === 0 && !apifyToken) {
+    console.log("ℹ️ APIFY_AUTHORITIES_TOKEN tanımlı olmadığı için geliştirme ortamı şablonu kullanılıyor.");
     const fallbackData = getComprehensiveFallbackAuthorities();
     for (const fb of fallbackData) {
-      if (!results.some(r => r.authority === fb.authority)) {
-        results.push({
-          ...fb,
-          sourcePlatform: 'Resmi Portal & İstihbarat Bülteni'
-        });
-      }
+      results.push({
+        ...fb,
+        sourcePlatform: 'Resmi Portal & İstihbarat Bülteni'
+      });
     }
   }
 
-  console.log(`✅ Otoritelerin resmi X & LinkedIn kanallarından toplam ${results.length} regülasyon ve yaptırım verisi hazırlandı.`);
+  console.log(`✅ Otoritelerin resmi X & LinkedIn kanallarından toplam ${results.length} son 24 saatlik regülasyon ve yaptırım verisi hazırlandı.`);
   return results;
 }
 
@@ -370,7 +412,7 @@ export function getComprehensiveFallbackAuthorities() {
       title: "Gayrimenkul ve Yatırım Danışmanlığı Sektörüne Yönelik Nihai AML Düzenlemesi",
       summary: "Gayrimenkul alımlarında nakit veya paravan şirket arkasına gizlenen fonların gerçek faydalanıcılarının (BOI) bildirilmesi zorunlu kılındı.",
       date: todayStr,
-      url: "https://www.fincen.gov/news"
+      url: "https://www.fincen.gov/news-room/news"
     },
     {
       id: "auth-amla",
@@ -390,7 +432,7 @@ export function getComprehensiveFallbackAuthorities() {
       title: "Muhabir Bankacılıkta Müşteri İncelemesi (CBDDQ v1.4) Standartları Yenilendi",
       summary: "Muhabir bankaların zincirleme transfer şeffaflığı ve tüzel kişi UBO eşik değerleri için risk bazlı yeni inceleme yönergeleri yayımlandı.",
       date: todayStr,
-      url: "https://wolfsberg-principles.com"
+      url: "https://www.wolfsberg-group.org"
     },
     {
       id: "auth-eba",

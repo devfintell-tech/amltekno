@@ -87,10 +87,22 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     if (res.ok) {
       const items = await res.json();
       if (Array.isArray(items) && items.length > 0) {
-        // Nitelikli ve anlamlı AML tweetlerini filtrele (Aşırı filtre kaldırıldı - olabildiğince havuza al)
+        const now = Date.now();
+        const cutoff24h = now - (24 * 60 * 60 * 1000);
+
+        // Nitelikli ve anlamlı AML tweetlerini filtrele (KESİNLİKLE SON 24 SAAT)
         const meaningful = items.filter(t => {
           const text = (t.text || t.full_text || "").replace(/^@\w+\s+/g, "").trim();
-          return text.length >= 10 && !text.startsWith("https://t.co");
+          if (text.length < 10 || text.startsWith("https://t.co")) return false;
+
+          // Kesin 24 saat kontrolü: 24 saatten eski hiçbir tweet kabul edilmez
+          if (t.createdAt) {
+            const tweetTime = new Date(t.createdAt).getTime();
+            if (!isNaN(tweetTime) && tweetTime < cutoff24h) {
+              return false;
+            }
+          }
+          return true;
         });
 
         // En güncel ve en çok etkileşim alanlara göre sırala
@@ -123,7 +135,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
         });
 
         combinedPosts.push(...mapped);
-        console.log(`✅ X (Twitter) analist ve dedektif havuzundan ${mapped.length} gönderi işlendi.`);
+        console.log(`✅ X (Twitter) analist ve dedektif havuzundan ${mapped.length} son 24 saatlik gönderi işlendi.`);
       }
     } else {
       console.warn(`⚠️ Apify Twitter HTTP ${res.status}`);
@@ -148,7 +160,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
         "money mule smurfing",
         "trade based money laundering"
       ],
-      postedLimit: "24h", // Son 24 saat
+      postedLimit: "24h", // Kesinlikle son 24 saat
       maxPosts: 12 // 5 sorgu * 12 gönderi = 60 gönderi = $0.120 (16 sent hedefi)
     };
 
@@ -162,9 +174,22 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     if (liRes.ok) {
       const liItems = await liRes.json();
       if (Array.isArray(liItems) && liItems.length > 0) {
+        const now = Date.now();
+        const cutoff24h = now - (24 * 60 * 60 * 1000);
+
         const meaningfulLi = liItems.filter(p => {
           const text = (p.content || p.text || "").trim();
-          return text.length >= 10; // Aşırı filtre kaldırıldı
+          if (text.length < 10) return false;
+
+          // Kesin 24 saat kontrolü
+          const postDate = p.postedAt?.date || p.postedAt;
+          if (postDate) {
+            const pTime = new Date(postDate).getTime();
+            if (!isNaN(pTime) && pTime < cutoff24h) {
+              return false;
+            }
+          }
+          return true;
         });
 
         const mappedLi = meaningfulLi.slice(0, 60).map(p => {
@@ -190,7 +215,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
         });
 
         combinedPosts.push(...mappedLi);
-        console.log(`✅ LinkedIn AML uzman paylaşımlarından ${mappedLi.length} gönderi işlendi.`);
+        console.log(`✅ LinkedIn AML uzman paylaşımlarından ${mappedLi.length} son 24 saatlik gönderi işlendi.`);
       }
     } else {
       console.warn(`⚠️ Apify LinkedIn Post Search HTTP ${liRes.status}`);
@@ -199,18 +224,13 @@ export async function fetchAmlTwitterPosts(apifyToken) {
     console.warn("⚠️ Apify LinkedIn çekimi sırasında hata:", err.message);
   }
 
-  // Eğer toplam gönderi sayısı azsa zenginleştirilmiş uzman havuzundan destekle
-  if (combinedPosts.length < 10) {
-    console.log("ℹ️ Canlı sosyal akış sayısı az olduğu için doğrulanmış uzman havuzuyla birleştiriliyor.");
-    const fallback = getFallbackExpertTweets();
-    for (const fb of fallback) {
-      if (!combinedPosts.some(m => m.authorHandle === fb.authorHandle)) {
-        combinedPosts.push(fb);
-      }
-    }
+  // SADECE ve SADECE APIFY_TOKEN tanımlı değilse ve veri hiç çekilemediyse (geliştirme/çevrimdışı ortam) fallback kullan
+  if (combinedPosts.length === 0 && !apifyToken) {
+    console.log("ℹ️ APIFY_TOKEN tanımlı olmadığı için geliştirme ortamı şablonu kullanılıyor.");
+    return getFallbackExpertTweets();
   }
 
-  console.log(`🎯 Toplam X (Twitter) & LinkedIn Saha İstihbaratı: ${combinedPosts.length} gönderi.`);
+  console.log(`🎯 Toplam X (Twitter) & LinkedIn Saha İstihbaratı (Son 24 Saat): ${combinedPosts.length} gönderi.`);
   return combinedPosts;
 }
 

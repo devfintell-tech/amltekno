@@ -5,7 +5,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { SUBREDDIT_BATCHES, REDDIT_SEARCH_QUERIES, REDDIT_USER_AGENT, isAmlRelevant } from './subreddits.js';
 import { fetchAmlTwitterPosts } from './twitter-sources.js';
 import { fetchArxivAmlPapers } from './arxiv-sources.js';
-import { fetchAuthorityDevelopments } from './authorities-sources.js';
+import { fetchAuthorityDevelopments, OFFICIAL_AUTHORITY_URLS } from './authorities-sources.js';
 import { analyzeAmlDataWithDualLLM } from './deepseek-analyzer.js';
 import { printFullApifyCostReport } from './apify-cost-tracker.js';
 
@@ -50,9 +50,11 @@ function sleep(ms) {
  */
 async function fetchRedditBatch(batch) {
   const posts = [];
-  const feedTypes = ['hot', 'new'];
+  const feedTypes = ['new', 'hot'];
+  const now = Date.now();
+  const cutoff24h = now - (24 * 60 * 60 * 1000);
 
-  console.log(`📡 Reddit taranıyor (Genişletilmiş Hacim: hot & new): [${batch.name}]...`);
+  console.log(`📡 Reddit taranıyor (Kesin Son 24 Saat Filtresi): [${batch.name}]...`);
 
   for (const sortType of feedTypes) {
     const feedUrl = `https://www.reddit.com/r/${batch.slug}/${sortType}.rss?limit=100`;
@@ -81,7 +83,14 @@ async function fetchRedditBatch(batch) {
         const content = (entry.content?.["#text"] || entry.content || "").replace(/<[^>]*>/g, "");
         const author = entry.author?.name || "reddit_user";
         const link = entry.link?.["@_href"] || "";
-        const updated = entry.updated || new Date().toISOString();
+        const dateStr = entry.published || entry.updated;
+        const postTime = dateStr ? new Date(dateStr).getTime() : 0;
+
+        // KESİN 24 SAAT FİLTRESİ: 24 saatten eski gönderileri asla havuza alma
+        if (postTime > 0 && postTime < cutoff24h) {
+          continue;
+        }
+
         const category = entry.category?.["@_label"] || entry.category?.["@_term"] || batch.slug.split("+")[0];
 
         // AML Uygunluk Kontrolü: İlgisiz konuları sıfır toleransla eler
@@ -91,7 +100,7 @@ async function fetchRedditBatch(batch) {
             content: content.slice(0, 500),
             author,
             url: link,
-            updated,
+            updated: dateStr || new Date().toISOString(),
             subreddit: category
           });
         }
@@ -101,19 +110,21 @@ async function fetchRedditBatch(batch) {
     }
   }
 
-  console.log(`✅ [${batch.name}] -> ${posts.length} AML odaklı gönderi onaylandı.`);
+  console.log(`✅ [${batch.name}] -> ${posts.length} AML odaklı (Son 24 Saat) gönderi onaylandı.`);
   return posts;
 }
 
 /**
- * Reddit Global Arama Beslemesinden Doğrudan AML Gönderilerini Çeker (Limit 100)
+ * Reddit Global Arama Beslemesinden Doğrudan AML Gönderilerini Çeker (Son 24 Saat)
  */
 async function fetchRedditSearch(queryObj) {
   const encodedQ = encodeURIComponent(queryObj.query);
   const feedUrl = `https://www.reddit.com/search.rss?q=${encodedQ}&sort=new&t=day&limit=100`;
   const posts = [];
+  const now = Date.now();
+  const cutoff24h = now - (24 * 60 * 60 * 1000);
 
-  console.log(`🔍 Reddit AML Arama Beslemesi (Limit 100): [${queryObj.name}]...`);
+  console.log(`🔍 Reddit AML Arama Beslemesi (Son 24 Saat): [${queryObj.name}]...`);
 
   try {
     const res = await fetch(feedUrl, {
@@ -135,6 +146,13 @@ async function fetchRedditSearch(queryObj) {
           const content = (entry.content?.["#text"] || entry.content || "").replace(/<[^>]*>/g, "");
           const link = entry.link?.["@_href"] || "";
           const category = entry.category?.["@_label"] || "AMLSearch";
+          const dateStr = entry.published || entry.updated;
+          const postTime = dateStr ? new Date(dateStr).getTime() : 0;
+
+          // KESİN 24 SAAT FİLTRESİ
+          if (postTime > 0 && postTime < cutoff24h) {
+            continue;
+          }
 
           if (isAmlRelevant(title, content, true)) {
             posts.push({
@@ -142,7 +160,7 @@ async function fetchRedditSearch(queryObj) {
               content: content.slice(0, 500),
               author: entry.author?.name || "search_user",
               url: link,
-              updated: entry.updated || new Date().toISOString(),
+              updated: dateStr || new Date().toISOString(),
               subreddit: category
             });
           }
@@ -265,6 +283,27 @@ async function main() {
         }
       }
     }
+  }
+
+  // Otorite linklerini doğrula (Asla kırık / hayali link bırakma)
+  if (Array.isArray(finalReport.authoritiesPulse)) {
+    finalReport.authoritiesPulse = finalReport.authoritiesPulse.map(auth => {
+      const codeUpper = (auth.authority || '').toUpperCase().trim();
+      const canonicalUrl = OFFICIAL_AUTHORITY_URLS[codeUpper];
+      let cleanUrl = auth.url;
+      if (!cleanUrl || 
+          cleanUrl.includes('hazine.gov.tr') || 
+          cleanUrl.includes('amla.europa.eu') || 
+          cleanUrl.includes('wolfsberg-principles.com') ||
+          cleanUrl.includes('example.com') ||
+          !cleanUrl.startsWith('http')) {
+        cleanUrl = canonicalUrl || 'https://masak.hmb.gov.tr/duyurular';
+      }
+      return {
+        ...auth,
+        url: cleanUrl
+      };
+    });
   }
 
   // 6. ADIM: Verileri Kaydet
@@ -480,15 +519,7 @@ function generateFallbackReport(redditPosts = [], twitterPosts = [], arxivPapers
         category: "Mule (Kurye) Hesap Tespiti",
         problem: "Geleneksel kurallar günde 1 kez EOD (gün sonu) çalıştığı için, kurye hesaplara gelen para 3 dakika içinde kriptoya veya ATM'den nakde çevrilip buharlaşıyor.",
         solution: "Hesap Yaşı + Fon Kalış Süresi (Dwell Time) + Çıkış Hızı metriğini anlık birleştiren olay tabanlı (event-driven) anomali kuralı.",
-        promptOrLogic: `IF (Account_Age < 90 Days) 
-AND (Inbound_Transfer_Count_Last_1Hour >= 3)
-AND (Total_Inbound_Amount >= 50000 TRY / 2000 USD)
-AND (Outbound_Transfer_Initiated_Within < 180 Seconds)
-AND (Outbound_Channel IN ['FAST', 'ATM_Cash', 'Crypto_VASP_Transfer'])
-THEN:
-  SET Transaction_State = 'TEMPORARY_HOLD_5_MIN'
-  TRIGGER 'High_Risk_Mule_Alert'
-  DISPATCH Push_OTP_Verification_To_Registered_Biometric_Device()`,
+        promptOrLogic: "Metodoloji ve Operasyonel Mantık: Hesap yaşı 90 günün altında olan ve son 1 saatte 3 veya daha fazla gelen transferle 50.000 TL üzeri fon toplayan hesaplar izlemeye alınır. Fon girişinden sonraki 180 saniye içinde FAST, ATM veya kripto borsasına hızlı çıkış denemesi yapıldığında, işlem geçici olarak 5 dakika bekletilir, yüksek riskli kurye alarmı üretilir ve kayıtlı biyometrik cihaza onay bildirimi gönderilir.",
         expectedImpact: "Kurye hesaplardan fon kaçırılmasını %78 oranında engelleme; anlık bloke kabiliyeti."
       },
       {
@@ -497,14 +528,7 @@ THEN:
         category: "OSINT & Paravan Şirket",
         problem: "Müşteri kabul (CDD) aşamasında paravan şirketler aynı adresi veya aynı vekili kullanarak farklı tüzel kişilikler altında hesap açabiliyor; analistlerin manuel Ticaret Sicil taraması saatler alıyor.",
         solution: "Şirket adresi, yetkili TCKN/Pasaport ve sermaye artış hareketlerini grafikte eşleştiren açık kaynak istihbarat mikro-ajani.",
-        promptOrLogic: `// Python/SQL Graph Sorgu Mantığı
-MATCH (c:Company)-[:REGISTERED_AT]->(a:Address)
-WITH a, count(c) as company_count, collect(c.name) as companies
-WHERE company_count > 5 AND NOT a.is_coworking_space
-MATCH (p:Person)-[:DIRECTOR_OF]->(comp:Company)
-WHERE comp.name IN companies
-RETURN a.full_address, company_count, companies, p.name, p.national_id
-ORDER BY company_count DESC;`,
+        promptOrLogic: "Metodoloji ve Ağ Analitiği: Ticaret Sicil ve şirket kuruluş veri tabanlarında ortak adres sorgulaması yapılarak, ortak çalışma alanı (co-working) statüsünde olmayan tek bir adreste 5'ten fazla şirketin kayıtlı olup olmadığı incelenir. Şirket yetkilileri ve yönetim kurulu üyelerinin kimlik numaraları çapraz sorgulanarak kurumsal ağ kümelenmesi ve paravan şirket riski haritalandırılır.",
         expectedImpact: "Paravan şirket ve sahte fatura yapılarının hesap açılış anında %85 doğrulukla bloke edilmesi."
       }
     ],
@@ -515,12 +539,7 @@ ORDER BY company_count DESC;`,
         category: "Sentetik Kimlik Savunması",
         problem: "Aklayıcılar gerçek bir kişinin TCKN/SSN numarasını yapay zeka üretimi yüz fotoğraflarıyla birleştirip dijital bankalarda hesap açtırıyor.",
         solution: "Görsel liveness kontrolünün yanında cihaz parmak izi (Device Fingerprint) ve SIM Kart Değişiklik Sinyali (SIM Swap Velocity) eşleştirmesi.",
-        promptOrLogic: `Kural Mantığı:
-1. Dijital Başvuru IP'si VPN/Proxy havuzunda mı?
-2. Cihazda son 24 saatte açılan başka hesap denemesi var mı? (Canvas/WebGL fingerprint)
-3. Operatör SIM kartı son 48 saat içinde değiştirildi mi?
-4. Başvuru sahibinin SGK/Vergi beyanı ile kredi bürosu adres geçmişi son 6 aydır uyuşuyor mu?
--> Eğer 2 veya daha fazla sinyal pozitifse: Görüntülü görüşme müşteri temsilcisine aktarılır.`,
+        promptOrLogic: "Uygulama Modeli: Dijital başvuru IP'sinin VPN havuzunda olup olmadığı, cihaz parmak izinin son 24 saatteki diğer başvurularla çakışması ve telekom operatörü SIM kart değişiklik hızı (SIM swap) aynı anda değerlendirilir. Risk parametreleri eşik değerleri aştığında başvuru otomatik onaydan çıkarılıp canlı görüntülü müşteri temsilcisi doğrulamasına yönlendirilir.",
         expectedImpact: "Sentetik kimlik dolandırıcılığı kayıplarında %70 azalma."
       },
       {
@@ -529,17 +548,7 @@ ORDER BY company_count DESC;`,
         category: "UBO & Mülkiyet Analitiği",
         problem: "Çok katmanlı off-shore holding yapıları arkasına gizlenen gerçek kişileri manuel tespit etmek analistlerin 3-4 gününü alıyor.",
         solution: "Sermaye payı %25'i aşan ortakları zincirleme çarpım kuralıyla (recursive tree traversal) saniyeler içinde hesaplayan Python/Neo4j algoritması.",
-        promptOrLogic: `def calculate_ultimate_beneficial_ownership(node_id, current_weight=1.0):
-    ubo_candidates = []
-    direct_shares = db.query("MATCH (parent)-[r:OWNS]->(child {id: $id}) RETURN parent, r.percentage", id=node_id)
-    for p, pct in direct_shares:
-        effective_pct = current_weight * (pct / 100.0)
-        if p.is_individual:
-            if effective_pct >= 0.25:
-                ubo_candidates.append((p.name, effective_pct))
-        else:
-            ubo_candidates.extend(calculate_ultimate_beneficial_ownership(p.id, effective_pct))
-    return ubo_candidates`,
+        promptOrLogic: "Metodoloji ve Uyum Modeli: Çok katmanlı holding ve iştirak yapılarında doğrudan ve dolaylı sermaye payları yukarıdan aşağıya zincirleme oranlama yöntemiyle taranır. Sermaye veya oy hakkı kontrolü %25 eşiğini aşan nihai gerçek kişi ortaklar (UBO) otomatik olarak tespit edilip müşteri inceleme dosyasına eklenir.",
         expectedImpact: "Tüzel kişi müşteri kabul inceleme süresinde %85 hızlanma."
       },
       {
@@ -548,9 +557,7 @@ ORDER BY company_count DESC;`,
         category: "Olumsuz Medya Taraması",
         problem: "İsim benzerliği (homonim) nedeniyle masum müşteriler için yüzlerce alakasız mahkeme veya suç haberi uyarısı düşüyor.",
         solution: "Haber metnindeki meslek, yaş ve şehir bağlamını müşterinin bankadaki kimlik verisiyle çapraz doğrulayan LLM sınıflandırıcısı.",
-        promptOrLogic: `Sistem: Aşağıdaki haber metnini verilen müşteri kimlik profiliyle karşılaştır.
-Kriter: Suçlanan şahıs ile banka müşterisi aynı kişi mi?
-Yanıt Formatı: { "is_same_person": true/false, "confidence": 0-100, "reasoning": "..." }`,
+        promptOrLogic: "İnceleme Metodolojisi: Haber metinlerindeki meslek, yaş, adres ve şirket bağıntıları müşteri ana veri tabanındaki kimlik profiliyle çapraz karşılaştırılır. İsim benzerliği taşıyan masum şahıslar otomatik olarak elenirken, suç şüphesi doğrulanan vakalar yüksek güven skoruyla uyum analistine iletilir.",
         expectedImpact: "Adverse Media yanlış alarmlarında %60 azalma."
       }
     ],
