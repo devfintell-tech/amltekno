@@ -6,7 +6,7 @@ import { SUBREDDIT_BATCHES, REDDIT_SEARCH_QUERIES, REDDIT_USER_AGENT, isAmlRelev
 import { fetchAmlTwitterPosts } from './twitter-sources.js';
 import { fetchArxivAmlPapers } from './arxiv-sources.js';
 import { fetchAuthorityDevelopments, OFFICIAL_AUTHORITY_URLS } from './authorities-sources.js';
-import { analyzeAmlDataWithDualLLM } from './deepseek-analyzer.js';
+import { analyzeAmlDataWithDualLLM, safeTruncate } from './deepseek-analyzer.js';
 import { printFullApifyCostReport } from './apify-cost-tracker.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -96,8 +96,8 @@ async function fetchRedditBatch(batch) {
         // AML Uygunluk Kontrolü: İlgisiz konuları sıfır toleransla eler
         if (isAmlRelevant(title, content, batch.strictFilter)) {
           posts.push({
-            title,
-            content: content.slice(0, 500),
+            title: safeTruncate(title, 250),
+            content: safeTruncate(content, 500),
             author,
             url: link,
             updated: dateStr || new Date().toISOString(),
@@ -156,8 +156,8 @@ async function fetchRedditSearch(queryObj) {
 
           if (isAmlRelevant(title, content, true)) {
             posts.push({
-              title,
-              content: content.slice(0, 500),
+              title: safeTruncate(title, 250),
+              content: safeTruncate(content, 500),
               author: entry.author?.name || "search_user",
               url: link,
               updated: dateStr || new Date().toISOString(),

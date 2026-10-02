@@ -1,4 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
+import { safeTruncate } from './deepseek-analyzer.js';
 
 const xmlParser = new XMLParser({
   ignoreAttributes: false,
@@ -232,8 +233,8 @@ export async function fetchAuthorityDevelopments(apifyToken) {
             if (rawText.length < 10) continue; // Aşırı filtre kaldırıldı
 
             const textLines = rawText.split('\n').filter(l => l.trim().length > 0);
-            const dynamicTitle = textLines[0].slice(0, 140);
-            const dynamicSummary = rawText.slice(0, 320);
+            const dynamicTitle = safeTruncate(textLines[0], 140);
+            const dynamicSummary = safeTruncate(rawText, 320);
 
             results.push({
               id: `auth-tw-${tw.id || Math.random().toString(36).slice(2)}`,
@@ -325,8 +326,8 @@ export async function fetchAuthorityDevelopments(apifyToken) {
             if (postText.length < 10) continue; // Aşırı filtre kaldırıldı
 
             const textLines = postText.split('\n').filter(l => l.trim().length > 0);
-            const dynamicTitle = textLines[0].slice(0, 140);
-            const dynamicSummary = postText.slice(0, 320);
+            const dynamicTitle = safeTruncate(textLines[0], 140);
+            const dynamicSummary = safeTruncate(postText, 320);
 
             results.push({
               id: `auth-li-${post.id || post.entityId || Math.random().toString(36).slice(2)}`,

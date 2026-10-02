@@ -8,6 +8,8 @@
  * "Twitter'da AML hakkında ne konuşuluyor?" sorusunun yanıtını çıkarır.
  */
 
+import { safeTruncate } from './deepseek-analyzer.js';
+
 // 1. Otorite Dışı Bağımsız Dedektifler, Düşünce Önderleri & Uzmanlar
 export const TWITTER_INDEPENDENT_EXPERTS = [
   // 🔍 On-Chain İstihbarat & Finansal Suç Dedektifleri
@@ -204,7 +206,7 @@ export async function fetchAmlTwitterPosts(apifyToken) {
             id: `li-${p.id || p.entityId || Math.random().toString(36).slice(2)}`,
             platform: "linkedin",
             authorName: author,
-            authorHandle: headline.slice(0, 45),
+            authorHandle: safeTruncate(headline, 45),
             authorAvatar: p.author?.avatar?.url || p.author?.profilePicture || "",
             text: text,
             likes: likes,

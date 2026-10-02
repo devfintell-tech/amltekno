@@ -48,6 +48,20 @@ function safeParseJson(raw, phaseName = "LLM") {
   }
 }
 
+export function safeTruncate(str, maxLength = 0) {
+  if (!str || typeof str !== 'string') return '';
+  let clean = typeof str.toWellFormed === 'function' ? str.toWellFormed() : str;
+  // Kontrol karakterlerini temizle (\t, \n, \r hariç)
+  clean = clean.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '');
+  if (maxLength > 0) {
+    const chars = Array.from(clean);
+    if (chars.length > maxLength) {
+      clean = chars.slice(0, maxLength).join('');
+    }
+  }
+  return typeof clean.toWellFormed === 'function' ? clean.toWellFormed() : clean;
+}
+
 export async function analyzeAmlDataWithDualLLM({ 
   redditPosts = [], 
   twitterPosts = [], 
@@ -67,19 +81,19 @@ export async function analyzeAmlDataWithDualLLM({
   console.log("🧠 1. LLM (Phase 1) - Model: DeepSeek v4.1 Flash: Ham veriler derin taranıyor...");
 
   const redditContext = redditPosts.slice(0, 150).map((p, idx) => 
-    `[Reddit-${idx + 1}] [r/${p.subreddit}] [Son 24 Saat / Zaman: ${p.updated}] "${p.title}"\n${(p.content || "").slice(0, 350)}\nLink: ${p.url}`
+    `[Reddit-${idx + 1}] [r/${p.subreddit}] [Son 24 Saat / Zaman: ${p.updated}] "${safeTruncate(p.title, 200)}"\n${safeTruncate(p.content, 350)}\nLink: ${p.url}`
   ).join("\n\n");
 
   const twitterContext = twitterPosts.slice(0, 200).map((t, idx) => 
-    `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${t.authorHandle} [Son 24 Saat / Zaman: ${t.createdAt}] (${t.likes} beğeni, ${t.retweets} paylaşım): "${t.text}"\nLink: ${t.url}`
+    `[${t.platform === 'linkedin' ? 'LinkedIn' : 'X-Twitter'}-${idx + 1}] @${safeTruncate(t.authorHandle, 50)} [Son 24 Saat / Zaman: ${t.createdAt}] (${t.likes} beğeni, ${t.retweets} paylaşım): "${safeTruncate(t.text, 450)}"\nLink: ${t.url}`
   ).join("\n\n");
 
   const arxivContext = arxivPapers.slice(0, 15).map((a, idx) => 
-    `[arXiv-${idx + 1}] [${a.id}] [Yayın Tarihi: ${a.published}] "${a.title}"\nÖzet: ${(a.summary || "").slice(0, 320)}\nLink: ${a.arxivUrl}`
+    `[arXiv-${idx + 1}] [${a.id}] [Yayın Tarihi: ${a.published}] "${safeTruncate(a.title, 200)}"\nÖzet: ${safeTruncate(a.summary, 320)}\nLink: ${a.arxivUrl}`
   ).join("\n\n");
 
   const authContext = authorityPosts.slice(0, 80).map((a, idx) => 
-    `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] [Son 24 Saat / Zaman: ${a.createdAt || a.date}] "${a.title}"\n${a.summary || ""}\nLink: ${a.url}`
+    `[Resmi Otorite (${a.sourcePlatform || 'X & LinkedIn'})-${idx + 1}] [${a.authority} / ${a.country}] [Son 24 Saat / Zaman: ${a.createdAt || a.date}] "${safeTruncate(a.title, 200)}"\n${safeTruncate(a.summary, 400)}\nLink: ${a.url}`
   ).join("\n\n");
 
   // ==========================================
@@ -197,8 +211,8 @@ ${arxivContext || "arXiv verisi bulunamadı."}
     body: JSON.stringify({
       model: "deepseek-chat",
       messages: [
-        { role: "system", content: phase1System },
-        { role: "user", content: phase1User }
+        { role: "system", content: safeTruncate(phase1System) },
+        { role: "user", content: safeTruncate(phase1User) }
       ],
       temperature: 0.3,
       max_tokens: 8192,
@@ -317,8 +331,8 @@ Yukarıdaki TÜM güncel verileri okuyarak şu JSON şemasında çıktı üret:
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
-          { role: "system", content: phase2System },
-          { role: "user", content: phase2User }
+          { role: "system", content: safeTruncate(phase2System) },
+          { role: "user", content: safeTruncate(phase2User) }
         ],
         temperature: 0.3,
         max_tokens: 4000,

@@ -1,4 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
+import { safeTruncate } from './deepseek-analyzer.js';
 
 const parser = new XMLParser({
   ignoreAttributes: false,
@@ -52,8 +53,8 @@ export async function fetchArxivAmlPapers() {
     const papers = entries.map(entry => {
       const fullId = entry.id || "";
       const rawId = fullId.replace("http://arxiv.org/abs/", "").replace("https://arxiv.org/abs/", "").trim();
-      const title = decodeHtmlEntities(entry.title || "Başlıksız Makale");
-      const summary = decodeHtmlEntities(entry.summary || "Özet bulunamadı.");
+      const title = safeTruncate(decodeHtmlEntities(entry.title || "Başlıksız Makale"), 250);
+      const summary = safeTruncate(decodeHtmlEntities(entry.summary || "Özet bulunamadı."), 800);
       
       let authors = [];
       if (Array.isArray(entry.author)) {
